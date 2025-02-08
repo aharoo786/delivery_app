@@ -5,6 +5,8 @@ import 'package:flutter_grocery/helper/price_converter_helper.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/styles.dart';
 
+import '../../../utill/color_resources.dart';
+
 class DiscountedPriceWidget extends StatelessWidget {
   final bool isUnitPrice;
   final String? leadingText;
@@ -44,7 +46,9 @@ class DiscountedPriceWidget extends StatelessWidget {
           TextSpan(
             style: poppinsSemiBold.copyWith(
               fontSize: Dimensions.fontSizeDefault,
-              color: Theme.of(context).textTheme.titleMedium?.color,
+              fontWeight: FontWeight.w400,
+              color: ColorResources.priceColor,
+              // color: Theme.of(context).textTheme.titleMedium?.color,
             ),
             text: PriceConverterHelper.convertPrice(context, (cart.discountedPrice ?? 0) * (isUnitPrice ? 1 : cart.quantity ?? 1)),
           ),

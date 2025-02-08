@@ -17,6 +17,9 @@ import 'package:flutter_grocery/utill/styles.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
+import '../../../utill/images.dart';
+import '../../home/widgets/search_category_screen.dart';
+
 class CategoryProductScreen extends StatefulWidget {
   final String categoryId;
   final String? subCategoryName;
@@ -63,15 +66,62 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
 
     return Scaffold(
       appBar: (ResponsiveHelper.isDesktop(context)? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
-          : CustomAppBarWidget(
-        title: appBarText,
-        isCenter: false, isElevation: true,fromCategory: true,
-      )) as PreferredSizeWidget?,
+          : AppBar(backgroundColor: Colors.white,
+            scrolledUnderElevation: 0.0,
+            leading: GestureDetector(
+                onTap: (){
+                  Navigator.pop(context);
+                },
+                child: Icon(Icons.arrow_back,color: Colors.black)),
+    )),
+      // CustomAppBarWidget(
+      //   title: appBarText,
+      //   isCenter: false, isElevation: true,fromCategory: true,
+      // )) as PreferredSizeWidget?,
       body: Consumer<CategoryProvider>(
           builder: (context, productProvider, child) {
             return Column(
               crossAxisAlignment: ResponsiveHelper.isDesktop(context)? CrossAxisAlignment.center : CrossAxisAlignment.start,
               children: [
+                Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
+                child:
+                Row(
+                  children: [
+                    Text(
+                       'Fruit',
+                      style: poppinsSemiBold.copyWith(
+                          fontSize:ResponsiveHelper.isDesktop(context)
+                              ? Dimensions.fontSizeExtraLarge
+                              : 20,),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign:TextAlign.start,
+                    ),
+                    SizedBox(width: 4,),
+                    Icon(Icons.keyboard_arrow_down_outlined),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (ctx){
+                          return SearchCategoryScreen();
+                        }));
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: ColorResources.getGreyColor(context),
+                            border: Border.all(
+                                color: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.05)),
+                          ),
+                          child: Image.asset(Images.search,
+                              color: Colors.black,
+                              width: 20, height: 20)),
+                    ),
+                  ],
+                )),
                 SizedBox(height: 70,width: Dimensions.webScreenWidth, child: Consumer<CategoryProvider>(
                     builder: (context, categoryProvider, child){
                       return categoryProvider.subCategoryList != null ? Container(
@@ -97,8 +147,12 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                         alignment: Alignment.center,
                                         margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
                                         decoration: BoxDecoration(
-                                            color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).primaryColor : ColorResources.getGreyColor(context),
-                                            borderRadius: BorderRadius.circular(7)),
+                                            color: categoryProvider.selectedCategoryIndex == -1 ? Colors.black : Colors.white,
+                                            borderRadius: BorderRadius.circular(30),
+                                            border: Border.all(//DEE2E6
+                                                color: ColorResources.borderColor,
+                                                width: 1)
+                                        ),
                                         child: Text(
                                           getTranslated('all', context),
                                           style: poppinsRegular.copyWith(
@@ -127,11 +181,17 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                             alignment: Alignment.center,
                                             margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
                                             decoration: BoxDecoration(
-                                                color: categoryProvider.selectedCategoryIndex == index ? Theme.of(context).primaryColor : ColorResources.getGreyColor(context),
-                                                borderRadius: BorderRadius.circular(7)),
+                                                color: categoryProvider.selectedCategoryIndex == index ?Colors.black : Colors.white,
+                                                borderRadius: BorderRadius.circular(30),
+                                            border: Border.all(//DEE2E6
+                                                color: ColorResources.borderColor,
+                                                width: 1)
+                                            ),
                                             child: Text(
                                               categoryProvider.subCategoryList?[index].name ?? '',
                                               style: poppinsRegular.copyWith(
+                                                fontSize: Dimensions.fontSizeSmall,
+                                                fontWeight: FontWeight.w500,
                                                 color:  categoryProvider.selectedCategoryIndex == index ? Theme.of(context).canvasColor : Colors.black,
                                               ),
                                             ),

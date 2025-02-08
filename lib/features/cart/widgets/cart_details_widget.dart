@@ -34,24 +34,24 @@ class CartDetailsWidget extends StatelessWidget {
     print("-----------------(CART DETAILS WIDGET)--------------$_discount");
     return Column(children: [
 
-      Container(
-        padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(getTranslated('delivery_option', context), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
-          DeliveryOptionWidget(value: 'delivery', title: getTranslated('home_delivery', context)),
-
-          if(configModel.selfPickup == 1)...[
-            DeliveryOptionWidget(value: 'self_pickup', title: getTranslated('self_pickup', context)),
-          ],
-
-
-        ]),
-      ),
+      // Container(
+      //   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+      //   decoration: BoxDecoration(
+      //     color: Theme.of(context).cardColor,
+      //     borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+      //     boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
+      //   ),
+      //   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      //     Text(getTranslated('delivery_option', context), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
+      //     DeliveryOptionWidget(value: 'delivery', title: getTranslated('home_delivery', context)),
+      //
+      //     if(configModel.selfPickup == 1)...[
+      //       DeliveryOptionWidget(value: 'self_pickup', title: getTranslated('self_pickup', context)),
+      //     ],
+      //
+      //
+      //   ]),
+      // ),
       // SizedBox(height: _isSelfPickupActive ? Dimensions.paddingSizeDefault : 0),
 
       Container(
@@ -63,15 +63,16 @@ class CartDetailsWidget extends StatelessWidget {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-          Consumer<CouponProvider>(
-            builder: (context, couponProvider, child) {
-              return CouponWidget(couponController: _couponController, total: _total);
-            },
-          ),
-          const SizedBox(height: Dimensions.paddingSizeLarge),
+          // Consumer<CouponProvider>(
+          //   builder: (context, couponProvider, child) {
+          //     return CouponWidget(couponController: _couponController, total: _total);
+          //   },
+          // ),
+          //const SizedBox(height: Dimensions.paddingSizeLarge),
 
           // Total
-          Text(getTranslated('cost_summery', context), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
+          Text('Bill Details ', style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
+          // Text(getTranslated('cost_summery', context), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
           Divider(height: 30, thickness: 1, color: Theme.of(context).disabledColor.withOpacity(0.05)),
 
           PriceItemWidget(

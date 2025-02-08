@@ -108,6 +108,14 @@ class Images {
   static const String emailIcon = 'assets/image/email.png';
   static const String deliveryTooltipIcon = 'assets/image/delivery_tooltip_icon.png';
   static const String noMapBackground = 'assets/image/no_map_background.png';
+  static const String fruit = 'assets/image/fruit.png';
+  static const String amul = 'assets/image/amul.png';
+  static const String clock = 'assets/image/clock.png';
+  static const String dateIcon = 'assets/image/date.png';
+  static const String instruction = 'assets/image/instruction.png';
+  static const String promocode = 'assets/image/promocode.png';
+  static const String mycoupon = 'assets/image/mycoupon.png';
+  static const String chicken = 'assets/image/chicken.png';
 
   static const String emailVerificationBackgroundIcon = 'assets/image/email_verification_background.png';
   static const String phoneVerificationBackgroundIcon = 'assets/image/phone_verification_background.png';

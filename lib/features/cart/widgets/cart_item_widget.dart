@@ -28,7 +28,9 @@ class CartItemWidget extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeDefault),
-      decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () {
           Navigator.of(context).pushNamed(
@@ -48,17 +50,19 @@ class CartItemWidget extends StatelessWidget {
               cartProvider.removeItemFromCart(index, context);
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeSmall),
+              height: 104,
+              padding: const EdgeInsets.symmetric(vertical: Dimensions.radiusSizeSmall, horizontal: Dimensions.paddingSizeSmall),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
+                // color: Colors.red,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[Provider.of<ThemeProvider>(context).darkTheme ? 900 : 200]!,
-                    blurRadius: 5,
-                    spreadRadius: 1,
-                  )
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey[Provider.of<ThemeProvider>(context).darkTheme ? 900 : 200]!,
+                //     blurRadius: 5,
+                //     spreadRadius: 1,
+                //   )
+                // ],
               ),
               child: Row(crossAxisAlignment : ResponsiveHelper.isDesktop(context) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
                   mainAxisAlignment: ResponsiveHelper.isDesktop(context) ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
@@ -70,7 +74,7 @@ class CartItemWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     child: CustomImageWidget(
                       image: '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${cart.image}',
-                      height: ResponsiveHelper.isDesktop(context) ? 100 : 70, width: ResponsiveHelper.isDesktop(context) ? 100 : 70,
+                      height: ResponsiveHelper.isDesktop(context) ? 100 : 104, width: ResponsiveHelper.isDesktop(context) ? 100 : 104,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -78,12 +82,16 @@ class CartItemWidget extends StatelessWidget {
                 const SizedBox(width: Dimensions.paddingSizeSmall),
 
                 !ResponsiveHelper.isDesktop(context) ? Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(height: 12,),
 
                       Text(cart.name!, style: poppinsMedium.copyWith(
-                        fontSize: Dimensions.fontSizeSmall,
+                        fontSize: Dimensions.fontSizeDefault,
+                        fontWeight: FontWeight.w600
                       ), maxLines: 2, overflow: TextOverflow.ellipsis),
+                     /*
                       const SizedBox(height: Dimensions.paddingSizeExtraSmall),
                       
                       if(cart.product?.variations?.isNotEmpty ?? false)  Row(children: [
@@ -100,6 +108,7 @@ class CartItemWidget extends StatelessWidget {
 
 
                       DiscountedPriceWidget(cart: cart, leadingText: '${getTranslated('unit', context)}: ',),
+                      */
 
 
 
@@ -125,8 +134,74 @@ class CartItemWidget extends StatelessWidget {
                       //   ))
                       // ]),
                       const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+                      Spacer(),
 
-                      DiscountedPriceWidget(cart: cart, isUnitPrice: false, leadingText: '${getTranslated('total', context)}: ',),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          DiscountedPriceWidget(cart: cart, isUnitPrice: false, leadingText: null),
+                          Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).disabledColor.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(28),
+
+                            ),
+                            child: Row(
+                                mainAxisSize: MainAxisSize.min, children: [
+
+                              (ResponsiveHelper.isDesktop(context) && cart.quantity == 1) ? Padding(
+                                padding: const EdgeInsets.only(left: Dimensions.paddingSizeSmall),
+                                child: IconButton(
+                                  onPressed: () {
+                                    cartProvider.removeItemFromCart(index, context);
+                                    cartProvider.setExistData(null);
+                                  },
+                                  icon: const RotatedBox(quarterTurns: 2, child: Icon(CupertinoIcons.delete, color: Colors.red, size: 20)),
+                                ),
+                              ) : InkWell(
+                                onTap: () {
+                                  Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
+                                  if (cart.quantity! > 1) {
+                                    cartProvider.setCartQuantity(false, index,showMessage: true, context: context);
+                                  }else if(cart.quantity == 1){
+                                    cartProvider.removeItemFromCart(index, context);
+                                    cartProvider.setExistData(null);
+                                  }
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : Dimensions.paddingSizeSmall, vertical: Dimensions.radiusSizeSmall),
+                                  child: Icon(Icons.remove, size: 20,color: Theme.of(context).disabledColor),
+                                ),
+                              ),
+
+                              Text(cart.quantity.toString(), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge,color: Theme.of(context).primaryColor)),
+                              InkWell(
+                                onTap: () {
+                                  if(cart.product!.maximumOrderQuantity == null || cart.quantity! < cart.product!.maximumOrderQuantity!) {
+                                    if(cart.quantity! < cart.stock!) {
+                                      Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
+                                      cartProvider.setCartQuantity(true, index, showMessage: true, context: context);
+                                    }else {
+                                      showCustomSnackBarHelper(getTranslated('out_of_stock', context));
+                                    }
+                                  }else{
+                                    showCustomSnackBarHelper('${getTranslated('you_can_add_max', context)} ${cart.product!.maximumOrderQuantity} ${
+                                        getTranslated(cart.product!.maximumOrderQuantity! > 1 ? 'items' : 'item', context)} ${getTranslated('only', context)}');
+                                  }
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault :  Dimensions.radiusSizeSmall),
+                                  child: Icon(Icons.add, size: 20, color: Theme.of(context).primaryColor),
+                                ),
+                              ),
+
+                            ]),
+                          ),
+
+                        ],
+                      ),//'${getTranslated('total', context)}: ',
 
 
                       
@@ -177,68 +252,71 @@ class CartItemWidget extends StatelessWidget {
                 ),
 
 
-                RotatedBox(
-                  quarterTurns: ResponsiveHelper.isMobile() ? 0 : 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).disabledColor.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(10),
+                    /*
+                    RotatedBox(
+                            quarterTurns: ResponsiveHelper.isMobile() ? 0 : 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).disabledColor.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(10),
 
-                    ),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                              ),
+                              child: Column(mainAxisSize: MainAxisSize.min, children: [
 
-                      InkWell(
-                        onTap: () {
-                          if(cart.product!.maximumOrderQuantity == null || cart.quantity! < cart.product!.maximumOrderQuantity!) {
-                            if(cart.quantity! < cart.stock!) {
-                              Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
-                              cartProvider.setCartQuantity(true, index, showMessage: true, context: context);
-                            }else {
-                              showCustomSnackBarHelper(getTranslated('out_of_stock', context));
-                            }
-                          }else{
-                            showCustomSnackBarHelper('${getTranslated('you_can_add_max', context)} ${cart.product!.maximumOrderQuantity} ${
-                                getTranslated(cart.product!.maximumOrderQuantity! > 1 ? 'items' : 'item', context)} ${getTranslated('only', context)}');
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault :  Dimensions.paddingSizeSmall),
-                          child: Icon(Icons.add, size: 20, color: Theme.of(context).primaryColor),
-                        ),
-                      ),
+                                InkWell(
+                                  onTap: () {
+                                    if(cart.product!.maximumOrderQuantity == null || cart.quantity! < cart.product!.maximumOrderQuantity!) {
+                                      if(cart.quantity! < cart.stock!) {
+                                        Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
+                                        cartProvider.setCartQuantity(true, index, showMessage: true, context: context);
+                                      }else {
+                                        showCustomSnackBarHelper(getTranslated('out_of_stock', context));
+                                      }
+                                    }else{
+                                      showCustomSnackBarHelper('${getTranslated('you_can_add_max', context)} ${cart.product!.maximumOrderQuantity} ${
+                                          getTranslated(cart.product!.maximumOrderQuantity! > 1 ? 'items' : 'item', context)} ${getTranslated('only', context)}');
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault :  Dimensions.paddingSizeSmall),
+                                    child: Icon(Icons.add, size: 20, color: Theme.of(context).primaryColor),
+                                  ),
+                                ),
 
-                      RotatedBox(quarterTurns: ResponsiveHelper.isMobile() ? 0 : 3, child: Text(cart.quantity.toString(), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge,color: Theme.of(context).primaryColor))),
+                                RotatedBox(quarterTurns: ResponsiveHelper.isMobile() ? 0 : 3, child: Text(cart.quantity.toString(), style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge,color: Theme.of(context).primaryColor))),
 
-                      RotatedBox(
-                        quarterTurns: ResponsiveHelper.isMobile() ? 0 : 1,
-                        child: (ResponsiveHelper.isDesktop(context) && cart.quantity == 1) ? Padding(
-                          padding: const EdgeInsets.only(left: Dimensions.paddingSizeSmall),
-                          child: IconButton(
-                            onPressed: () {
-                              cartProvider.removeItemFromCart(index, context);
-                              cartProvider.setExistData(null);
-                            },
-                            icon: const RotatedBox(quarterTurns: 2, child: Icon(CupertinoIcons.delete, color: Colors.red, size: 20)),
+                                RotatedBox(
+                                  quarterTurns: ResponsiveHelper.isMobile() ? 0 : 1,
+                                  child: (ResponsiveHelper.isDesktop(context) && cart.quantity == 1) ? Padding(
+                                    padding: const EdgeInsets.only(left: Dimensions.paddingSizeSmall),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        cartProvider.removeItemFromCart(index, context);
+                                        cartProvider.setExistData(null);
+                                      },
+                                      icon: const RotatedBox(quarterTurns: 2, child: Icon(CupertinoIcons.delete, color: Colors.red, size: 20)),
+                                    ),
+                                  ) : InkWell(
+                                    onTap: () {
+                                      Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
+                                      if (cart.quantity! > 1) {
+                                        cartProvider.setCartQuantity(false, index,showMessage: true, context: context);
+                                      }else if(cart.quantity == 1){
+                                        cartProvider.removeItemFromCart(index, context);
+                                        cartProvider.setExistData(null);
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeSmall),
+                                      child: Icon(Icons.remove, size: 20,color: Theme.of(context).disabledColor),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            ),
                           ),
-                        ) : InkWell(
-                          onTap: () {
-                            Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
-                            if (cart.quantity! > 1) {
-                              cartProvider.setCartQuantity(false, index,showMessage: true, context: context);
-                            }else if(cart.quantity == 1){
-                              cartProvider.removeItemFromCart(index, context);
-                              cartProvider.setExistData(null);
-                            }
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeSmall),
-                            child: Icon(Icons.remove, size: 20,color: Theme.of(context).disabledColor),
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ),
-                ),
+                     */
+
               ]),
             ),
           ),

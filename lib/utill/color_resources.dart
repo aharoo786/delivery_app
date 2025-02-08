@@ -46,5 +46,7 @@ class ColorResources {
   static const Color colorGreen = Color(0xFF057237);
   static const Color colorBlue = Color(0xFF1692C9);
   static const Color redColor = Color(0xFFFF5C00);
+  static const Color borderColor = Color(0xFFDEE2E6);
+  static const Color priceColor = Color(0xFF676A6C);
 
 }

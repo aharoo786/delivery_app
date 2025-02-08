@@ -45,6 +45,7 @@ class CustomTextFieldWidget extends StatefulWidget {
   final Color? prefixAssetImageColor;
   final Function(CountryCode countryCode)? onCountryChanged;
   final bool isToolTipSuffix;
+  final bool showOneSideBorerRadius;
   final String? toolTipMessage;
   final GlobalKey? toolTipKey;
   final bool isSuffixIconLoading;
@@ -56,6 +57,7 @@ class CustomTextFieldWidget extends StatefulWidget {
         this.focusNode,
         this.nextFocus,
         this.isEnabled = true,
+        this.showOneSideBorerRadius = false,
         this.inputType = TextInputType.text,
         this.inputAction = TextInputAction.next,
         this.maxLines = 1,
@@ -139,7 +141,15 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
 
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ResponsiveHelper.isDesktop(context)? 20 : 12),
+            borderRadius:widget.showOneSideBorerRadius?
+             BorderRadius.only(
+              topRight: Radius.circular(0.0),
+              bottomRight: Radius.circular(0.0),
+              topLeft: Radius.circular(ResponsiveHelper.isDesktop(context)? 20 : 12),
+              bottomLeft: Radius.circular(ResponsiveHelper.isDesktop(context)? 20 : 12)
+
+            ):
+            BorderRadius.circular(ResponsiveHelper.isDesktop(context)? 20 : 12),
             boxShadow: [
               BoxShadow(
                 color: widget.isElevation ? Colors.grey[Provider.of<ThemeProvider>(context).darkTheme ? 700 : 200]! : Colors.transparent,
