@@ -36,7 +36,7 @@
         android:extractNativeLibs="true"
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_MAP_KEY_HERE" />
+            android:value="AIzaSyBNfDDSWLMTtVpDy58bnhhU4x_1jLoJnJA" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

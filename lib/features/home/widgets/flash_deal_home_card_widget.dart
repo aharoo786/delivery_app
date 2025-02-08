@@ -17,67 +17,67 @@ class FlashDealHomeCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FlashDealProvider>(builder: (context, flashDealProvider, child) {
-      return (flashDealProvider.flashDealModel?.products?.isEmpty ?? false) || (flashDealProvider.duration?.isNegative ?? false)
-          ? const SizedBox() :
-      Column(children: [
-
-        InkWell(
-          hoverColor: Colors.transparent,
-          onTap: () => Navigator.pushNamed(context, RouteHelper.getHomeItemRoute(ProductType.flashSale)),
-          child: Container(
-            color: Theme.of(context).primaryColor.withOpacity(0.05),
-            padding: EdgeInsets.only(
-              left: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : 0, top: Dimensions.paddingSizeDefault, bottom: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : Dimensions.paddingSizeSmall,
-            ),
-            child: ResponsiveHelper.isDesktop(context) ? Row(children: [
-
-              TitleWithTimeWidget(
-                isDetailsPage: false,
-                title: '',
-                eventDuration: flashDealProvider.duration,
-                onTap: () => Navigator.pushNamed(context, RouteHelper.getHomeItemRoute(ProductType.flashSale)),
-              ),
-
-
-              Flexible(child: HomeItemWidget(productList: flashDealProvider.flashDealModel?.products)),
-
-
-            ]) : Column(children: [
-
-              TitleWithTimeWidget(
-                isDetailsPage: false,
-                title: '',
-                eventDuration: flashDealProvider.duration,
-              ),
-
-              HomeItemWidget(productList: flashDealProvider.flashDealModel?.products, isFlashDeal: true),
-
+    return Consumer<FlashDealProvider>(
+        builder: (context, flashDealProvider, child) {
+      return (flashDealProvider.flashDealModel?.products?.isEmpty ?? false) ||
+              (flashDealProvider.duration?.isNegative ?? false)
+          ? const SizedBox()
+          : Column(children: [
               InkWell(
-                onTap: () => Navigator.pushNamed(context, RouteHelper.getHomeItemRoute(ProductType.flashSale)),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: Dimensions.paddingSizeDefault, bottom: Dimensions.paddingSizeExtraSmall),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text(
-                      'view_all'.tr,
-                      style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).primaryColor.withOpacity(0.8)),
+                hoverColor: Colors.transparent,
+                onTap: () => Navigator.pushNamed(context,
+                    RouteHelper.getHomeItemRoute(ProductType.flashSale)),
+                child: Container(
+                  color: Theme.of(context).primaryColor.withOpacity(0.05),
+                  padding: EdgeInsets.only(
+                    left: ResponsiveHelper.isDesktop(context)
+                        ? Dimensions.paddingSizeDefault
+                        : 0,
+                    top: Dimensions.paddingSizeDefault,
+                    bottom: ResponsiveHelper.isDesktop(context)
+                        ? Dimensions.paddingSizeDefault
+                        : Dimensions.paddingSizeSmall,
+                  ),
+                  child: Column(children: [
+                    TitleWithTimeWidget(
+                      isDetailsPage: false,
+                      title: '',
+                      eventDuration: flashDealProvider.duration,
                     ),
-
-                    Icon(
-                      Icons.arrow_forward,
-                      color: Theme.of(context).primaryColor,
-                      size: 15,
+                    HomeItemWidget(
+                        productList: flashDealProvider.flashDealModel?.products,
+                        isFlashDeal: true),
+                    InkWell(
+                      onTap: () => Navigator.pushNamed(context,
+                          RouteHelper.getHomeItemRoute(ProductType.flashSale)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: Dimensions.paddingSizeDefault,
+                            bottom: Dimensions.paddingSizeExtraSmall),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'view_all'.tr,
+                                style: poppinsRegular.copyWith(
+                                    fontSize: Dimensions.fontSizeSmall,
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.8)),
+                              ),
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Theme.of(context).primaryColor,
+                                size: 15,
+                              ),
+                            ]),
+                      ),
                     ),
                   ]),
                 ),
               ),
-
-            ]),
-
-          ),
-        ),
-        const SizedBox(height: Dimensions.paddingSizeLarge),
-      ]);
+              const SizedBox(height: Dimensions.paddingSizeLarge),
+            ]);
     });
   }
 }

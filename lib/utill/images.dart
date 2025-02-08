@@ -5,6 +5,7 @@ class Images {
   static const String englandFlag = 'assets/image/england.png';
   static const String arabicFlag = 'assets/image/arabic.png';
   static const String bd = 'assets/image/bd.png';
+  static const String loginImage = 'assets/image/loginImage.png';
 
   static const String maintenance = 'assets/image/maintenance.png';
   static const String chat = 'assets/image/chat.png';
@@ -112,6 +113,7 @@ class Images {
   static const String phoneVerificationBackgroundIcon = 'assets/image/phone_verification_background.png';
   static const String notVerifiedProfileIcon = 'assets/image/not_verified.png';
   static const String verifiedProfileIcon = 'assets/image/verified.png';
+  static const String discountTagPng = 'assets/image/discountTag.png';
 
   //svg
   static const String addressList = 'assets/svg/address_list.svg';
@@ -134,7 +136,13 @@ class Images {
   static const String returnPolicy = 'assets/svg/return_policy.svg';
   static const String orderFailed = 'assets/svg/order_failed.svg';
   static const String refundPolicy = 'assets/svg/refund_policy.svg';
-
+  static const String currentLocationIcon = 'assets/svg/currentLocationIcon.svg';
+  static const String discountTag = 'assets/svg/discountTag.svg';
+  static const String userIconBottom = 'assets/svg/userIcon.svg';
+  static const String homeIcon = 'assets/svg/homeIcon.svg';
+  static const String orderIcon = 'assets/svg/orderIcon.svg';
+  static const String cartIconBottom = 'assets/svg/cartIcon.svg';
+  static const String setting = 'assets/svg/Setting.svg';
 
   static String getShareIcon(String name) => 'assets/image/$name.png';
   static String getPaymentImage(String name) => 'assets/payment/$name.png';

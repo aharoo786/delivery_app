@@ -105,6 +105,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   context, RouteHelper.onBoarding, (route) => false,
                   arguments: OnBoardingScreen());
             } else {
+              // Navigator.pushNamedAndRemoveUntil(
+              //     context, RouteHelper.onBoarding, (route) => false,
+              //     arguments: OnBoardingScreen());
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(RouteHelper.menu, (route) => false);
             }
@@ -148,9 +151,9 @@ class _SplashScreenState extends State<SplashScreen> {
         }
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          // crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Image.asset(Images.appLogo, height: 140, width: 180),
+            Center(child: Image.asset(Images.appLogo,scale: 3.5,)),
             // const SizedBox(height: Dimensions.paddingSizeSmall),
             // Text(AppConstants.appName,
             //     textAlign: TextAlign.center,

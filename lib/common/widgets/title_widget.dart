@@ -14,27 +14,35 @@ class TitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       //color: ResponsiveHelper.isDesktop(context) ? ColorResources.getAppBarHeaderColor(context) : Theme.of(context).canvasColor,
-      padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.isDesktop(context) ? 0 : 15, vertical: 12),
-      margin: ResponsiveHelper.isDesktop(context) ? const EdgeInsets.symmetric(horizontal: 5, vertical: 10) : EdgeInsets.zero,
+      padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.isDesktop(context) ? 0 : 16,
+          vertical: 12),
+      margin: ResponsiveHelper.isDesktop(context)
+          ? const EdgeInsets.symmetric(horizontal: 5, vertical: 10)
+          : EdgeInsets.zero,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text(
           title!,
-          style: poppinsBold.copyWith(fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge?.color),
+          style: poppinsBold.copyWith(
+              fontSize: ResponsiveHelper.isDesktop(context)
+                  ? Dimensions.fontSizeExtraLarge
+                  : 20,
+              color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
-        onTap != null ? InkWell(
-          onTap: onTap as void Function()?,
-          child: TextHoverWidget(
-            builder: (bool isHovered)=> Padding(
-              padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-              child: Text(
-                'view_all'.tr,
-                style: poppinsRegular.copyWith(
-                  fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeLarge : Dimensions.fontSizeSmall,
-                  color: isHovered ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.8),
+        onTap != null
+            ? InkWell(
+                onTap: onTap as void Function()?,
+                child: Container(
+                  height: 42,
+                  width: 42,
+                  decoration: const BoxDecoration(
+                    color: Color(0xffF2F2F3),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.arrow_forward)
                 ),
-              ),
-            )),
-        ) : const SizedBox(),
+              )
+            : const SizedBox(),
       ]),
     );
   }

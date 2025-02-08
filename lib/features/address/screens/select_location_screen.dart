@@ -31,18 +31,26 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
   void initState() {
     super.initState();
 
-    final LocationProvider locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    final LocationProvider locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
 
-    if(locationProvider.pickedAddressLatitude == null && locationProvider.pickedAddressLongitude == null){
+    if (locationProvider.pickedAddressLatitude == null &&
+        locationProvider.pickedAddressLongitude == null) {
       _initialPosition = LatLng(
-        double.parse(Provider.of<SplashProvider>(context, listen: false).configModel!.branches![0].latitude! ),
-        double.parse(Provider.of<SplashProvider>(context, listen: false).configModel!.branches![0].longitude!),
+        double.parse(Provider.of<SplashProvider>(context, listen: false)
+            .configModel!
+            .branches![0]
+            .latitude!),
+        double.parse(Provider.of<SplashProvider>(context, listen: false)
+            .configModel!
+            .branches![0]
+            .longitude!),
       );
-    }else{
-      _initialPosition = LatLng(double.parse(locationProvider.pickedAddressLatitude ?? '0'), double.parse(locationProvider.pickedAddressLongitude ?? '0'));
+    } else {
+      _initialPosition = LatLng(
+          double.parse(locationProvider.pickedAddressLatitude ?? '0'),
+          double.parse(locationProvider.pickedAddressLongitude ?? '0'));
     }
-
-
 
     Provider.of<LocationProvider>(context, listen: false).setPickData();
   }
@@ -53,20 +61,27 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     _controller!.dispose();
   }
 
-  void _openSearchDialog(BuildContext context, GoogleMapController? mapController) async {
-    showDialog(context: context, builder: (context) => SearchDialogWidget(mapController: mapController));
+  void _openSearchDialog(
+      BuildContext context, GoogleMapController? mapController) async {
+    showDialog(
+        context: context,
+        builder: (context) => SearchDialogWidget(mapController: mapController));
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     if (Provider.of<LocationProvider>(context).address != null) {
-      _locationController.text = Provider.of<LocationProvider>(context).address ?? '';
+      _locationController.text =
+          Provider.of<LocationProvider>(context).address ?? '';
     }
 
     return Scaffold(
-      appBar: (ResponsiveHelper.isDesktop(context)? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget()): CustomAppBarWidget(title: getTranslated('select_delivery_address', context), isCenter: true)) as PreferredSizeWidget?,
+      appBar: (ResponsiveHelper.isDesktop(context)
+          ? const PreferredSize(
+              preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
+          : CustomAppBarWidget(
+              title: getTranslated('select_delivery_address', context),
+              isCenter: true)) as PreferredSizeWidget?,
       body: Center(
         child: SizedBox(
           width: 1170,
@@ -86,23 +101,36 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                   indoorViewEnabled: true,
                   mapToolbarEnabled: true,
                   onCameraIdle: () {
-                    locationProvider.updatePosition(_cameraPosition, false, null, forceNotify: true);
+                    locationProvider.updatePosition(
+                        _cameraPosition, false, null,
+                        forceNotify: true);
                   },
                   onCameraMove: ((position) => _cameraPosition = position),
                   // markers: Set<Marker>.of(locationProvider.markers),
                   onMapCreated: (GoogleMapController controller) {
-                    Future.delayed(const Duration(milliseconds: 800)).then((value) {
+                    Future.delayed(const Duration(milliseconds: 800))
+                        .then((value) {
                       _controller = controller;
-                      _controller!.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                          target:  locationProvider.pickPosition.longitude.toInt() == 0 &&  locationProvider.pickPosition.latitude.toInt() == 0 ? _initialPosition : LatLng(
-                        locationProvider.pickPosition.latitude, locationProvider.pickPosition.longitude,
-                      ), zoom: 15)));
+                      _controller!.moveCamera(CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                              target: locationProvider.pickPosition.longitude
+                                              .toInt() ==
+                                          0 &&
+                                      locationProvider.pickPosition.latitude
+                                              .toInt() ==
+                                          0
+                                  ? _initialPosition
+                                  : LatLng(
+                                      locationProvider.pickPosition.latitude,
+                                      locationProvider.pickPosition.longitude,
+                                    ),
+                              zoom: 15)));
                     });
-
                   },
                 ),
                 locationProvider.pickAddress != null
-                    ? SearchBarView(onTap: ()=> _openSearchDialog(context, _controller))
+                    ? SearchBarView(
+                        onTap: () => _openSearchDialog(context, _controller))
                     : const SizedBox.shrink(),
                 Positioned(
                   bottom: 0,
@@ -112,15 +140,18 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       InkWell(
-                        onTap: () => AddressHelper.checkPermission((){
-                          locationProvider.getCurrentLocation(context, false, mapController: _controller);
+                        onTap: () => AddressHelper.checkPermission(() {
+                          locationProvider.getCurrentLocation(context, false,
+                              mapController: _controller);
                         }),
                         child: Container(
                           width: 50,
                           height: 50,
-                          margin: const EdgeInsets.only(right: Dimensions.paddingSizeLarge),
+                          margin: const EdgeInsets.only(
+                              right: Dimensions.paddingSizeLarge),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
+                            borderRadius: BorderRadius.circular(
+                                Dimensions.paddingSizeSmall),
                             color: Theme.of(context).cardColor,
                           ),
                           child: Icon(
@@ -133,59 +164,97 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: Padding(
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
+                          padding:
+                              const EdgeInsets.all(Dimensions.paddingSizeLarge),
                           child: CustomButtonWidget(
-                            buttonText: getTranslated('select_location', context),
-                            onPressed: locationProvider.loading ? null : () {
+                            buttonText:
+                                getTranslated('select_location', context),
+                            onPressed: locationProvider.loading
+                                ? null
+                                : () {
+                                    if (locationProvider.pickAddress != null) {
+                                      locationProvider.setAddress =
+                                          locationProvider.pickAddress ?? '';
+                                    }
 
-                              if(locationProvider.pickAddress != null){
-                                locationProvider.setAddress = locationProvider.pickAddress ?? '';
-                              }
+                                    print(
+                                        "----------Select Location Screen: ${locationProvider.pickPosition.latitude} and ${locationProvider.pickPosition.longitude}");
+                                    print(
+                                        "----------(Select Location)-------------------------Address: ${locationProvider.address} and PickAddress ${locationProvider.pickAddress}");
 
-                              print("----------Select Location Screen: ${locationProvider.pickPosition.latitude} and ${locationProvider.pickPosition.longitude}");
-                              print("----------(Select Location)-------------------------Address: ${locationProvider.address} and PickAddress ${locationProvider.pickAddress}");
+                                    locationProvider.setPickedAddressLatLon(
+                                        locationProvider.pickPosition.latitude
+                                            .toString(),
+                                        locationProvider.pickPosition.longitude
+                                            .toString());
 
-                              locationProvider.setPickedAddressLatLon(locationProvider.pickPosition.latitude.toString(), locationProvider.pickPosition.longitude.toString());
-
-
-                              print('-------------------------(IT IS PUSHED IN SELECTED LOCATION SCREEN)---------------');
-                              if(widget.googleMapController != null) {
-                                widget.googleMapController!.setMapStyle('[]');
-                                Future.delayed(const Duration(milliseconds: 800)).then((value) {
-                                  widget.googleMapController!.animateCamera(CameraUpdate.newCameraPosition(
-                                      CameraPosition(target: LatLng(locationProvider.pickPosition.latitude, locationProvider.pickPosition.longitude), zoom: 16)));
-                                  if (ResponsiveHelper.isWeb()) {
-                                    locationProvider.setAddAddressData(true);
-                                  }
-                                });
-
-                              }else{
-                                if(locationProvider.mapController != null){
-                                  Future.delayed(const Duration(milliseconds: 800)).then((value){
-                                    locationProvider.mapController!.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(
-                                      double.parse(locationProvider.pickedAddressLatitude ?? '0'),
-                                      double.parse(locationProvider.pickedAddressLongitude ?? '0'),
-                                    ), zoom: 16)));
-                                  });
-
-                                }
-                              }
-                              Navigator.of(context).pop();
-                            },
+                                    print(
+                                        '-------------------------(IT IS PUSHED IN SELECTED LOCATION SCREEN)---------------');
+                                    if (widget.googleMapController != null) {
+                                      widget.googleMapController!
+                                          .setMapStyle('[]');
+                                      Future.delayed(
+                                              const Duration(milliseconds: 800))
+                                          .then((value) {
+                                        widget.googleMapController!
+                                            .animateCamera(
+                                                CameraUpdate.newCameraPosition(
+                                                    CameraPosition(
+                                                        target: LatLng(
+                                                            locationProvider
+                                                                .pickPosition
+                                                                .latitude,
+                                                            locationProvider
+                                                                .pickPosition
+                                                                .longitude),
+                                                        zoom: 16)));
+                                        if (ResponsiveHelper.isWeb()) {
+                                          locationProvider
+                                              .setAddAddressData(true);
+                                        }
+                                      });
+                                    } else {
+                                      if (locationProvider.mapController !=
+                                          null) {
+                                        Future.delayed(const Duration(
+                                                milliseconds: 800))
+                                            .then((value) {
+                                          locationProvider.mapController!
+                                              .animateCamera(CameraUpdate
+                                                  .newCameraPosition(
+                                                      CameraPosition(
+                                                          target: LatLng(
+                                                            double.parse(
+                                                                locationProvider
+                                                                        .pickedAddressLatitude ??
+                                                                    '0'),
+                                                            double.parse(
+                                                                locationProvider
+                                                                        .pickedAddressLongitude ??
+                                                                    '0'),
+                                                          ),
+                                                          zoom: 16)));
+                                        });
+                                      }
+                                    }
+                                    //  Navigator.of(context).pop();
+                                  },
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Center(child: Icon(
+                Center(
+                    child: Icon(
                   Icons.location_on,
                   color: Theme.of(context).primaryColor,
                   size: 50,
                 )),
-
                 locationProvider.loading
-                    ? Center(child: CustomLoaderWidget(color: Theme.of(context).primaryColor))
+                    ? Center(
+                        child: CustomLoaderWidget(
+                            color: Theme.of(context).primaryColor))
                     : const SizedBox(),
               ],
             ),
@@ -200,34 +269,44 @@ class SearchBarView extends StatelessWidget {
   final Function onTap;
   final double margin;
   const SearchBarView({
-    super.key, required this.onTap, this.margin = Dimensions.paddingSizeExtraLarge,
+    super.key,
+    required this.onTap,
+    this.margin = Dimensions.paddingSizeExtraLarge,
   });
 
   @override
   Widget build(BuildContext context) {
-
     return Selector<LocationProvider, String?>(
-      selector: (context, locationProvider) => locationProvider.pickAddress,
-      builder: (context, pickAddress, child) {
-        return InkWell(
-          onTap: ()=> onTap(),
-          child: Container(
+        selector: (context, locationProvider) => locationProvider.pickAddress,
+        builder: (context, pickAddress, child) {
+          return InkWell(
+            onTap: () => onTap(),
+            child: Container(
               width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeDefault),
-              margin: EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: margin),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall)),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeLarge,
+                  vertical: Dimensions.paddingSizeDefault),
+              margin: EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeLarge, vertical: margin),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius:
+                      BorderRadius.circular(Dimensions.paddingSizeSmall)),
               child: Row(children: [
-                Expanded(child: Text(
+                Expanded(
+                    child: Text(
                   pickAddress != null && pickAddress.isNotEmpty
-                      ? pickAddress :  getTranslated('search_here', context),
-                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                      ? pickAddress
+                      : getTranslated('search_here', context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 )),
-
-                Icon(Icons.search, size: Dimensions.paddingSizeExtraLarge, color: Theme.of(context).primaryColor),
+                Icon(Icons.search,
+                    size: Dimensions.paddingSizeExtraLarge,
+                    color: Theme.of(context).primaryColor),
               ]),
             ),
-        );
-      }
-    );
+          );
+        });
   }
 }

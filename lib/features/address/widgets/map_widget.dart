@@ -15,10 +15,11 @@ import 'package:provider/provider.dart';
 class MapWidget extends StatelessWidget {
   final bool isEnableUpdate;
   final bool fromCheckout;
+  final double height;
   final AddressModel? address;
 
   const MapWidget({
-    super.key, required this.isEnableUpdate, this.address, required this.fromCheckout,
+    super.key, required this.isEnableUpdate, this.address, required this.fromCheckout,  this.height=130,
   });
 
   @override
@@ -29,7 +30,7 @@ class MapWidget extends StatelessWidget {
 
     print("-----(MAP WIDGET)-------------${locationProvider.pickedAddressLatitude} and ${locationProvider.pickedAddressLongitude} and Is Enable Update : $isEnableUpdate");
     return SizedBox(
-      height: ResponsiveHelper.isMobile() ? 130 : 250,
+      height: height,
       width: MediaQuery.of(context).size.width,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),

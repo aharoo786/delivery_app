@@ -8,7 +8,7 @@ class AppConstants {
   static const double appVersion = 7.6;
   static const AppMode appMode = AppMode.release;
   static const LocalCachesTypeEnum cachesType = LocalCachesTypeEnum.all;
-  static const String fontFamily = 'Poppins';
+  static const String fontFamily = 'MonaSans';
   static const String baseUrl = 'https://grocery.radiansystech.com';
   static const String webHostUrl = 'http://royogrocery.radiansystech.com';
   static const String configUri = '/api/v1/config';

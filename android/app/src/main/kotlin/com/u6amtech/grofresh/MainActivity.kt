@@ -1,4 +1,4 @@
-package com.sixamtech.grofresh
+package com.royogrocery.user
 
 import io.flutter.embedding.android.FlutterActivity
 

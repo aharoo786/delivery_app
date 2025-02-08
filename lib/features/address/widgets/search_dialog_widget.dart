@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/widgets/custom_loader_widget.dart';
 import 'package:flutter_grocery/features/address/domain/models/prediction_model.dart';
@@ -17,53 +16,61 @@ class SearchDialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LocationProvider locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    final LocationProvider locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
 
     return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault)),
       margin: EdgeInsets.only(
         top: ResponsiveHelper.isDesktop(context) ? 160 : 75,
-        right: Dimensions.paddingSizeSmall, left: Dimensions.paddingSizeSmall,
+        right: Dimensions.paddingSizeSmall,
+        left: Dimensions.paddingSizeSmall,
       ),
       alignment: Alignment.topCenter,
-      child: SizedBox(width: 650, child: TypeAheadField<PredictionModel>(
-        suggestionsCallback: (pattern) async => await locationProvider.searchLocation(context, pattern),
-        builder: (context, controller, focusNode) => TextField(
-          controller: controller,
-          focusNode: focusNode,
-          textInputAction: TextInputAction.search,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          keyboardType: TextInputType.streetAddress,
-
-          decoration: InputDecoration(
-            hintText: getTranslated('search_location', context),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(style: BorderStyle.none, width: 0),
+      child: SizedBox(
+          width: 650,
+          child: TypeAheadField<PredictionModel>(
+            suggestionsCallback: (pattern) async =>
+                await locationProvider.searchLocation(context, pattern),
+            builder: (context, controller, focusNode) => TextField(
+              controller: controller,
+              focusNode: focusNode,
+              textInputAction: TextInputAction.search,
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+              keyboardType: TextInputType.streetAddress,
+              decoration: InputDecoration(
+                hintText: getTranslated('search_location', context),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(style: BorderStyle.none, width: 0),
+                ),
+                hintStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
+                      fontSize: Dimensions.fontSizeDefault,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                filled: true,
+                fillColor: Theme.of(context).cardColor,
+              ),
+              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    fontSize: Dimensions.fontSizeLarge,
+                  ),
             ),
-            hintStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
-              fontSize: Dimensions.fontSizeDefault, color: Theme.of(context).disabledColor,
-            ),
-            filled: true,
-            fillColor: Theme.of(context).cardColor,
-
-          ),
-          style: Theme.of(context).textTheme.displayMedium!.copyWith(
-            color: Theme.of(context).textTheme.bodyLarge!.color,
-            fontSize: Dimensions.fontSizeLarge,
-          ),
-        ),
-        itemBuilder: (context, suggestion) => SearchItemWidget(suggestion: suggestion),
-        onSelected: (PredictionModel suggestion) {
-          locationProvider.setLocation(suggestion.placeId, suggestion.description, mapController);
-          Navigator.pop(context);
-        },
-        loadingBuilder: (context) => CustomLoaderWidget(color: Theme.of(context).primaryColor),
-        errorBuilder: (context, error) => const SearchItemWidget(),
-        emptyBuilder: (context) => const SearchItemWidget(),
-      )),
+            itemBuilder: (context, suggestion) =>
+                SearchItemWidget(suggestion: suggestion),
+            onSelected: (PredictionModel suggestion) {
+              locationProvider.setLocation(
+                  suggestion.placeId, suggestion.description, mapController);
+              Navigator.pop(context);
+            },
+            loadingBuilder: (context) =>
+                CustomLoaderWidget(color: Theme.of(context).primaryColor),
+            errorBuilder: (context, error) => const SearchItemWidget(),
+            emptyBuilder: (context) => const SearchItemWidget(),
+          )),
     );
   }
 }
-

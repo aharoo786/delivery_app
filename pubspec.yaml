@@ -99,3 +99,16 @@ flutter:
           weight: 600
         - asset: assets/font/Poppins-Bold.ttf
           weight: 700
+
+    - family: MonaSans
+      fonts:
+        - asset: assets/font/MonaSans-Light.ttf
+          weight: 300
+        - asset: assets/font/MonaSans-Regular.ttf
+          weight: 400
+        - asset: assets/font/MonaSans-Medium.ttf
+          weight: 500
+        - asset: assets/font/MonaSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/font/MonaSans-Bold.ttf
+          weight: 700

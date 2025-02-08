@@ -41,6 +41,7 @@ class ColorResources {
   }
   static const Color cartShadowColor = Color(0xFFA7A7A7);
   static const Color splashColor = Color(0xFFCAE97C);
+  static const Color buttonColor = Colors.black;
   static const Color ratingColor = Color(0xFFFFBA08);
   static const Color colorGreen = Color(0xFF057237);
   static const Color colorBlue = Color(0xFF1692C9);

@@ -22,94 +22,120 @@ class CategoryWidget extends StatefulWidget {
 class _CategoryWidgetState extends State<CategoryWidget> {
   ScrollController scrollController = ScrollController();
 
-
-
   @override
   Widget build(BuildContext context) {
     print('------load-----------');
 
-    final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
+    final SplashProvider splashProvider =
+        Provider.of<SplashProvider>(context, listen: false);
 
-    return Consumer<CategoryProvider>(builder: (context, categoryProvider, child) {
+    return Consumer<CategoryProvider>(
+        builder: (context, categoryProvider, child) {
       print('--------cate-------${categoryProvider.categoryList}');
-      return categoryProvider.categoryList == null ? const CategoriesShimmerWidget() : (categoryProvider.categoryList?.isNotEmpty ?? false) ? Column(children: [
-
-        TitleWidget(title: getTranslated('popular_categories', context)),
-
-        ResponsiveHelper.isDesktop(context) ? CategoryWebWidget(scrollController: scrollController) : GridView.builder(
-          itemCount: (categoryProvider.categoryList?.length ?? 0) > 7 ? 8 : categoryProvider.categoryList?.length,
-          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: ResponsiveHelper.isMobilePhone() ? 4 : ResponsiveHelper.isTab(context) ? 4 :3,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 0.7,
-          ),
-          itemBuilder: (context, index) {
-            return Center(
-              child: InkWell(
-                onTap: () {
-                  if (index == 7) {
-                    ResponsiveHelper.isMobilePhone() ? splashProvider.setPageIndex(1) : const SizedBox();
-                    ResponsiveHelper.isWeb() ? Navigator.pushNamed(context, RouteHelper.categories) : const SizedBox();
-
-                  } else {
-                    categoryProvider.onChangeSelectIndex(-1,notify: false);
-                    Navigator.of(context).pushNamed(
-                      RouteHelper.getCategoryProductsRoute(categoryId: '${categoryProvider.categoryList![index].id}'),
-                    );
-                  }
-                },
-                child: Column(children: [
-                  Expanded(flex: 6, child: Container(
-                    margin: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).cardColor,
-                    ),
-                    child: index != 7 ? Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: CustomImageWidget(
-                          image: '${splashProvider.baseUrls?.categoryImageUrl}/${categoryProvider.categoryList?[index].image}',
-                          fit: BoxFit.cover, height: 70, width: 70,
+      return categoryProvider.categoryList == null
+          ? const CategoriesShimmerWidget()
+          : (categoryProvider.categoryList?.isNotEmpty ?? false)
+              ? Column(children: [
+                  ResponsiveHelper.isDesktop(context)
+                      ? CategoryWebWidget(scrollController: scrollController)
+                      : GridView.builder(
+                          itemCount:
+                              (categoryProvider.categoryList?.length ?? 0) > 5
+                                  ? 6
+                                  : categoryProvider.categoryList?.length,
+                          padding:
+                              const EdgeInsets.all(16),
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: ResponsiveHelper.isMobilePhone()
+                                ? 3
+                                : ResponsiveHelper.isTab(context)
+                                    ? 4
+                                    : 3,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 1,
+                          ),
+                          itemBuilder: (context, index) {
+                            return Center(
+                              child: InkWell(
+                                onTap: () {
+                                  if (index == 5) {
+                                    ResponsiveHelper.isMobilePhone()
+                                        ? splashProvider.setPageIndex(1)
+                                        : const SizedBox();
+                                    ResponsiveHelper.isWeb()
+                                        ? Navigator.pushNamed(
+                                            context, RouteHelper.categories)
+                                        : const SizedBox();
+                                  } else {
+                                    categoryProvider.onChangeSelectIndex(-1,
+                                        notify: false);
+                                    Navigator.of(context).pushNamed(
+                                      RouteHelper.getCategoryProductsRoute(
+                                          categoryId:
+                                              '${categoryProvider.categoryList![index].id}'),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: 12, top: 12, right: 7),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xffF2F2F3),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          index != 5
+                                              ? categoryProvider
+                                                  .categoryList![index].name!
+                                              : getTranslated(
+                                                  'view_all', context),
+                                          style: poppinsBold,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(
+                                          height: 7,
+                                        ),
+                                        index != 5
+                                            ? Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 30),
+                                                  child: CustomImageWidget(
+                                                    image:
+                                                        '${splashProvider.baseUrls?.categoryImageUrl}/${categoryProvider.categoryList?[index].image}',
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                              )
+                                            : Expanded(
+                                                child: Container(
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Color(0xffF2F2F3),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                      '${(categoryProvider.categoryList?.length ?? 0) - 5}+',
+                                                      style: poppinsRegular),
+                                                ),
+                                              ),
+                                      ],
+                                    )),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                    ) : Container(
-                      height: 70, width: 70,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text('${(categoryProvider.categoryList?.length ?? 0) - 7}+', style: poppinsRegular.copyWith(color: Theme.of(context).cardColor)),
-                    ),
-                  )),
-
-                  Expanded(
-                    flex: ResponsiveHelper.isDesktop(context) ? 3 : 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                      child: Text(
-                        index != 7 ? categoryProvider.categoryList![index].name! : getTranslated('view_all', context),
-                        style: poppinsRegular,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
-            );
-          },
-        ),
-      ]) : const SizedBox();
-
+                ])
+              : const SizedBox();
     });
   }
 }
-

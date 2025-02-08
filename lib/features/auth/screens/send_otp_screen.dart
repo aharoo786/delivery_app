@@ -29,13 +29,11 @@ import 'package:provider/provider.dart';
 class SendOtpScreen extends StatefulWidget {
   const SendOtpScreen({super.key});
 
-
   @override
   State<SendOtpScreen> createState() => _SendOtpScreenState();
 }
 
 class _SendOtpScreenState extends State<SendOtpScreen> {
-
   String? countryCode;
   TextEditingController? _phoneNumberController;
 
@@ -44,219 +42,177 @@ class _SendOtpScreenState extends State<SendOtpScreen> {
     super.initState();
     _phoneNumberController = TextEditingController();
 
-    final ConfigModel configModel = Provider.of<SplashProvider>(context, listen: false).configModel!;
-    final AuthProvider authProvider =  Provider.of<AuthProvider>(context, listen: false);
+    final ConfigModel configModel =
+        Provider.of<SplashProvider>(context, listen: false).configModel!;
+    final AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
 
     UserLogData? userData = authProvider.getUserData();
-    if(userData != null && userData.loginType == FromPage.otp.name) {
-      if(userData.phoneNumber != null){
-        _phoneNumberController!.text = PhoneNumberCheckerHelper.getPhoneNumber(userData.phoneNumber ?? '', userData.countryCode ?? '') ?? '';
+    if (userData != null && userData.loginType == FromPage.otp.name) {
+      if (userData.phoneNumber != null) {
+        _phoneNumberController!.text = PhoneNumberCheckerHelper.getPhoneNumber(
+                userData.phoneNumber ?? '', userData.countryCode ?? '') ??
+            '';
       }
       countryCode ??= userData.countryCode;
-    }else{
-      countryCode ??= CountryCode.fromCountryCode(configModel.country!).dialCode;
+    } else {
+      countryCode ??=
+          CountryCode.fromCountryCode(configModel.country!).dialCode;
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     final Size size = MediaQuery.of(context).size;
-    final ConfigModel configModel = Provider.of<SplashProvider>(context, listen: false).configModel!;
+    final ConfigModel configModel =
+        Provider.of<SplashProvider>(context, listen: false).configModel!;
 
-    print("------------------------ ROUTE IS ${ModalRoute.of(context)?.settings.name}");
+    print(
+        "------------------------ ROUTE IS ${ModalRoute.of(context)?.settings.name}");
+    print("kjjkkjkjllkjjklkljlkjklj");
 
     return CustomPopScopeWidget(
       child: Scaffold(
-        appBar: ResponsiveHelper.isDesktop(context)? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget()) : PreferredSize(
-          preferredSize: const Size.fromHeight(40),
-          child: CustomAppBarWidget(
-            isBackButtonExist: true,
-            title: '',
-            onBackPressed: (){
-              if(Navigator.canPop(context)){
-                Navigator.pop(context);
-              }
-            },
-          ),
-        ),
+        appBar: ResponsiveHelper.isDesktop(context)
+            ? const PreferredSize(
+                preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(40),
+                child: CustomAppBarWidget(
+                  isBackButtonExist: true,
+                  title: '',
+                  onBackPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
         body: SafeArea(
-          child: Center(
-            child: CustomScrollView(slivers: [
-
-              SliverToBoxAdapter(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-
-                if(ResponsiveHelper.isDesktop(context))
-                  SizedBox(height: size.width * 0.02),
-
-                Center(child: Container(
-                  width: size.width > 700 ? 450 : size.width,
-                  margin: const EdgeInsets.only(top: Dimensions.paddingSizeLarge),
-                  padding: size.width > 700 ? const EdgeInsets.all(Dimensions.paddingSizeDefault) : null,
-                  decoration: size.width > 700 ? BoxDecoration(
-                    color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(color: Theme.of(context).shadowColor, blurRadius: 5, spreadRadius: 1),
-                    ],
-                  ) : null,
-                  child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-
-                    SizedBox(height: ResponsiveHelper.isDesktop(context) ? size.height * 0.08 : size.height * 0.14),
-
-                    Consumer<SplashProvider>(
-                      builder: (context, splash, child) {
-                        return Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: Image.asset(
-                            Images.appLogo, height: ResponsiveHelper.isDesktop(context)
-                              ? MediaQuery.of(context).size.height * 0.15
-                              : MediaQuery.of(context).size.height / 4.5,
-                            fit: BoxFit.scaleDown,
+          child: Column(
+            children: [
+              Center(
+                child: Image.asset(
+                  Images.loginImage,
+                  scale: 3,
+                  fit: BoxFit.scaleDown,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Get started with App",
+                          style: poppinsBold.copyWith(
+                            fontSize: Dimensions.fontSizeOverLarge,
+                            color:
+                                Theme.of(context).textTheme.titleMedium?.color,
                           ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: size.height * 0.05),
-
-                    Row(children: [
-
-                      Expanded(child: Container()),
-
-                      Expanded(flex: 7, child: Column(children: [
-
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Login or signup to use the app",
+                          style: poppinsLight.copyWith(
+                              fontSize: Dimensions.fontSizeLarge,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff828385)),
+                        ),
+                        const SizedBox(height: 25),
                         CustomTextFieldWidget(
                           countryDialCode: countryCode,
-                          onCountryChanged: (CountryCode value) => countryCode = value.dialCode,
+                          onCountryChanged: (CountryCode value) =>
+                              countryCode = value.dialCode,
                           hintText: getTranslated('number_hint', context),
                           isShowBorder: true,
                           controller: _phoneNumberController,
                           inputType: TextInputType.phone,
-                          title: getTranslated('mobile_number', context),
+                          title:
+                              getTranslated('Enter the phone number', context),
                         ),
-                        SizedBox(height: size.height * 0.03),
-
-                        Consumer<AuthProvider>(builder: (context, authProvider, child) {
-                          return InkWell(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: ()=> authProvider.onChangeRememberMeStatus(),
-                            child: Row(children: [
-
-                              Container(width: 18, height: 18,
-                                decoration: BoxDecoration(
-                                  color: authProvider.isActiveRememberMe ? Theme.of(context).primaryColor : Theme.of(context).cardColor,
-                                  border: Border.all(color: authProvider.isActiveRememberMe ? Colors.transparent : Theme.of(context).primaryColor),
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                                child: authProvider.isActiveRememberMe
-                                    ? const Icon(Icons.done, color: Colors.white, size: 17)
-                                    : const SizedBox.shrink(),
-                              ),
-                              const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                              Text(getTranslated('remember_me', context),
-                                style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  fontSize: Dimensions.fontSizeExtraSmall,
-                                  color: Theme.of(context).textTheme.bodyMedium?.color,
-                                ),
-                              ),
-
-                            ]),
-                          );
-                        }),
-                        SizedBox(height: size.height * 0.03),
-
-                        Consumer<VerificationProvider>(builder: (context, verificationProvider, child) {
+                        Spacer(),
+                        Consumer<VerificationProvider>(
+                            builder: (context, verificationProvider, child) {
                           return CustomButtonWidget(
                             isLoading: verificationProvider.isLoading,
-                            buttonText: getTranslated('get_otp', context),
+                            buttonText: getTranslated('Continue', context),
                             onPressed: () async {
                               if (_phoneNumberController!.text.isEmpty) {
-                                showCustomSnackBarHelper(getTranslated('enter_phone_number', context));
-                              }else {
-                                String phoneWithCountryCode = countryCode! + _phoneNumberController!.text.trim();
-                                if(PhoneNumberCheckerHelper.isPhoneValidWithCountryCode(phoneWithCountryCode)){
-                                  if(AuthHelper.isPhoneVerificationEnable(configModel)){
-                                    print("-----------(SEND)-----Phone Number With Country Code $phoneWithCountryCode");
-                                    print("-----------(SEND)-----VerificationType ${VerificationType.phone.name}");
-                                    print("-----------(SEND)-----FromPage ${FromPage.otp.name}");
-                                    await verificationProvider.sendVerificationCode(context,
-                                      configModel, phoneWithCountryCode, type: VerificationType.phone.name,
-                                      fromPage: FromPage.otp.name
-                                    );
+                                showCustomSnackBarHelper(getTranslated(
+                                    'enter_phone_number', context));
+                              } else {
+                                String phoneWithCountryCode = countryCode! +
+                                    _phoneNumberController!.text.trim();
+                                if (PhoneNumberCheckerHelper
+                                    .isPhoneValidWithCountryCode(
+                                        phoneWithCountryCode)) {
+                                  if (AuthHelper.isPhoneVerificationEnable(
+                                      configModel)) {
+                                    print(
+                                        "-----------(SEND)-----Phone Number With Country Code $phoneWithCountryCode");
+                                    print(
+                                        "-----------(SEND)-----VerificationType ${VerificationType.phone.name}");
+                                    print(
+                                        "-----------(SEND)-----FromPage ${FromPage.otp.name}");
+                                    await verificationProvider
+                                        .sendVerificationCode(context,
+                                            configModel, phoneWithCountryCode,
+                                            type: VerificationType.phone.name,
+                                            fromPage: FromPage.otp.name);
                                   }
-                                }else{
-                                  showCustomSnackBarHelper(getTranslated('invalid_phone_number', context));
+                                } else {
+                                  showCustomSnackBarHelper(getTranslated(
+                                      'invalid_phone_number', context));
                                 }
-
                               }
                             },
                           );
                         }),
-                        const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-
-                        if(AuthHelper.isSocialMediaLoginEnable(configModel) && !AuthHelper.isManualLoginEnable(configModel))...[
-                          Center(child: Text(
-                            getTranslated('or', context),
-                            style: poppinsRegular.copyWith(
-                              fontSize: Dimensions.fontSizeDefault,
-                              color: Theme.of(context).hintColor,
-                            ),
-                          )),
-                          const SizedBox(height: Dimensions.paddingSizeDefault),
-
-                          const SocialLoginWidget(),
-                          const SizedBox(height: Dimensions.paddingSizeLarge),
-                        ],
-
-                      ])),
-
-                      Expanded(child: Container()),
-
-                    ]),
-
-                    if(configModel.isGuestCheckout == true && !Navigator.canPop(context))...[
-                      Center(child: InkWell(
-                        onTap: () => Navigator.pushNamedAndRemoveUntil(context, RouteHelper.getMainRoute(), (route) => false),
-                        child: RichText(text: TextSpan(children: [
-
-                          TextSpan(text: '${getTranslated('continue_as_a', context)} ',
-                            style: poppinsRegular.copyWith(
-                              fontSize: Dimensions.fontSizeSmall,
-                              color: Theme.of(context).hintColor,
-                            ),
+                        RichText(
+                          text: TextSpan(
+                            style: poppinsMedium.copyWith(
+                                fontSize: 14,
+                                color: Colors.black), // Default text style
+                            children: [
+                              TextSpan(
+                                text: "By clicking, I accept the ",
+                                style: poppinsMedium.copyWith(
+                                    fontSize: 13,
+                                    color: Colors.black.withOpacity(0.4)),
+                              ),
+                              TextSpan(
+                                text: "Terms & Conditions",
+                                style: poppinsMedium.copyWith(
+                                    fontSize: 13,
+                                    color: Colors.black),
+                              ),
+                              TextSpan(text: " & ",style:poppinsMedium.copyWith(
+                                  fontSize: 13,
+                                  color: Colors.black.withOpacity(0.4)),),
+                              TextSpan(
+                                text: "Privacy Policy",
+                                style: poppinsMedium.copyWith(
+                                    fontSize: 13,
+                                    color: Colors.black),
+                              ),
+                              TextSpan(text: "."),
+                            ],
                           ),
-
-                          TextSpan(text: getTranslated('guest', context),
-                            style: poppinsRegular.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-
-                        ])),
-                      )),
-                    ],
-
-                  ])),
-                )),
-
-                if(ResponsiveHelper.isDesktop(context))
-                  SizedBox(height: size.width * 0.02),
-
-              ]))),
-
-              if(ResponsiveHelper.isDesktop(context)) const SliverFillRemaining(
-                hasScrollBody: false,
-                child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-
-                  SizedBox(height: Dimensions.paddingSizeLarge),
-                  FooterWebWidget(footerType: FooterType.nonSliver),
-
-                ]),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ]),
+                ),
               ),
-
-            ]),
+            ],
           ),
         ),
       ),

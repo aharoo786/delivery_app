@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/localization/language_constraints.dart';
+import 'package:flutter_grocery/utill/color_resources.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/styles.dart';
 
@@ -14,19 +15,22 @@ class CustomButtonWidget extends StatelessWidget {
   final double? width;
   final double? height;
   final IconData? icon;
+  final bool isFrontIcon;
   final TextStyle? textStyle;
   final bool isLoading;
 
   const CustomButtonWidget({
-    super.key, required this.buttonText,
+    super.key,
+    required this.buttonText,
     required this.onPressed,
     this.margin = 0,
     this.textColor,
-    this.borderRadius = 10,
+    this.borderRadius = 4,
     this.backgroundColor,
     this.width,
     this.height,
     this.icon,
+    this.isFrontIcon = true,
     this.textStyle,
     this.isLoading = false,
     this.borderColor,
@@ -39,37 +43,62 @@ class CustomButtonWidget extends StatelessWidget {
       child: TextButton(
         onPressed: isLoading ? null : onPressed as void Function()?,
         style: TextButton.styleFrom(
-          backgroundColor: backgroundColor ?? (onPressed == null ? Theme.of(context).hintColor.withOpacity(0.6) : Theme.of(context).primaryColor),
-          minimumSize: Size( Dimensions.webScreenWidth,  height ?? 50),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
-          side: borderColor != null ? BorderSide(color: borderColor!, width: 1) : null,
+          backgroundColor: backgroundColor ??
+              (onPressed == null
+                  ? Theme.of(context).hintColor.withOpacity(0.6)
+                  : ColorResources.buttonColor),
+          minimumSize: Size(Dimensions.webScreenWidth, height ?? 44),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius)),
+          side: borderColor != null
+              ? BorderSide(color: borderColor!, width: 1)
+              : null,
         ),
-        child: isLoading ?
-        Center(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const SizedBox(
-            height: 15, width: 15,
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              strokeWidth: 2,
-            ),
-          ),
-          const SizedBox(width: Dimensions.paddingSizeSmall),
-
-          Text(getTranslated('loading', context), style: poppinsMedium.copyWith(color: Colors.white)),
-        ]),
-        ) : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-
-          icon != null ? Padding(
-            padding: const EdgeInsets.only(right: Dimensions.paddingSizeExtraSmall),
-            child: Icon(icon, color: textColor ?? Theme.of(context).cardColor),
-          ) : const SizedBox(),
-
-          Text(buttonText ?? '', textAlign: TextAlign.center,  style: textStyle ?? poppinsMedium.copyWith(
-            fontSize: Dimensions.fontSizeLarge,
-            color: textColor ?? Theme.of(context).cardColor,
-          )) ,
-
-        ]),
+        child: isLoading
+            ? Center(
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  const SizedBox(
+                    height: 15,
+                    width: 15,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
+                    ),
+                  ),
+                  const SizedBox(width: Dimensions.paddingSizeSmall),
+                  Text(getTranslated('loading', context),
+                      style: poppinsMedium.copyWith(color: Colors.white)),
+                ]),
+              )
+            : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                isFrontIcon
+                    ? icon != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                                right: Dimensions.paddingSizeExtraSmall),
+                            child: Icon(icon,
+                                color:
+                                    textColor ?? Theme.of(context).cardColor),
+                          )
+                        : const SizedBox()
+                    : const SizedBox(),
+                Text(buttonText ?? '',
+                    textAlign: TextAlign.center,
+                    style: textStyle ??
+                        poppinsMedium.copyWith(
+                          fontSize: Dimensions.fontSizeLarge,
+                          color: textColor ?? Theme.of(context).cardColor,
+                        )),
+                icon != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                            left: Dimensions.paddingSizeExtraSmall),
+                        child: Icon(icon,
+                            color: textColor ?? Theme.of(context).cardColor,size: 15,),
+                      )
+                    : const SizedBox()
+              ]),
       ),
     );
   }

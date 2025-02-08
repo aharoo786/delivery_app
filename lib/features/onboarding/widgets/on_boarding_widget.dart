@@ -10,35 +10,41 @@ class OnBoardingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-
-      Expanded(flex: 7, child: Padding(
-        padding: const EdgeInsets.all(Dimensions.paddingSizeExtraLarge),
-        child: Image.asset(onBoardingModel.imageUrl),
-      )),
-
       Expanded(
-        flex: 1,
-        child: Text(
-          onBoardingModel.title,
-          style: poppinsMedium.copyWith(
-            fontSize: Dimensions.fontSizeLarge,
-            color: Theme.of(context).primaryColor,
-          ),
-          textAlign: TextAlign.center,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: Dimensions.paddingSizeExtraLarge),
+          child: Image.asset(onBoardingModel.imageUrl),
         ),
       ),
-
-      Expanded(
-        flex: 2,
+      SizedBox(
+        height: 60,
+      ),
+      Text(
+        onBoardingModel.title,
+        style: poppinsBold.copyWith(
+          fontSize: Dimensions.fontSizeOverLarge,
+          color: Theme.of(context).textTheme.titleMedium?.color,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(
+        height: 12,
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Text(
           onBoardingModel.description,
           style: poppinsLight.copyWith(
-            fontSize: Dimensions.fontSizeLarge,
-          ),
+              fontSize: Dimensions.fontSizeLarge,
+              fontWeight: FontWeight.w500,
+              color: Color(0xff828385)),
           textAlign: TextAlign.center,
         ),
-      )
-
+      ),
+      SizedBox(
+        height: 50,
+      ),
     ]);
   }
 }

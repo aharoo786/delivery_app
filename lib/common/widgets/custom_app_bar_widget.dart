@@ -27,7 +27,7 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
       title: Text(title!, style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge!.color)),
       centerTitle: isCenter?true:false,
       leading: isBackButtonExist ? IconButton(
-        icon: Icon(Icons.arrow_back_ios,color: Theme.of(context).textTheme.bodyLarge!.color),
+        icon: Icon(Icons.arrow_back,color: Theme.of(context).textTheme.bodyLarge!.color),
         color: Theme.of(context).textTheme.bodyLarge!.color,
         onPressed: () => onBackPressed != null ? onBackPressed!() : Navigator.pop(context),
       ) : const SizedBox(),
