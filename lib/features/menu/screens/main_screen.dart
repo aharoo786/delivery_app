@@ -18,7 +18,10 @@ import 'package:flutter_grocery/utill/styles.dart';
 import 'package:flutter_grocery/common/widgets/third_party_chat_widget.dart';
 import 'package:flutter_grocery/features/home/screens/home_screens.dart';
 import 'package:flutter_grocery/features/refer_and_earn/screens/refer_and_earn_screen.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
+import '../../profile/screens/profile_screen.dart';
 
 // List<MainScreenModel> screenList = [
 //   MainScreenModel(const HomeScreen(), 'home', Images.home),
@@ -103,107 +106,84 @@ class _MainScreenState extends State<MainScreen> {
                   }
                 },
                 child: Scaffold(
-                  floatingActionButton: !ResponsiveHelper.isDesktop(context)
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 50.0),
-                          child: ThirdPartyChatWidget(
-                              configModel: splash.configModel),
-                        )
-                      : null,
+                  // floatingActionButton: !ResponsiveHelper.isDesktop(context)
+                  //     ? Padding(
+                  //         padding: const EdgeInsets.symmetric(vertical: 50.0),
+                  //         child: ThirdPartyChatWidget(
+                  //             configModel: splash.configModel),
+                  //       )
+                  //     : null,
                   appBar: ResponsiveHelper.isDesktop(context)
                       ? null
-                      : AppBar(
-                         elevation: 0,
-                          scrolledUnderElevation: 0,
-                          backgroundColor: Theme.of(context).cardColor,
-                          leading: IconButton(
-                              icon: Image.asset(Images.moreIcon,
-                                  color: Theme.of(context).primaryColor,
-                                  height: 30,
-                                  width: 30),
-                              onPressed: () {
-                                widget.drawerController.toggle();
-                              }),
-                          title: splash.pageIndex == 0
-                              ? Row(children: [
-                                  Image.asset(Images.appLogo, width: 25),
-                                  const SizedBox(
-                                      width: Dimensions.paddingSizeSmall),
-                                  Expanded(
-                                      child: Text(
-                                    AppConstants.appName,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: poppinsMedium.copyWith(
-                                        color: Theme.of(context).primaryColor),
-                                  )),
-                                ])
-                              : Text(
-                                  getTranslated(
-                                      splash.screenList[splash.pageIndex].title,
-                                      context),
-                                  style: poppinsMedium.copyWith(
-                                      fontSize: Dimensions.fontSizeLarge,
-                                      color: Theme.of(context).primaryColor),
-                                ),
-                          actions: splash.pageIndex == 0
-                              ? [
-                                  IconButton(
-                                    icon: Image.asset(Images.search,
-                                        color: Theme.of(context).primaryColor,
-                                        width: 25),
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, RouteHelper.searchProduct);
-                                    },
-                                  ),
-                                  IconButton(
-                                      icon: Stack(
-                                          clipBehavior: Clip.none,
+                      : PreferredSize(
+                          preferredSize: Size.fromHeight(65),
+                          child: AppBar(
+                              backgroundColor: Theme.of(context).cardColor,
+                              centerTitle: true,
+                              elevation: 0,
+                              scrolledUnderElevation: 0,
+                              leading: Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 5, left: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Deliver Now",
+                                      style: poppinsRegular.copyWith(
+                                          color: Color(0xff868E96)),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(
+                                      height: 2,
+                                    ),
+                                    Consumer<LocationProvider>(
+                                      builder: (BuildContext context, value,
+                                          Widget? child) {
+                                        return Row(
                                           children: [
-                                            Icon(Icons.shopping_cart,
-                                                color: Theme.of(context)
-                                                    .hintColor
-                                                    .withOpacity(isDarkTheme
-                                                        ? 0.9
-                                                        : 0.4),
-                                                size: 30),
-                                            Positioned(
-                                              top: -7,
-                                              right: -2,
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(6),
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                child: Text(
-                                                    '${Provider.of<CartProvider>(context).cartList.length}',
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .cardColor,
-                                                        fontSize: 10)),
-                                              ),
+                                            Text(
+                                              value.address!.isEmpty
+                                                  ? "Address.."
+                                                  : value.address ?? "",
+                                              style: poppinsSemiBold.copyWith(
+                                                  fontSize: 20),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ]),
-                                      onPressed: () {
-                                        splash.setPageIndex(2);
-                                      }),
-                                ]
-                              : splash.pageIndex == 2
-                                  ? [
-                                      Center(child: Consumer<CartProvider>(
-                                          builder: (context, cartProvider, _) {
-                                        return Text(
-                                            '${cartProvider.cartList.length} ${getTranslated('items', context)}',
-                                            style: poppinsMedium.copyWith(
-                                                color: Theme.of(context)
-                                                    .primaryColor));
-                                      })),
-                                      const SizedBox(width: 20)
-                                    ]
-                                  : null,
+                                            Icon(Icons
+                                                .keyboard_arrow_down_rounded)
+                                          ],
+                                        );
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+                              leadingWidth: 168,
+                              actions: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        RouteHelper.profile,
+                                        arguments: const ProfileScreen());
+                                  },
+                                  child: Container(
+                                    height: 48,
+                                    width: 48,
+                                    margin: EdgeInsets.only(right: 16),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xffF2F2F3)),
+                                    child: SvgPicture.asset(
+                                      Images.userIconBottom,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                )
+                              ]),
                         ),
                   body: splash.screenList[splash.pageIndex].screen,
                 ),

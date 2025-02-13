@@ -25,6 +25,9 @@ import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/product_type.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/widgets/custom_text_field_widget.dart';
+import '../../../utill/images.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -115,6 +118,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SizedBox(
             width: Dimensions.webScreenWidth,
             child: Column(children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Dimensions.paddingSizeDefault),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteHelper.searchProduct);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: CustomTextFieldWidget(
+                      isShowBorder: false,
+                      fillColor: const Color(0xffF5F5F5),
+                      isShowPrefixIcon: true,
+                      isEnabled: false,
+                      prefixAssetUrl: Images.search,
+                      hintText: "Search here",
+                      prefixAssetImageColor: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ),
+              ),
               /// Category
               Padding(
                 padding: EdgeInsets.only(

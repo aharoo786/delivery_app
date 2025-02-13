@@ -43,8 +43,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                               (categoryProvider.categoryList?.length ?? 0) > 5
                                   ? 6
                                   : categoryProvider.categoryList?.length,
-                          padding:
-                              const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16),
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           gridDelegate:
@@ -63,13 +62,8 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                               child: InkWell(
                                 onTap: () {
                                   if (index == 5) {
-                                    ResponsiveHelper.isMobilePhone()
-                                        ? splashProvider.setPageIndex(1)
-                                        : const SizedBox();
-                                    ResponsiveHelper.isWeb()
-                                        ? Navigator.pushNamed(
-                                            context, RouteHelper.categories)
-                                        : const SizedBox();
+                                    Navigator.pushNamed(
+                                        context, RouteHelper.categories);
                                   } else {
                                     categoryProvider.onChangeSelectIndex(-1,
                                         notify: false);

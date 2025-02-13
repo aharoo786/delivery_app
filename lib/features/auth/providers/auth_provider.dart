@@ -510,12 +510,10 @@ class AuthProvider with ChangeNotifier {
           Navigator.pushReplacementNamed(
               Get.context!, RouteHelper.getMainRoute());
         } else if (tempToken != null) {
-          Navigator.of(Get.context!).push(CupertinoDialogRoute(
-              builder: (context) => const GiveAccessLocation(),
-              context: Get.context!));
+
           // Navigator.of(Get.context!).pushReplacementNamed(RouteHelper.getAddAddressRoute('address', 'add', AddressModel()), arguments: const AddNewAddressScreen());
 
-          // Navigator.of(Get.context!).pushReplacementNamed(RouteHelper.getOtpRegistration(tempToken, phoneNumber));
+          Navigator.of(Get.context!).pushReplacementNamed(RouteHelper.getOtpRegistration(tempToken, phoneNumber));
         }
       }
     } else {
