@@ -23,11 +23,13 @@ class AddNewAddressScreen extends StatefulWidget {
   final bool isEnableUpdate;
   final bool fromCheckout;
   final bool fromStart;
+  final bool fromManualAddAddress;
   final AddressModel? address;
   const AddNewAddressScreen(
       {super.key,
       this.isEnableUpdate = true,
       this.fromStart = false,
+      this.fromManualAddAddress = false,
       this.address,
       this.fromCheckout = false});
 
@@ -68,6 +70,7 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   @override
   Widget build(BuildContext context) {
     print('_AddNewAddressScreenState.build ${widget.fromStart}');
+    print('Addd address screen manuall address : ${widget.fromManualAddAddress}');
 
     return Scaffold(
       appBar: (ResponsiveHelper.isDesktop(context)
@@ -97,6 +100,7 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
                               isEnableUpdate: widget.isEnableUpdate,
                               fromCheckout: widget.fromCheckout,
                               address: widget.address,
+                              fromManualAddAddress: widget.fromManualAddAddress,
                             ),
 
                           // for label us
@@ -139,6 +143,8 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
               floorNumberController: _florNumberController,
               countryCode: countryCode!,
               fromStart: widget.fromStart,
+                fromManualAddAddress:widget.fromManualAddAddress
+
             ),
         ]);
       }),

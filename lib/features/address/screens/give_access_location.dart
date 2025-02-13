@@ -170,7 +170,7 @@ class GiveAccessLocation extends StatelessWidget {
                                               suggestion.placeId,
                                               suggestion.description,
                                               null);
-                                          pushToAddAddress();
+                                          pushToAddAddress(isManual:true);
                                         },
                                         loadingBuilder: (context) =>
                                             CustomLoaderWidget(
@@ -216,9 +216,12 @@ class GiveAccessLocation extends StatelessWidget {
     );
   }
 
-  void pushToAddAddress() async {
+  void pushToAddAddress({isManual=false}) async {
     Navigator.of(Get.context!).pushNamed(RouteHelper.getAddAddressRoute(
         'address', 'add', AddressModel(),
-        fromStart: true));
+        fromStart: true,
+      fromManualAddress: isManual
+    ));
+
   }
 }

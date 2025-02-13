@@ -154,7 +154,9 @@ class _AddressDetailsWidgetState extends State<AddressDetailsWidget> {
                     textStyle: poppinsMedium.copyWith(
                         fontSize: 12, color: Colors.black),
                     buttonText: "Change",
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                     height: 36,
                     width: 72,
                   ),

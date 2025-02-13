@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 class MapWithLabelWidget extends StatelessWidget {
   final bool isEnableUpdate;
   final bool fromCheckout;
+  final bool? fromManualAddAddress;
   final AddressModel? address;
 
   const MapWithLabelWidget({
@@ -24,6 +25,7 @@ class MapWithLabelWidget extends StatelessWidget {
     required this.isEnableUpdate,
     required this.fromCheckout,
     this.address,
+    this.fromManualAddAddress,
   });
 
   @override
@@ -34,6 +36,7 @@ class MapWithLabelWidget extends StatelessWidget {
         Provider.of<SplashProvider>(context, listen: false).configModel;
     final Size size = MediaQuery.of(context).size;
 
+    print("Map with labe manuall address ${fromManualAddAddress}");
     print(
         "-------(MAP with Label Widget)-------${locationProvider.pickedAddressLatitude} and ${locationProvider.pickedAddressLongitude} and ${address?.toJson()}");
 
@@ -133,6 +136,7 @@ class MapWithLabelWidget extends StatelessWidget {
                     fromCheckout: fromCheckout,
                     isEnableUpdate: isEnableUpdate,
                     address: address,
+                    fromManualAddAdddress: fromManualAddAddress!,
                   ),
                 Padding(
                     padding: const EdgeInsets.only(top: 10),
@@ -159,6 +163,7 @@ class MapWithLabelWidget extends StatelessWidget {
                   fromCheckout: fromCheckout,
                   isEnableUpdate: isEnableUpdate,
                   address: address,
+                  fromManualAddAdddress: fromManualAddAddress!,
                 ),
               Padding(
                   padding: const EdgeInsets.only(top: 10),

@@ -155,10 +155,11 @@ class RouteHelper {
       '$resetPassword?email=${Uri.encodeComponent('$userInput')}&token=$token';
   //static String getAddAddressRoute(String page) => '$addAddress?page=$page';
   static String getAddAddressRoute(
-      String page, String action, AddressModel addressModel, {bool fromStart=false}) {
+      String page, String action, AddressModel addressModel,
+      {bool fromStart = false, bool fromManualAddress = false}) {
     String data =
         base64Url.encode(utf8.encode(jsonEncode(addressModel.toJson())));
-    return '$addAddressScreen?page=$page&action=$action&address=$data&fromStart=$fromStart';
+    return '$addAddressScreen?page=$page&action=$action&address=$data&fromStart=$fromStart&fromManualAddress=$fromManualAddress';
   }
 
   static String getUpdateAddressRoute(
@@ -537,18 +538,18 @@ class RouteHelper {
       fromCheckout: params['page'][0] == 'checkout',
       isEnableUpdate: isUpdate,
       address: isUpdate ? addressModel : null,
-      fromStart: params['fromStart'][0]=="true"?true:false,
+      fromStart: params['fromStart'][0] == "true" ? true : false,
+      fromManualAddAddress:
+          params['fromManualAddress'][0] == "true" ? true : false,
     ));
   });
 
   static final Handler _otpRegistrationHandler =
       Handler(handlerFunc: (context, Map<String, dynamic> params) {
     print("-------------------------(After ENCODING)---------");
-    print(
-        "-------------------TempToken : ${jsonDecode(params['tempToken'][0] ?? '')}");
-    print("-------------------Input : ${jsonDecode(params['input'][0] ?? '')}");
-    print(
-        "-------------------UserName : ${jsonDecode(params['userName'][0] ?? '')}");
+    // print("-------------------TempToken : ${jsonDecode(params['tempToken'][0] ?? '')}");
+    // print("-------------------Input : ${jsonDecode(params['input'][0] ?? '')}");
+    // print("-------------------UserName : ${jsonDecode(params['userName'][0] ?? '')}");
 
     return _routeHandler(
       child: OtpRegistrationScreen(

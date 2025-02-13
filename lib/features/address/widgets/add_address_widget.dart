@@ -20,6 +20,7 @@ class AddAddressWidget extends StatelessWidget {
   final bool isEnableUpdate;
   final bool fromCheckout;
   final bool fromStart;
+  final bool fromManualAddAddress;
   final TextEditingController contactPersonNameController;
   final TextEditingController contactPersonNumberController;
   final TextEditingController streetNumberController;
@@ -40,11 +41,13 @@ class AddAddressWidget extends StatelessWidget {
     required this.houseNumberController,
     required this.countryCode,
     required this.fromStart,
+    required this.fromManualAddAddress,
   });
 
   @override
   Widget build(BuildContext context) {
     print("frommmmm   4${fromStart}");
+    print("frommmmm   Manual ${fromManualAddAddress}");
     final LocationProvider locationProvider =
         Provider.of<LocationProvider>(context, listen: false);
 

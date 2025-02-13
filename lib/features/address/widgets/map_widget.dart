@@ -15,11 +15,14 @@ import 'package:provider/provider.dart';
 class MapWidget extends StatelessWidget {
   final bool isEnableUpdate;
   final bool fromCheckout;
+  final bool fromManualAddAdddress;
   final double height;
   final AddressModel? address;
 
   const MapWidget({
-    super.key, required this.isEnableUpdate, this.address, required this.fromCheckout,  this.height=130,
+    super.key, required this.isEnableUpdate,
+    this.fromManualAddAdddress=false,
+    this.address, required this.fromCheckout,  this.height=130,
   });
 
   @override
@@ -28,6 +31,7 @@ class MapWidget extends StatelessWidget {
 
     final branch = Provider.of<SplashProvider>(context, listen: false).configModel!.branches![0];
 
+    print("Checking on permission dialog Manual ${fromManualAddAdddress}");
     print("-----(MAP WIDGET)-------------${locationProvider.pickedAddressLatitude} and ${locationProvider.pickedAddressLongitude} and Is Enable Update : $isEnableUpdate");
     return SizedBox(
       height: height,
@@ -72,10 +76,13 @@ class MapWidget extends StatelessWidget {
             onMapCreated: (GoogleMapController controller) {
 
               if (!isEnableUpdate && locationProvider.mapController != null) {
-                AddressHelper.checkPermission(() =>
-                    locationProvider.getCurrentLocation(
-                      context, true, mapController: locationProvider.mapController,
-                    ));
+                if(!fromManualAddAdddress){
+                  AddressHelper.checkPermission(() =>
+                      locationProvider.getCurrentLocation(
+                        context, true, mapController: locationProvider.mapController,
+                      ));
+                }
+
               }
 
 
@@ -86,9 +93,12 @@ class MapWidget extends StatelessWidget {
               if (!isEnableUpdate && locationProvider.mapController != null) {
                 if(locationProvider.pickedAddressLatitude == null && locationProvider.pickedAddressLongitude == null){
                   print("Hello ");
-                  AddressHelper.checkPermission(()=>locationProvider.getCurrentLocation(
-                    context, true, mapController: locationProvider.mapController,
-                  ));
+                  if(!fromManualAddAdddress){
+                    AddressHelper.checkPermission(()=>locationProvider.getCurrentLocation(
+                      context, true, mapController: locationProvider.mapController,
+                    ));
+                  }
+
                 }else{
                   print("Hello From Else");
                   Future.delayed(const Duration(milliseconds: 800)).then((value) {
