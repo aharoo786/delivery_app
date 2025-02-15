@@ -30,7 +30,8 @@ import 'package:provider/provider.dart';
 class WalletScreen extends StatefulWidget {
   final String? token;
   final String? status;
-  const WalletScreen({super.key, this.token, this.status});
+   bool showAppBar;
+   WalletScreen({super.key,this.showAppBar=false, this.token, this.status});
 
   @override
   State<WalletScreen> createState() => _WalletScreenState();
@@ -116,8 +117,13 @@ class _WalletScreenState extends State<WalletScreen> {
         backgroundColor: Theme.of(context).cardColor,
         appBar: ResponsiveHelper.isDesktop(context)
             ? const PreferredSize(preferredSize: Size.fromHeight(100), child: WebAppBarWidget())
-            : null,
-
+            : widget.showAppBar?AppBar(
+          elevation: 0,
+          scrolledUnderElevation: 0.0,
+          leading: IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+        ) : null,
         body: Consumer<WalletAndLoyaltyProvider>(builder: (context, walletProvider, _) {
           entryList = WalletHelper.getPopupMenuList(walletFilterList: walletProvider.walletFilterList, type: walletProvider.type);
 

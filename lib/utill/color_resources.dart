@@ -24,6 +24,7 @@ class ColorResources {
 
 
   static Color getCategoryBgColor(BuildContext context) {
+    // return Provider.of<ThemeProvider>(context).darkTheme ? const Color(0xFFFFFFFF) : const Color(0xFFCAE97C);
     return Provider.of<ThemeProvider>(context).darkTheme ? const Color(0xFFFFFFFF) : const Color(0xFFb2b8bd);
   }
 

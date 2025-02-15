@@ -472,10 +472,10 @@ class RouteHelper {
           _routeHandler(child: const MenuWidget()));
   static final Handler _orderListScreenHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, dynamic> params) =>
-          _routeHandler(child: const OrderListScreen()));
+          _routeHandler(child:  OrderListScreen()));
   static final Handler _addressHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, dynamic> params) =>
-          _routeHandler(child: const AddressListScreen()));
+          _routeHandler(child:  AddressListScreen()));
   static final Handler _couponHandler = Handler(
       handlerFunc: (BuildContext? context, Map<String, dynamic> params) =>
           _routeHandler(child: const CouponScreen()));

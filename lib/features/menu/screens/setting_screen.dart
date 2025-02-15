@@ -24,7 +24,13 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: ResponsiveHelper.isMobilePhone()
-          ? null : (ResponsiveHelper.isDesktop(context)
+          ?  AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0.0,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+      ) : (ResponsiveHelper.isDesktop(context)
           ? const MainAppBarWidget(): const AppBarBaseWidget()) as PreferredSizeWidget?,
 
       body: Center(

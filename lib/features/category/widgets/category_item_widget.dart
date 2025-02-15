@@ -52,7 +52,7 @@ class CategoryItemWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: poppinsSemiBold.copyWith(
                     fontSize: Dimensions.fontSizeExtraSmall,
-                    color: isSelected ? Theme.of(context).canvasColor : Theme.of(context).textTheme.bodyLarge?.color
+                    color: isSelected ? Colors.black : Theme.of(context).textTheme.bodyLarge?.color
                 )),
           ),
         ]),

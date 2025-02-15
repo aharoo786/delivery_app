@@ -43,6 +43,15 @@ class SplashProvider extends ChangeNotifier {
   ConfigModel? _configModel;
   List<DeliveryInfoModel>? _deliveryInfoModelList;
   BaseUrls? _baseUrls;
+
+  int _bottomBarIndex = 0;
+
+  int get bottomBarIndex => _bottomBarIndex;
+
+  set bottomBarIndex(int value) {
+    _bottomBarIndex = value;
+    notifyListeners(); // Notify listeners to rebuild UI
+  }
   int _pageIndex = 0;
   bool _fromSetting = false;
   bool _firstTimeConnectionCheck = true;
@@ -261,16 +270,16 @@ class SplashProvider extends ChangeNotifier {
       MainScreenModel(const CartScreen(), 'shopping_bag', Images.orderBag),
       MainScreenModel(
           const WishListScreen(), 'favourite', Images.favouriteIcon),
-      MainScreenModel(const OrderListScreen(), 'my_order', Images.orderList),
+      MainScreenModel( OrderListScreen(), 'my_order', Images.orderList),
       MainScreenModel(
           const OrderSearchScreen(), 'track_order', Images.orderDetails),
-      MainScreenModel(const AddressListScreen(), 'address', Images.location),
+      MainScreenModel( AddressListScreen(), 'address', Images.location),
       MainScreenModel(const CouponScreen(), 'coupon', Images.coupon),
       MainScreenModel(
           const ChatScreen(orderModel: null), 'live_chat', Images.chat),
       MainScreenModel(const SettingsScreen(), 'settings', Images.settings),
       if (_configModel?.walletStatus ?? false)
-        MainScreenModel(const WalletScreen(), 'wallet', Images.wallet),
+        MainScreenModel( WalletScreen(), 'wallet', Images.wallet),
       if (_configModel?.loyaltyPointStatus ?? false)
         MainScreenModel(
             const LoyaltyScreen(), 'loyalty_point', Images.loyaltyIcon),

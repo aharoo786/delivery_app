@@ -20,9 +20,9 @@ import 'add_new_address_screen.dart';
 
 
 class AddressListScreen extends StatefulWidget {
-
+  bool showAppBar;
   final AddressModel? addressModel;
-  const AddressListScreen({super.key, this.addressModel});
+   AddressListScreen({super.key, this.showAppBar=false ,this.addressModel});
 
   @override
   State<AddressListScreen> createState() => _AddressListScreenState();
@@ -44,7 +44,13 @@ class _AddressListScreenState extends State<AddressListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ResponsiveHelper.isMobilePhone() ? null : (ResponsiveHelper.isDesktop(context)
+      appBar: ResponsiveHelper.isMobilePhone() ?  widget.showAppBar?AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0.0,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+      ) :null : (ResponsiveHelper.isDesktop(context)
           ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
           : const AppBarBaseWidget()) as PreferredSizeWidget?,
 

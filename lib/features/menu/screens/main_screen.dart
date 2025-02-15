@@ -84,6 +84,8 @@ class _MainScreenState extends State<MainScreen> {
         Provider.of<ThemeProvider>(context, listen: false).darkTheme;
     return Consumer<SplashProvider>(
       builder: (context, splash, child) {
+        print("Splash index ${splash.bottomBarIndex}");
+
         return CustomPopScopeWidget(
           child: Consumer<ProfileProvider>(
               builder: (context, profileProvider, child) {
@@ -115,7 +117,7 @@ class _MainScreenState extends State<MainScreen> {
                   //     : null,
                   appBar: ResponsiveHelper.isDesktop(context)
                       ? null
-                      : PreferredSize(
+                      :splash.bottomBarIndex == 3 ?null:PreferredSize(
                           preferredSize: Size.fromHeight(65),
                           child: AppBar(
                               backgroundColor: Theme.of(context).cardColor,

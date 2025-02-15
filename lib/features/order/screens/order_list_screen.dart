@@ -17,7 +17,8 @@ import '../../../utill/images.dart';
 import 'order_details_screen.dart';
 
 class OrderListScreen extends StatefulWidget {
-  const OrderListScreen({super.key});
+  bool showAppBar;
+   OrderListScreen({super.key,this.showAppBar=false});
 
   @override
   State<OrderListScreen> createState() => _OrderListScreenState();
@@ -106,7 +107,13 @@ class _OrderListScreenState extends State<OrderListScreen>
 
     return Scaffold(
       appBar: ResponsiveHelper.isMobilePhone()
-          ? null
+          ?  widget.showAppBar?AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0.0,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
+      )  : null
           : (ResponsiveHelper.isDesktop(context)
               ? const PreferredSize(
                   preferredSize: Size.fromHeight(120), child: WebAppBarWidget())

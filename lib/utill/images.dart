@@ -152,6 +152,15 @@ class Images {
   static const String cartIconBottom = 'assets/svg/cartIcon.svg';
   static const String setting = 'assets/svg/Setting.svg';
 
+  static const String myAccount = 'assets/svg/my_account.png';
+  static const String myAddress = 'assets/svg/my_address.png';
+  static const String myFav = 'assets/svg/my_fav.png';
+  static const String myHelp = 'assets/svg/my_help.png';
+  static const String myOrder = 'assets/svg/my_order.png';
+  static const String myPayment = 'assets/svg/my_payment.png';
+  static const String myPromoCode = 'assets/svg/my_promocode.png';
+  static const String mySettings = 'assets/svg/my_settings.png';
+
   static String getShareIcon(String name) => 'assets/image/$name.png';
   static String getPaymentImage(String name) => 'assets/payment/$name.png';
 

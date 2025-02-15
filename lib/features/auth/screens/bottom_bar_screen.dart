@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery/features/auth/screens/profile_screen.dart';
 import 'package:flutter_grocery/features/cart/screens/cart_screen.dart';
 import 'package:flutter_grocery/features/home/screens/home_screens.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,7 +40,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     HomeScreen(),
     CartScreen(),
     OrderListScreen(),
-    Container()
+    AccountScreen()
+    //Container()
   ];
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -126,8 +128,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   label: _isLoggedIn ? "" : "Account"),
             ],
             onTap: (value) async {
-              // Provider.of<SplashProvider>(context, listen: false)
-              //     .bottomBarIndex = value;
+              Provider.of<SplashProvider>(context, listen: false).bottomBarIndex = value;
               setState(() {
                 widget.index = value;
               });
