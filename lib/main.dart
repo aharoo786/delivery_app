@@ -4,8 +4,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kDebugMode, kIsWeb;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_grocery/common/enums/data_source_enum.dart';
@@ -49,8 +48,7 @@ import 'localization/app_localization.dart';
 import 'common/widgets/cookies_widget.dart';
 import 'package:universal_html/html.dart' as html;
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 AndroidNotificationChannel? channel;
@@ -96,12 +94,9 @@ Future<void> main() async {
         importance: Importance.high,
       );
     }
-    final RemoteMessage? remoteMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (remoteMessage != null) {
-      orderID = remoteMessage.notification!.titleLocKey != null
-          ? int.parse(remoteMessage.notification!.titleLocKey!)
-          : null;
+      orderID = remoteMessage.notification!.titleLocKey != null ? int.parse(remoteMessage.notification!.titleLocKey!) : null;
     }
     await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
     FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
@@ -114,8 +109,7 @@ Future<void> main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => di.sl<ThemeProvider>()),
-      ChangeNotifierProvider(
-          create: (context) => di.sl<LocalizationProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<LocalizationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SplashProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<OnBoardingProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<CategoryProvider>()),
@@ -129,19 +123,15 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<ProfileProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<OrderProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<BannerProvider>()),
-      ChangeNotifierProvider(
-          create: (context) => di.sl<NotificationProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<NotificationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LanguageProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<NewsLetterProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<WishListProvider>()),
-      ChangeNotifierProvider(
-          create: (context) => di.sl<WalletAndLoyaltyProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<WalletAndLoyaltyProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<FlashDealProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ReviewProvider>()),
-      ChangeNotifierProvider(
-          create: (context) => di.sl<VerificationProvider>()),
-      ChangeNotifierProvider(
-          create: (context) => di.sl<OrderImageNoteProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<VerificationProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<OrderImageNoteProvider>()),
     ],
     child: MyApp(orderID: orderID, isWeb: !kIsWeb),
   ));
@@ -170,8 +160,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _route() {
-    final SplashProvider splashProvider =
-        Provider.of<SplashProvider>(context, listen: false);
+    final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
 
     print("-------(HERE ALSO)-----");
 
@@ -179,8 +168,7 @@ class _MyAppState extends State<MyApp> {
       if (value != null) {
         splashProvider.getDeliveryInfo();
         // splashProvider.initializeScreenList(Get.context!);
-        if (Provider.of<AuthProvider>(Get.context!, listen: false)
-            .isLoggedIn()) {
+        if (Provider.of<AuthProvider>(Get.context!, listen: false).isLoggedIn()) {
           Provider.of<AuthProvider>(Get.context!, listen: false).updateToken();
         }
       }
@@ -210,9 +198,7 @@ class _MyAppState extends State<MyApp> {
         return (kIsWeb && splashProvider.configModel == null)
             ? const SizedBox()
             : MaterialApp(
-                title: splashProvider.configModel != null
-                    ? splashProvider.configModel!.ecommerceName ?? ''
-                    : AppConstants.appName,
+                title: splashProvider.configModel != null ? splashProvider.configModel!.ecommerceName ?? '' : AppConstants.appName,
                 initialRoute: ResponsiveHelper.isMobilePhone()
                     ? widget.orderID == null
                         ? RouteHelper.getSplashRoute()
@@ -223,9 +209,7 @@ class _MyAppState extends State<MyApp> {
                 onGenerateRoute: RouteHelper.router.generator,
                 debugShowCheckedModeBanner: false,
                 navigatorKey: navigatorKey,
-                theme: Provider.of<ThemeProvider>(context).darkTheme
-                    ? dark
-                    : light,
+                theme: Provider.of<ThemeProvider>(context).darkTheme ? dark : light,
                 locale: Provider.of<LocalizationProvider>(context).locale,
                 localizationsDelegates: const [
                   AppLocalization.delegate,
@@ -235,16 +219,9 @@ class _MyAppState extends State<MyApp> {
                 ],
                 supportedLocales: locals,
                 scrollBehavior:
-                    const MaterialScrollBehavior().copyWith(dragDevices: {
-                  PointerDeviceKind.mouse,
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.stylus,
-                  PointerDeviceKind.unknown
-                }),
+                    const MaterialScrollBehavior().copyWith(dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.stylus, PointerDeviceKind.unknown}),
                 builder: (context, widget) => MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                      textScaler: TextScaler.linear(
-                          MediaQuery.sizeOf(context).width < 380 ? 0.8 : 1)),
+                  data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(MediaQuery.sizeOf(context).width < 380 ? 0.8 : 1)),
                   child: Material(
                       child: Stack(children: [
                     widget!,
@@ -253,23 +230,16 @@ class _MyAppState extends State<MyApp> {
                         child: Align(
                             alignment: Alignment.bottomRight,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 50, horizontal: 20),
-                              child: ThirdPartyChatWidget(
-                                  configModel: splashProvider.configModel!),
+                              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+                              child: ThirdPartyChatWidget(configModel: splashProvider.configModel!),
                             )),
                       ),
                     if (kIsWeb &&
                         splashProvider.configModel!.cookiesManagement != null &&
-                        splashProvider
-                            .configModel!.cookiesManagement!.status! &&
-                        !splashProvider.getAcceptCookiesStatus(splashProvider
-                            .configModel!.cookiesManagement!.content) &&
+                        splashProvider.configModel!.cookiesManagement!.status! &&
+                        !splashProvider.getAcceptCookiesStatus(splashProvider.configModel!.cookiesManagement!.content) &&
                         splashProvider.cookiesShow)
-                      const Positioned.fill(
-                          child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: CookiesWidget())),
+                      const Positioned.fill(child: Align(alignment: Alignment.bottomCenter, child: CookiesWidget())),
                   ])),
                 ),
               );
@@ -281,9 +251,7 @@ class _MyAppState extends State<MyApp> {
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }
 
