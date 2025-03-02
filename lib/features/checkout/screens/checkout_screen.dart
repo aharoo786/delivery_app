@@ -45,7 +45,16 @@ class CheckoutScreen extends StatefulWidget {
   final String freeDeliveryType;
   final double? tax;
   final double? weight;
-  const CheckoutScreen({super.key, required this.amount, required this.orderType, required this.discount, required this.couponDiscount,  required this.couponCode,required this.freeDeliveryType, required this.tax, required this.weight});
+  const CheckoutScreen(
+      {super.key,
+      required this.amount,
+      required this.orderType,
+      required this.discount,
+      required this.couponDiscount,
+      required this.couponCode,
+      required this.freeDeliveryType,
+      required this.tax,
+      required this.weight});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -65,17 +74,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   List<PaymentMethod> _activePaymentList = [];
   late bool selfPickup;
 
-
   @override
   void initState() {
     super.initState();
 
     initLoading();
-
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,403 +88,443 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
     final OrderProvider orderProvider = Provider.of<OrderProvider>(context, listen: false);
 
-
     final bool isRoute = (_isLoggedIn || (configModel.isGuestCheckout! && authProvider.getGuestId() != null));
 
-
     double weightCharge = 0.0;
-    if(widget.orderType == OrderType.delivery.name){
+    if (widget.orderType == OrderType.delivery.name) {
       weightCharge = CheckOutHelper.weightChargeCalculation(widget.weight, splashProvider.deliveryInfoModelList?[orderProvider.branchIndex]);
     }
-
 
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
-      appBar: (ResponsiveHelper.isDesktop(context)? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())  : CustomAppBarWidget(title: getTranslated('checkout', context))) as PreferredSizeWidget?,
-      body: isRoute ? Column(children: [
+      appBar: (ResponsiveHelper.isDesktop(context)
+          ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
+          : CustomAppBarWidget(title: getTranslated('checkout', context))) as PreferredSizeWidget?,
+      body: isRoute
+          ? Column(children: [
+              Expanded(
+                  child: CustomScrollView(controller: scrollController, slivers: [
+                SliverToBoxAdapter(child: Consumer<OrderProvider>(
+                  builder: (context, orderProvider, child) {
+                    double deliveryCharge = CheckOutHelper.getDeliveryCharge(
+                      freeDeliveryType: widget.freeDeliveryType,
+                      orderAmount: widget.amount,
+                      distance: orderProvider.distance,
+                      discount: widget.discount ?? 0,
+                      configModel: configModel,
+                    );
 
-        Expanded(child: CustomScrollView(controller: scrollController, slivers: [
+                    orderProvider.setDeliveryCharge(deliveryCharge, notify: false);
+                    orderProvider.getCheckOutData?.copyWith(deliveryCharge: orderProvider.deliveryCharge, orderNote: _noteController.text);
 
-          SliverToBoxAdapter(child: Consumer<OrderProvider>(
-            builder: (context, orderProvider, child) {
-
-              double deliveryCharge = CheckOutHelper.getDeliveryCharge(
-                freeDeliveryType: widget.freeDeliveryType,
-                orderAmount: widget.amount, distance: orderProvider.distance, discount: widget.discount ?? 0, configModel: configModel,
-              );
-
-              orderProvider.setDeliveryCharge(deliveryCharge, notify: false);
-              orderProvider.getCheckOutData?.copyWith(deliveryCharge: orderProvider.deliveryCharge, orderNote: _noteController.text);
-
-              return Consumer<LocationProvider>(builder: (context, address, child) => Column(children: [
-
-                Center(child: SizedBox(width: Dimensions.webScreenWidth, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Expanded(flex: 6, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-                    if (_branches!.isNotEmpty) CustomShadowWidget(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.paddingSizeDefault,
-                        vertical: Dimensions.paddingSizeSmall,
-                      ),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-                        Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                          child: Text(getTranslated('select_branch', context), style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge)),
-                        ),
-
-                        SizedBox(height: 50, child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: _branches!.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
-                              child: InkWell(
-                                onTap: () async {
-                                  try {
-                                    orderProvider.setBranchIndex(index);
-                                    orderProvider.setAreaID(isReload: true);
-                                    orderProvider.setDeliveryCharge(null);
-                                    CheckOutHelper.selectDeliveryAddressAuto(orderType: widget.orderType, isLoggedIn: (_isLoggedIn || CheckOutHelper.isGuestCheckout()));
-                                    double.parse(_branches![index].latitude!);
-
-                                    weightCharge = CheckOutHelper.weightChargeCalculation(widget.weight, splashProvider.deliveryInfoModelList?[orderProvider.branchIndex]);
-
-                                    CheckOutHelper.getDeliveryCharge(
-                                      freeDeliveryType: widget.freeDeliveryType,
-                                      orderAmount: widget.amount, distance: orderProvider.distance, discount: widget.discount ?? 0, configModel: configModel,
-                                    );
-
-
-                                    _setMarkers(index);
-                                    // ignore: empty_catches
-                                  }catch(e) {}
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraSmall, horizontal: Dimensions.paddingSizeSmall),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: index == orderProvider.branchIndex ? Theme.of(context).primaryColor : Theme.of(context).canvasColor,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Text(_branches![index].name!, maxLines: 1, overflow: TextOverflow.ellipsis, style: poppinsMedium.copyWith(
-                                    color: index == orderProvider.branchIndex ? Colors.white : Theme.of(context).textTheme.bodyLarge!.color,
-                                  )),
-                                ),
-                              ),
-                            );
-                          },
-                        )),
-
-                        (configModel.googleMapStatus ?? false)? Container(
-                          height: 200,
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).cardColor,
-                          ),
-                          child: Stack(children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                              child: GoogleMap(
-                                minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
-                                mapType: MapType.normal,
-                                initialCameraPosition: CameraPosition(target: LatLng(
-                                  double.parse(_branches![0].latitude!),
-                                  double.parse(_branches![0].longitude!),
-                                ), zoom: 8),
-                                zoomControlsEnabled: true,
-                                markers: _markers,
-                                onMapCreated: (GoogleMapController controller) async {
-                                  await Geolocator.requestPermission();
-                                  _mapController = controller;
-                                  _loading = false;
-                                  _setMarkers(0);
-                                },
-                              ),
-                            ),
-
-
-                            _loading ? Center(child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                            )) : const SizedBox(),
-                          ]),
-                        ): const SizedBox.shrink(),
-                      ]),
-                    ),
-                    const SizedBox(height: Dimensions.paddingSizeSmall),
-
-                    //if(orderProvider.orderType != OrderType.takeAway && splashProvider.deliveryInfoModel != null && (splashProvider.deliveryInfoModel!.deliveryChargeByArea?.isNotEmpty ?? false) && splashProvider.deliveryInfoModel?.deliveryChargeSetup?.deliveryChargeType == 'area')...[
-
-                    if(CheckOutHelper.getDeliveryChargeType() == DeliveryChargeType.area.name && !(widget.orderType == OrderType.self_pickup.name))...[
-                      Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
-                        child: Text(
-                          getTranslated('zip_area', context),
-                          style: poppinsSemiBold.copyWith(
-                            fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeLarge : Dimensions.fontSizeDefault,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: Dimensions.paddingSizeSmall),
-
-                      Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
-                        child: Consumer<SplashProvider>(builder: (context, splashProvider, child) {
-                          return Row(children: [
-
-                            Expanded(child: DropdownButtonHideUnderline(child: DropdownButton2<String>(
-                              key: dropDownKey,
-                              iconStyleData: IconStyleData(icon: Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).hintColor)),
-                              isExpanded: true,
-                              hint: Text(
-                                getTranslated('search_or_select_zip_code_area', context),
-                                style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeDefault, color: Theme.of(context).hintColor),
-                              ),
-                              selectedItemBuilder: (BuildContext context) {
-                                return (splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea ?? []).map<Widget>((DeliveryChargeByArea item) {
-                                  return Row(children: [
-
-                                    Text(item.areaName ?? "",
-                                      style: poppinsSemiBold.copyWith(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                                      ),
-                                    ),
-
-                                    Text(" (${PriceConverterHelper.convertPrice(context, item.deliveryCharge ?? 0)})",
-                                      style: poppinsRegular.copyWith(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        color: Theme.of(context).hintColor,
-                                      ),
-                                    ),
-
-                                  ]);
-                                  }).toList();
-                              },
-
-                              items: (splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea ?? [])
-                                  .map((DeliveryChargeByArea item) => DropdownMenuItem<String>(
-
-                                value: item.id.toString(),
-                                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-
-                                  Text(item.areaName ?? "", style: poppinsRegular.copyWith(
-                                    fontSize: Dimensions.fontSizeDefault,
-                                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                                  )),
-
-                                  Text(" (${PriceConverterHelper.convertPrice(context, item.deliveryCharge ?? 0)})",
-                                    style: poppinsRegular.copyWith(
-                                      fontSize: Dimensions.fontSizeDefault,
-                                      color: Theme.of(context).hintColor,
-                                    ),
-                                  ),
-
-                                ]),
-                              )).toList(),
-
-                              value: orderProvider.selectedAreaID == null ? null
-                                  : splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea!.firstWhere((area) => area.id == orderProvider.selectedAreaID).id.toString(),
-
-                              onChanged: (String? value) {
-                                orderProvider.setAreaID(areaID: int.parse(value!));
-                                double deliveryCharge;
-                                deliveryCharge = CheckOutHelper.getDeliveryCharge(
-                                  freeDeliveryType: widget.freeDeliveryType,
-                                  orderAmount: widget.amount,
-                                  distance: orderProvider.distance,
-                                  discount: widget.discount ?? 0,
-                                  configModel: configModel,
-                                );
-
-                                orderProvider.setDeliveryCharge(deliveryCharge);
-                                print("------------------------(DELIVERY CHARGE after change)------------- ${orderProvider.deliveryCharge}");
-                              },
-
-                              dropdownSearchData: DropdownSearchData(
-                                searchController: searchController,
-                                searchInnerWidgetHeight: 50,
-                                searchInnerWidget: Container(
-                                  height: 50,
-                                  padding: const EdgeInsets.only(top: Dimensions.paddingSizeSmall, left: Dimensions.paddingSizeSmall, right: Dimensions.paddingSizeSmall),
-                                  child: TextFormField(
-                                    controller: searchController,
-                                    expands: true,
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      contentPadding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                                      hintText: getTranslated('search_zip_area_name', context),
-                                      hintStyle: const TextStyle(fontSize: Dimensions.fontSizeSmall),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                searchMatchFn: (item, searchValue) {
-                                  DeliveryChargeByArea areaItem = (splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea ?? [])
-                                      .firstWhere((element) => element.id.toString() == item.value);
-                                  return areaItem.areaName?.toLowerCase().contains(searchValue.toLowerCase()) ?? false;
-                                },
-                              ),
-                              buttonStyleData: ButtonStyleData(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Theme.of(context).hintColor.withOpacity(0.5)),
-                                  borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                                ),
-                                padding: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
-                              ),
-
-                            ))),
-
-
-                          ]);
-                        }),
-                      ),
-                      const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-                    ],
-
-                    DeliveryAddressWidget(selfPickup: selfPickup),
-                    // Time Slot
-                    CustomShadowWidget(
-                      margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeSmall),
-                      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeDefault),
-                      child: Align(
-                        alignment: Provider.of<LocalizationProvider>(context, listen: false).isLtr
-                            ? Alignment.topLeft : Alignment.topRight,
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeDefault),
-                            child: Row(children: [
-                              Text(getTranslated('preference_time', context), style: poppinsMedium.copyWith(
-                                fontSize: Dimensions.fontSizeLarge,
-                              )),
-                              const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                                  
-                              Tooltip(
-                                triggerMode: ResponsiveHelper.isDesktop(context) ? null : TooltipTriggerMode.tap,
-                                   message: getTranslated('select_your_preference_time', context),
-                                child: Icon(Icons.info_outline, color: Theme.of(context).disabledColor, size: Dimensions.paddingSizeLarge),
-                              ),
-                                  
-                            ]),
-                          ),
-
-                          CustomSingleChildListWidget(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 3,
-                            itemBuilder: (index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2),
-                                child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                                  Radio(
-                                    activeColor: Theme.of(context).primaryColor,
-                                    value: index,
-                                    groupValue: orderProvider.selectDateSlot,
-                                    onChanged: (value)=> orderProvider.updateDateSlot(index),
-                                  ),
-                                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-
-                                  Text(index == 0 ? getTranslated('today', context) : index == 1
-                                      ? getTranslated('tomorrow', context)
-                                      : DateConverterHelper.estimatedDate(DateTime.now().add(const Duration(days: 2))),
-                                    style: poppinsRegular.copyWith(
-                                      color: index == orderProvider.selectDateSlot ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyLarge?.color,
-                                    ),
-                                  ),
-                                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-
-                                ]),
-                              );
-                            }
-                          ),
-                          const SizedBox(height: Dimensions.paddingSizeDefault),
-
-                              orderProvider.timeSlots == null ? CustomLoaderWidget(color: Theme.of(context).primaryColor) : CustomSingleChildListWidget(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: orderProvider.timeSlots?.length ?? 0,
-                                itemBuilder: (index){
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
-                                    child: InkWell(
-                                      hoverColor: Colors.transparent,
-                                      onTap: () => orderProvider.updateTimeSlot(index),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeSmall),
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: orderProvider.selectTimeSlot == index
-                                              ? Theme.of(context).primaryColor
-                                              : Theme.of(context).cardColor,
-                                          borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                                          boxShadow: [BoxShadow(
-                                            color: Theme.of(context).shadowColor,
-                                            spreadRadius: .5, blurRadius: .5,
-                                          )],
-                                          border: Border.all(
-                                            color: orderProvider.selectTimeSlot == index
-                                                ? Theme.of(context).primaryColor
-                                                : Theme.of(context).disabledColor,
-                                          ),
-                                        ),
+                    return Consumer<LocationProvider>(
+                        builder: (context, address, child) => Column(
+                              children: [
+                                Center(
+                                    child: SizedBox(
+                                        width: Dimensions.webScreenWidth,
                                         child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Icon(Icons.history, color: orderProvider.selectTimeSlot == index ? Theme.of(context).cardColor : Theme.of(context).disabledColor, size: 20),
-                                            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                            Expanded(
+                                                flex: 6,
+                                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                  if (_branches!.isNotEmpty)
+                                                    CustomShadowWidget(
+                                                      margin: const EdgeInsets.symmetric(
+                                                        horizontal: Dimensions.paddingSizeDefault,
+                                                        vertical: Dimensions.paddingSizeSmall,
+                                                      ),
+                                                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                                          child: Text(getTranslated('select_branch', context), style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge)),
+                                                        ),
+                                                        SizedBox(
+                                                            height: 50,
+                                                            child: ListView.builder(
+                                                              scrollDirection: Axis.horizontal,
+                                                              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                                                              physics: const BouncingScrollPhysics(),
+                                                              itemCount: _branches!.length,
+                                                              itemBuilder: (context, index) {
+                                                                return Padding(
+                                                                  padding: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
+                                                                  child: InkWell(
+                                                                    onTap: () async {
+                                                                      try {
+                                                                        orderProvider.setBranchIndex(index);
+                                                                        orderProvider.setAreaID(isReload: true);
+                                                                        orderProvider.setDeliveryCharge(null);
+                                                                        CheckOutHelper.selectDeliveryAddressAuto(
+                                                                            orderType: widget.orderType, isLoggedIn: (_isLoggedIn || CheckOutHelper.isGuestCheckout()));
+                                                                        double.parse(_branches![index].latitude!);
 
-                                            Text('${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].startTime!, context)} '
-                                                '- ${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].endTime!, context)}',
-                                              style: poppinsRegular.copyWith(
-                                                fontSize: Dimensions.fontSizeLarge,
-                                                color: orderProvider.selectTimeSlot == index ? Theme.of(context).cardColor : Theme.of(context).disabledColor,
+                                                                        weightCharge = CheckOutHelper.weightChargeCalculation(
+                                                                            widget.weight, splashProvider.deliveryInfoModelList?[orderProvider.branchIndex]);
+
+                                                                        CheckOutHelper.getDeliveryCharge(
+                                                                          freeDeliveryType: widget.freeDeliveryType,
+                                                                          orderAmount: widget.amount,
+                                                                          distance: orderProvider.distance,
+                                                                          discount: widget.discount ?? 0,
+                                                                          configModel: configModel,
+                                                                        );
+
+                                                                        _setMarkers(index);
+                                                                        // ignore: empty_catches
+                                                                      } catch (e) {}
+                                                                    },
+                                                                    child: Container(
+                                                                      padding: const EdgeInsets.symmetric(
+                                                                          vertical: Dimensions.paddingSizeExtraSmall, horizontal: Dimensions.paddingSizeSmall),
+                                                                      alignment: Alignment.center,
+                                                                      decoration: BoxDecoration(
+                                                                        color: index == orderProvider.branchIndex ? Theme.of(context).primaryColor : Theme.of(context).canvasColor,
+                                                                        borderRadius: BorderRadius.circular(5),
+                                                                      ),
+                                                                      child: Text(_branches![index].name!,
+                                                                          maxLines: 1,
+                                                                          overflow: TextOverflow.ellipsis,
+                                                                          style: poppinsMedium.copyWith(
+                                                                            color: index == orderProvider.branchIndex ? Colors.white : Theme.of(context).textTheme.bodyLarge!.color,
+                                                                          )),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            )),
+                                                        (configModel.googleMapStatus ?? false)
+                                                            ? Container(
+                                                                height: 200,
+                                                                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                                                                alignment: Alignment.center,
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  color: Theme.of(context).cardColor,
+                                                                ),
+                                                                child: Stack(children: [
+                                                                  ClipRRect(
+                                                                    borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                                                    child: GoogleMap(
+                                                                      minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
+                                                                      mapType: MapType.normal,
+                                                                      initialCameraPosition: CameraPosition(
+                                                                          target: LatLng(
+                                                                            double.parse(_branches![0].latitude!),
+                                                                            double.parse(_branches![0].longitude!),
+                                                                          ),
+                                                                          zoom: 8),
+                                                                      zoomControlsEnabled: true,
+                                                                      markers: _markers,
+                                                                      onMapCreated: (GoogleMapController controller) async {
+                                                                        await Geolocator.requestPermission();
+                                                                        _mapController = controller;
+                                                                        _loading = false;
+                                                                        _setMarkers(0);
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                  _loading
+                                                                      ? Center(
+                                                                          child: CircularProgressIndicator(
+                                                                          valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                                                                        ))
+                                                                      : const SizedBox(),
+                                                                ]),
+                                                              )
+                                                            : const SizedBox.shrink(),
+                                                      ]),
+                                                    ),
+                                                  const SizedBox(height: Dimensions.paddingSizeSmall),
+
+                                                  //if(orderProvider.orderType != OrderType.takeAway && splashProvider.deliveryInfoModel != null && (splashProvider.deliveryInfoModel!.deliveryChargeByArea?.isNotEmpty ?? false) && splashProvider.deliveryInfoModel?.deliveryChargeSetup?.deliveryChargeType == 'area')...[
+
+                                                  if (CheckOutHelper.getDeliveryChargeType() == DeliveryChargeType.area.name &&
+                                                      !(widget.orderType == OrderType.self_pickup.name)) ...[
+                                                    Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
+                                                      child: Text(
+                                                        getTranslated('zip_area', context),
+                                                        style: poppinsSemiBold.copyWith(
+                                                          fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeLarge : Dimensions.fontSizeDefault,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: Dimensions.paddingSizeSmall),
+                                                    Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
+                                                      child: Consumer<SplashProvider>(builder: (context, splashProvider, child) {
+                                                        return Row(children: [
+                                                          Expanded(
+                                                              child: DropdownButtonHideUnderline(
+                                                                  child: DropdownButton2<String>(
+                                                            key: dropDownKey,
+                                                            iconStyleData: IconStyleData(icon: Icon(Icons.keyboard_arrow_down_rounded, color: Theme.of(context).hintColor)),
+                                                            isExpanded: true,
+                                                            hint: Text(
+                                                              getTranslated('search_or_select_zip_code_area', context),
+                                                              style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeDefault, color: Theme.of(context).hintColor),
+                                                            ),
+                                                            selectedItemBuilder: (BuildContext context) {
+                                                              return (splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea ?? [])
+                                                                  .map<Widget>((DeliveryChargeByArea item) {
+                                                                return Row(children: [
+                                                                  Text(
+                                                                    item.areaName ?? "",
+                                                                    style: poppinsSemiBold.copyWith(
+                                                                      fontSize: Dimensions.fontSizeDefault,
+                                                                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    " (${PriceConverterHelper.convertPrice(context, item.deliveryCharge ?? 0)})",
+                                                                    style: poppinsRegular.copyWith(
+                                                                      fontSize: Dimensions.fontSizeDefault,
+                                                                      color: Theme.of(context).hintColor,
+                                                                    ),
+                                                                  ),
+                                                                ]);
+                                                              }).toList();
+                                                            },
+                                                            items: (splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea ?? [])
+                                                                .map((DeliveryChargeByArea item) => DropdownMenuItem<String>(
+                                                                      value: item.id.toString(),
+                                                                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                                                        Text(item.areaName ?? "",
+                                                                            style: poppinsRegular.copyWith(
+                                                                              fontSize: Dimensions.fontSizeDefault,
+                                                                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                                                                            )),
+                                                                        Text(
+                                                                          " (${PriceConverterHelper.convertPrice(context, item.deliveryCharge ?? 0)})",
+                                                                          style: poppinsRegular.copyWith(
+                                                                            fontSize: Dimensions.fontSizeDefault,
+                                                                            color: Theme.of(context).hintColor,
+                                                                          ),
+                                                                        ),
+                                                                      ]),
+                                                                    ))
+                                                                .toList(),
+                                                            value: orderProvider.selectedAreaID == null
+                                                                ? null
+                                                                : splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea!
+                                                                    .firstWhere((area) => area.id == orderProvider.selectedAreaID)
+                                                                    .id
+                                                                    .toString(),
+                                                            onChanged: (String? value) {
+                                                              orderProvider.setAreaID(areaID: int.parse(value!));
+                                                              double deliveryCharge;
+                                                              deliveryCharge = CheckOutHelper.getDeliveryCharge(
+                                                                freeDeliveryType: widget.freeDeliveryType,
+                                                                orderAmount: widget.amount,
+                                                                distance: orderProvider.distance,
+                                                                discount: widget.discount ?? 0,
+                                                                configModel: configModel,
+                                                              );
+
+                                                              orderProvider.setDeliveryCharge(deliveryCharge);
+                                                              print("------------------------(DELIVERY CHARGE after change)------------- ${orderProvider.deliveryCharge}");
+                                                            },
+                                                            dropdownSearchData: DropdownSearchData(
+                                                              searchController: searchController,
+                                                              searchInnerWidgetHeight: 50,
+                                                              searchInnerWidget: Container(
+                                                                height: 50,
+                                                                padding: const EdgeInsets.only(
+                                                                    top: Dimensions.paddingSizeSmall, left: Dimensions.paddingSizeSmall, right: Dimensions.paddingSizeSmall),
+                                                                child: TextFormField(
+                                                                  controller: searchController,
+                                                                  expands: true,
+                                                                  maxLines: null,
+                                                                  decoration: InputDecoration(
+                                                                    isDense: true,
+                                                                    contentPadding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                                                                    hintText: getTranslated('search_zip_area_name', context),
+                                                                    hintStyle: const TextStyle(fontSize: Dimensions.fontSizeSmall),
+                                                                    border: OutlineInputBorder(
+                                                                      borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              searchMatchFn: (item, searchValue) {
+                                                                DeliveryChargeByArea areaItem =
+                                                                    (splashProvider.deliveryInfoModelList?[orderProvider.branchIndex].deliveryChargeByArea ?? [])
+                                                                        .firstWhere((element) => element.id.toString() == item.value);
+                                                                return areaItem.areaName?.toLowerCase().contains(searchValue.toLowerCase()) ?? false;
+                                                              },
+                                                            ),
+                                                            buttonStyleData: ButtonStyleData(
+                                                              decoration: BoxDecoration(
+                                                                border: Border.all(color: Theme.of(context).hintColor.withOpacity(0.5)),
+                                                                borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                                              ),
+                                                              padding: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
+                                                            ),
+                                                          ))),
+                                                        ]);
+                                                      }),
+                                                    ),
+                                                    const SizedBox(height: Dimensions.paddingSizeExtraLarge),
+                                                  ],
+
+                                                  DeliveryAddressWidget(selfPickup: selfPickup),
+                                                  // Time Slot
+                                                  CustomShadowWidget(
+                                                    margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeSmall),
+                                                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeDefault),
+                                                    child: Align(
+                                                      alignment: Provider.of<LocalizationProvider>(context, listen: false).isLtr ? Alignment.topLeft : Alignment.topRight,
+                                                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeDefault),
+                                                          child: Row(children: [
+                                                            Text(getTranslated('preference_time', context),
+                                                                style: poppinsMedium.copyWith(
+                                                                  fontSize: Dimensions.fontSizeLarge,
+                                                                )),
+                                                            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                            Tooltip(
+                                                              triggerMode: ResponsiveHelper.isDesktop(context) ? null : TooltipTriggerMode.tap,
+                                                              message: getTranslated('select_your_preference_time', context),
+                                                              child: Icon(Icons.info_outline, color: Theme.of(context).disabledColor, size: Dimensions.paddingSizeLarge),
+                                                            ),
+                                                          ]),
+                                                        ),
+                                                        CustomSingleChildListWidget(
+                                                            scrollDirection: Axis.horizontal,
+                                                            itemCount: 3,
+                                                            itemBuilder: (index) {
+                                                              return Padding(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 2),
+                                                                child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                                                                  Radio(
+                                                                    activeColor: Theme.of(context).primaryColor,
+                                                                    value: index,
+                                                                    groupValue: orderProvider.selectDateSlot,
+                                                                    onChanged: (value) => orderProvider.updateDateSlot(index),
+                                                                  ),
+                                                                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                                  Text(
+                                                                    index == 0
+                                                                        ? getTranslated('today', context)
+                                                                        : index == 1
+                                                                            ? getTranslated('tomorrow', context)
+                                                                            : DateConverterHelper.estimatedDate(DateTime.now().add(const Duration(days: 2))),
+                                                                    style: poppinsRegular.copyWith(
+                                                                      color: index == orderProvider.selectDateSlot
+                                                                          ? Theme.of(context).primaryColor
+                                                                          : Theme.of(context).textTheme.bodyLarge?.color,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                                ]),
+                                                              );
+                                                            }),
+                                                        const SizedBox(height: Dimensions.paddingSizeDefault),
+                                                        orderProvider.timeSlots == null
+                                                            ? CustomLoaderWidget(color: Theme.of(context).primaryColor)
+                                                            : CustomSingleChildListWidget(
+                                                                scrollDirection: Axis.horizontal,
+                                                                itemCount: orderProvider.timeSlots?.length ?? 0,
+                                                                itemBuilder: (index) {
+                                                                  return Padding(
+                                                                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
+                                                                    child: InkWell(
+                                                                      hoverColor: Colors.transparent,
+                                                                      onTap: () => orderProvider.updateTimeSlot(index),
+                                                                      child: Container(
+                                                                        padding: const EdgeInsets.symmetric(
+                                                                            vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeSmall),
+                                                                        alignment: Alignment.center,
+                                                                        decoration: BoxDecoration(
+                                                                          color:
+                                                                              orderProvider.selectTimeSlot == index ? Theme.of(context).primaryColor : Theme.of(context).cardColor,
+                                                                          borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Theme.of(context).shadowColor,
+                                                                              spreadRadius: .5,
+                                                                              blurRadius: .5,
+                                                                            )
+                                                                          ],
+                                                                          border: Border.all(
+                                                                            color: orderProvider.selectTimeSlot == index
+                                                                                ? Theme.of(context).primaryColor
+                                                                                : Theme.of(context).disabledColor,
+                                                                          ),
+                                                                        ),
+                                                                        child: Row(
+                                                                          children: [
+                                                                            Icon(Icons.history,
+                                                                                color: orderProvider.selectTimeSlot == index
+                                                                                    ? Theme.of(context).cardColor
+                                                                                    : Theme.of(context).disabledColor,
+                                                                                size: 20),
+                                                                            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                                            Text(
+                                                                              '${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].startTime!, context)} '
+                                                                              '- ${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].endTime!, context)}',
+                                                                              style: poppinsRegular.copyWith(
+                                                                                fontSize: Dimensions.fontSizeLarge,
+                                                                                color: orderProvider.selectTimeSlot == index
+                                                                                    ? Theme.of(context).cardColor
+                                                                                    : Theme.of(context).disabledColor,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ),
+                                                        const SizedBox(height: 20),
+                                                      ]),
+                                                    ),
+                                                  ),
+
+                                                  if (!ResponsiveHelper.isDesktop(context))
+                                                    DetailsWidget(
+                                                      paymentList: _activePaymentList,
+                                                      noteController: _noteController,
+                                                    ),
+                                                ])),
+                                            if (ResponsiveHelper.isDesktop(context))
+                                              Expanded(
+                                                flex: 4,
+                                                child: Column(children: [
+                                                  DetailsWidget(paymentList: _activePaymentList, noteController: _noteController),
+                                                  PlaceOrderButtonWidget(
+                                                      discount: widget.discount ?? 0.0,
+                                                      couponDiscount: widget.couponDiscount,
+                                                      tax: widget.tax,
+                                                      scrollController: scrollController,
+                                                      dropdownKey: dropDownKey,
+                                                      weight: weightCharge),
+                                                ]),
                                               ),
-                                            ),
                                           ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-
-
-                              const SizedBox(height: 20),
-                            ]),
-                          ),
-                        ),
-
-                        if(!ResponsiveHelper.isDesktop(context)) DetailsWidget(
-                          paymentList: _activePaymentList,
-                          noteController: _noteController,
-                        ),
-
-                      ])),
-
-                      if(ResponsiveHelper.isDesktop(context)) Expanded(
-                        flex: 4, child: Column(children: [
-                          DetailsWidget(paymentList: _activePaymentList, noteController: _noteController),
-
-                          PlaceOrderButtonWidget(discount: widget.discount ?? 0.0, couponDiscount: widget.couponDiscount, tax: widget.tax, scrollController: scrollController, dropdownKey: dropDownKey, weight: weightCharge),
-                      ]),
-                      ),
-                    ],
-                  ))),
-
-                ],
-              ));
-            },
-          )),
-
-
-          const FooterWebWidget(footerType: FooterType.sliver),
-        ])),
-
-        if(!ResponsiveHelper.isDesktop(context)) Center(child: PlaceOrderButtonWidget(discount: widget.discount ?? 0.0, couponDiscount: widget.couponDiscount, tax: widget.tax, scrollController: scrollController, dropdownKey: dropDownKey, weight: weightCharge)),
-      ]) : const NotLoggedInWidget(),
+                                        ))),
+                              ],
+                            ));
+                  },
+                )),
+                const FooterWebWidget(footerType: FooterType.sliver),
+              ])),
+              if (!ResponsiveHelper.isDesktop(context))
+                Center(
+                    child: PlaceOrderButtonWidget(
+                        discount: widget.discount ?? 0.0,
+                        couponDiscount: widget.couponDiscount,
+                        tax: widget.tax,
+                        scrollController: scrollController,
+                        dropdownKey: dropDownKey,
+                        weight: weightCharge)),
+            ])
+          : const NotLoggedInWidget(),
     );
   }
 
@@ -508,11 +552,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       freeDeliveryType: widget.freeDeliveryType,
       amount: widget.amount,
       placeOrderDiscount: widget.discount,
-      couponCode: widget.couponCode, orderNote: null,
+      couponCode: widget.couponCode,
+      orderNote: null,
     );
 
-
-    if(_isLoggedIn || CheckOutHelper.isGuestCheckout()) {
+    if (_isLoggedIn || CheckOutHelper.isGuestCheckout()) {
       orderProvider.setAddressIndex(-1, notify: false);
       orderProvider.initializeTimeSlot();
       _branches = splashProvider.configModel!.branches;
@@ -520,16 +564,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       await locationProvider.initAddressList();
       AddressModel? lastOrderedAddress;
 
-      if(_isLoggedIn && widget.orderType == 'delivery') {
-        lastOrderedAddress = await  locationProvider.getLastOrderedAddress();
+      if (_isLoggedIn && widget.orderType == 'delivery') {
+        lastOrderedAddress = await locationProvider.getLastOrderedAddress();
       }
 
       CheckOutHelper.selectDeliveryAddressAuto(orderType: widget.orderType, isLoggedIn: (_isLoggedIn || CheckOutHelper.isGuestCheckout()), lastAddress: lastOrderedAddress);
     }
     _activePaymentList = CheckOutHelper.getActivePaymentList(configModel: splashProvider.configModel!);
-
   }
-
 
   void _setMarkers(int selectedIndex) async {
     late BitmapDescriptor bitmapDescriptor;
@@ -542,7 +584,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
     // Marker
     _markers = HashSet<Marker>();
-    for(int index=0; index<_branches!.length; index++) {
+    for (int index = 0; index < _branches!.length; index++) {
       _markers.add(Marker(
         markerId: MarkerId('branch_$index'),
         position: LatLng(double.tryParse(_branches![index].latitude!)!, double.tryParse(_branches![index].longitude!)!),
@@ -551,17 +593,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ));
     }
 
-    if(_mapController != null){
-      _mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(
-        double.tryParse(_branches![selectedIndex].latitude!)!,
-        double.tryParse(_branches![selectedIndex].longitude!)!,
-      ), zoom: ResponsiveHelper.isMobile() ? 12 : 16)));
+    if (_mapController != null) {
+      _mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(
+            double.tryParse(_branches![selectedIndex].latitude!)!,
+            double.tryParse(_branches![selectedIndex].longitude!)!,
+          ),
+          zoom: ResponsiveHelper.isMobile() ? 12 : 16)));
     }
 
     setState(() {});
   }
-
-
 }
-
-
