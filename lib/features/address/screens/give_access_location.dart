@@ -70,7 +70,7 @@ class GiveAccessLocation extends StatelessWidget {
             CustomButtonWidget(
                 buttonText: "Use current location",
                 onPressed: () {
-                  pushToAddAddress();
+                  pushToAddAddress(context: context);
                 }),
             const SizedBox(
               height: 12,
@@ -137,7 +137,7 @@ class GiveAccessLocation extends StatelessWidget {
                                         itemBuilder: (context, suggestion) => SearchItemWidget(suggestion: suggestion),
                                         onSelected: (PredictionModel suggestion) async {
                                           await locationProvider.setLocation(suggestion.placeId, suggestion.description, null);
-                                          pushToAddAddress(isManual: true);
+                                          pushToAddAddress(isManual: true , context: context);
                                         },
                                         loadingBuilder: (context) => CustomLoaderWidget(color: Theme.of(context).primaryColor),
                                         errorBuilder: (context, error) => const SearchItemWidget(),
@@ -145,7 +145,7 @@ class GiveAccessLocation extends StatelessWidget {
                                       )),
                                   ListTile(
                                     onTap: () {
-                                      pushToAddAddress();
+                                      pushToAddAddress(context: context);
                                     },
                                     visualDensity: const VisualDensity(horizontal: -4),
                                     leading: SvgPicture.asset(Images.currentLocationIcon),
@@ -175,29 +175,30 @@ class GiveAccessLocation extends StatelessWidget {
     );
   }
 
-  void pushToAddAddress({isManual = false}) async {
+  void pushToAddAddress({isManual = false ,required context}) async {
     showModalBottomSheet(
-      context: Get.context!,
+      context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Adjust the radius as needed
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded top corners
       ),
+      backgroundColor: Colors.transparent, // Important: Makes sure the background is clear
       builder: (context) {
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height * 0.9,
           width: double.maxFinite,
-          decoration: const BoxDecoration(
-            color: Colors.white, // Ensure background color matches
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded top corners
-          ),
-          child: AddNewAddressScreen(
-            address: AddressModel(),
-            fromStart: true,
-            fromManualAddAddress: isManual,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)), // Ensure modal is clipped
+            child: AddNewAddressScreen(
+              address: AddressModel(),
+              fromStart: true,
+              fromManualAddAddress: isManual,
+            ),
           ),
         );
       },
     );
+
 
   }
 }
