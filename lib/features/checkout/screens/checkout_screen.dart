@@ -558,7 +558,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     if (_isLoggedIn || CheckOutHelper.isGuestCheckout()) {
       orderProvider.setAddressIndex(-1, notify: false);
-      orderProvider.initializeTimeSlot();
+      // orderProvider.initializeTimeSlot();
       _branches = splashProvider.configModel!.branches;
 
       await locationProvider.initAddressList();

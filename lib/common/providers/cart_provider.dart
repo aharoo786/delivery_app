@@ -4,9 +4,13 @@ import 'package:flutter_grocery/common/models/product_model.dart';
 import 'package:flutter_grocery/common/reposotories/cart_repo.dart';
 import 'package:flutter_grocery/localization/app_localization.dart';
 import 'package:flutter_grocery/helper/custom_snackbar_helper.dart';
+
 class CartProvider extends ChangeNotifier {
   final CartRepo? cartRepo;
   CartProvider({required this.cartRepo});
+
+  bool isShowScheduleTime = false;
+  bool isShowStandardTime = true;
 
   int _productSelect = 0;
   List<CartModel> _cartList = [];
@@ -22,6 +26,12 @@ class CartProvider extends ChangeNotifier {
   int get quantity => _quantity;
   List<int>? get variationIndex => _variationIndex;
 
+  void showSchedule0rStandard(bool showStandard, bool showSchedule) {
+    isShowScheduleTime = showSchedule;
+    isShowStandardTime = showStandard;
+    notifyListeners();
+  }
+
   void getCartData({bool isUpdate = false}) {
     _cartList = [];
     _amount = 0.0;
@@ -29,19 +39,17 @@ class CartProvider extends ChangeNotifier {
     for (var cart in _cartList) {
       _amount = _amount + (cart.discountedPrice! * cart.quantity!);
     }
-    if(isUpdate){
+    if (isUpdate) {
       notifyListeners();
     }
-
   }
 
-  void onSelectProductStatus(int select, bool isNotify){
+  void onSelectProductStatus(int select, bool isNotify) {
     _productSelect = select;
-    if(isNotify) {
+    if (isNotify) {
       notifyListeners();
     }
   }
-
 
   void addToCart(CartModel cartModel) {
     _cartList.add(cartModel);
@@ -51,17 +59,16 @@ class CartProvider extends ChangeNotifier {
   }
 
   void setCartQuantity(bool isIncrement, int? index, {bool showMessage = false, BuildContext? context}) {
-
     if (isIncrement) {
       _cartList[index!].quantity = _cartList[index].quantity! + 1;
       _amount = _amount + _cartList[index].discountedPrice!;
-      if(showMessage) {
+      if (showMessage) {
         showCustomSnackBarHelper('quantity_increase_from_cart'.tr, isError: false);
       }
     } else {
       _cartList[index!].quantity = _cartList[index].quantity! - 1;
       _amount = _amount - _cartList[index].discountedPrice!;
-      if(showMessage) {
+      if (showMessage) {
         showCustomSnackBarHelper('quantity_decreased_from_cart'.tr);
       }
     }
@@ -86,16 +93,12 @@ class CartProvider extends ChangeNotifier {
   }
 
   int? isExistInCart(CartModel? cartModel) {
-    for(int index= 0; index<_cartList.length; index++) {
-
-
-      if(_cartList[index].id == cartModel?.id) {
+    for (int index = 0; index < _cartList.length; index++) {
+      if (_cartList[index].id == cartModel?.id) {
         print('----${_cartList[index].variation?.toJson()}----${(cartModel?.variation?.type)}');
-        if((_cartList[index].variation == null ? true : _cartList[index].variation?.type == cartModel?.variation?.type)) {
+        if ((_cartList[index].variation == null ? true : _cartList[index].variation?.type == cartModel?.variation?.type)) {
           return index;
-
         }
-
       }
     }
     return null;
@@ -109,8 +112,8 @@ class CartProvider extends ChangeNotifier {
     _variationIndex = [];
     _cartIndex = null;
     _quantity = 1;
-    if(product.choiceOptions != null){
-      for(int i=0; i < product.choiceOptions!.length; i++) {
+    if (product.choiceOptions != null) {
+      for (int i = 0; i < product.choiceOptions!.length; i++) {
         _variationIndex!.add(0);
       }
     }
@@ -130,5 +133,4 @@ class CartProvider extends ChangeNotifier {
     _quantity = 1;
     notifyListeners();
   }
-
 }
