@@ -17,6 +17,7 @@ import '../../cart/screens/coupon_screen.dart';
 import '../../chat/screens/chat_screen.dart';
 import '../../html/screens/html_viewer_screen.dart';
 import '../../menu/screens/setting_screen.dart';
+import '../../menu/widgets/sign_out_dialog_widget.dart';
 import '../../order/screens/order_list_screen.dart';
 import '../../order/screens/order_search_screen.dart';
 import '../../profile/providers/profile_provider.dart';
@@ -266,6 +267,9 @@ class _AccountScreenState extends State<AccountScreen> {
               icon: Icons.logout,
               title: 'Log Out',
               iconColor: Theme.of(context).colorScheme.error,
+              onTap: (){
+                showDialog(context: context, barrierDismissible: false, builder: (context) => const SignOutDialogWidget());
+              },
             ),
           ],
         ),
