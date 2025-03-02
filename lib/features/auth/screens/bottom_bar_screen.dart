@@ -97,9 +97,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   ),
                   label: "Home"),
               BottomNavigationBarItem(
-                  icon: SvgPicture.asset(Images.cartIconBottom),
+                  icon: SvgPicture.asset(Images.categories),
                   activeIcon: SvgPicture.asset(
-                    Images.cartIconBottom,
+                    Images.categories,
                     colorFilter: ColorFilter.mode(
                         Theme.of(context).primaryColor, BlendMode.srcIn),
                   ),
