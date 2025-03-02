@@ -26,6 +26,7 @@ import '../../../helper/date_converter_helper.dart';
 import '../../../utill/color_resources.dart';
 import '../../../utill/styles.dart';
 import '../widgets/cart_details_widget.dart';
+import '../widgets/delivery_option_widget.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -360,7 +361,31 @@ class _CartScreenState extends State<CartScreen> {
                                   color: ColorResources.borderColor,
                                 ),
                                 const SizedBox(height: Dimensions.paddingSizeDefault),
-                                _cartScreenWidget(context: context, icon: Images.instruction, isImage: true, text: "Delivery Instructions", subTitle: 'Leave At Door'),
+                                GestureDetector(
+                                    onTap: () {
+                                      cart.showDeliveryInstructions();
+                                    },
+                                    child: _cartScreenWidget(
+                                        context: context,
+                                        icon: Images.instruction,
+                                        isImage: true,
+                                        text: "Delivery Instructions",
+                                        subTitle: Provider.of<OrderProvider>(context).orderType,
+                                        isNotFromDeliveryInstructions: false)),
+                                if (cart.isDeliveryInstructionOpen)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).cardColor,
+                                      borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
+                                    ),
+                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                      DeliveryOptionWidget(value: 'delivery', title: getTranslated('home_delivery', context)),
+                                      if (configModel.selfPickup == 1) ...[
+                                        DeliveryOptionWidget(value: 'self_pickup', title: getTranslated('self_pickup', context)),
+                                      ],
+                                    ]),
+                                  ),
                                 const SizedBox(height: Dimensions.paddingSizeDefault),
                                 const Divider(
                                   color: ColorResources.borderColor,
@@ -498,7 +523,7 @@ class _CartScreenState extends State<CartScreen> {
         ));
   }
 
-  _cartScreenWidget({context, icon, text, subTitle, isImage, promoCodeText = '', isPromoCode = false}) {
+  Widget _cartScreenWidget({context, icon, text, subTitle, isImage, promoCodeText = '', isPromoCode = false, isNotFromDeliveryInstructions = true}) {
     return Row(
       children: [
         isImage
@@ -560,8 +585,12 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         const SizedBox(width: 8),
-        const Icon(
-          Icons.arrow_forward_ios,
+        Icon(
+          isNotFromDeliveryInstructions
+              ? Icons.arrow_forward_ios
+              : Provider.of<CartProvider>(context).isDeliveryInstructionOpen
+                  ? Icons.keyboard_arrow_down
+                  : Icons.arrow_forward_ios,
           color: Colors.black,
           size: 16,
         )

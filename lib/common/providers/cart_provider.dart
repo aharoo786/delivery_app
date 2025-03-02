@@ -11,6 +11,7 @@ class CartProvider extends ChangeNotifier {
 
   bool isShowScheduleTime = false;
   bool isShowStandardTime = true;
+  bool isDeliveryInstructionOpen = false;
 
   int _productSelect = 0;
   List<CartModel> _cartList = [];
@@ -29,6 +30,11 @@ class CartProvider extends ChangeNotifier {
   void showSchedule0rStandard(bool showStandard, bool showSchedule) {
     isShowScheduleTime = showSchedule;
     isShowStandardTime = showStandard;
+    notifyListeners();
+  }
+
+  void showDeliveryInstructions() {
+    isDeliveryInstructionOpen = !isDeliveryInstructionOpen;
     notifyListeners();
   }
 

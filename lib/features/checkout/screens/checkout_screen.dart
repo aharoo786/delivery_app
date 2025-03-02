@@ -371,120 +371,120 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                   ],
 
                                                   DeliveryAddressWidget(selfPickup: selfPickup),
-                                                  // Time Slot
-                                                  CustomShadowWidget(
-                                                    margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeSmall),
-                                                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeDefault),
-                                                    child: Align(
-                                                      alignment: Provider.of<LocalizationProvider>(context, listen: false).isLtr ? Alignment.topLeft : Alignment.topRight,
-                                                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeDefault),
-                                                          child: Row(children: [
-                                                            Text(getTranslated('preference_time', context),
-                                                                style: poppinsMedium.copyWith(
-                                                                  fontSize: Dimensions.fontSizeLarge,
-                                                                )),
-                                                            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                                                            Tooltip(
-                                                              triggerMode: ResponsiveHelper.isDesktop(context) ? null : TooltipTriggerMode.tap,
-                                                              message: getTranslated('select_your_preference_time', context),
-                                                              child: Icon(Icons.info_outline, color: Theme.of(context).disabledColor, size: Dimensions.paddingSizeLarge),
-                                                            ),
-                                                          ]),
-                                                        ),
-                                                        CustomSingleChildListWidget(
-                                                            scrollDirection: Axis.horizontal,
-                                                            itemCount: 3,
-                                                            itemBuilder: (index) {
-                                                              return Padding(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 2),
-                                                                child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                                                                  Radio(
-                                                                    activeColor: Theme.of(context).primaryColor,
-                                                                    value: index,
-                                                                    groupValue: orderProvider.selectDateSlot,
-                                                                    onChanged: (value) => orderProvider.updateDateSlot(index),
-                                                                  ),
-                                                                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                                                                  Text(
-                                                                    index == 0
-                                                                        ? getTranslated('today', context)
-                                                                        : index == 1
-                                                                            ? getTranslated('tomorrow', context)
-                                                                            : DateConverterHelper.estimatedDate(DateTime.now().add(const Duration(days: 2))),
-                                                                    style: poppinsRegular.copyWith(
-                                                                      color: index == orderProvider.selectDateSlot
-                                                                          ? Theme.of(context).primaryColor
-                                                                          : Theme.of(context).textTheme.bodyLarge?.color,
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                                                                ]),
-                                                              );
-                                                            }),
-                                                        const SizedBox(height: Dimensions.paddingSizeDefault),
-                                                        orderProvider.timeSlots == null
-                                                            ? CustomLoaderWidget(color: Theme.of(context).primaryColor)
-                                                            : CustomSingleChildListWidget(
-                                                                scrollDirection: Axis.horizontal,
-                                                                itemCount: orderProvider.timeSlots?.length ?? 0,
-                                                                itemBuilder: (index) {
-                                                                  return Padding(
-                                                                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
-                                                                    child: InkWell(
-                                                                      hoverColor: Colors.transparent,
-                                                                      onTap: () => orderProvider.updateTimeSlot(index),
-                                                                      child: Container(
-                                                                        padding: const EdgeInsets.symmetric(
-                                                                            vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeSmall),
-                                                                        alignment: Alignment.center,
-                                                                        decoration: BoxDecoration(
-                                                                          color:
-                                                                              orderProvider.selectTimeSlot == index ? Theme.of(context).primaryColor : Theme.of(context).cardColor,
-                                                                          borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                                                                          boxShadow: [
-                                                                            BoxShadow(
-                                                                              color: Theme.of(context).shadowColor,
-                                                                              spreadRadius: .5,
-                                                                              blurRadius: .5,
-                                                                            )
-                                                                          ],
-                                                                          border: Border.all(
-                                                                            color: orderProvider.selectTimeSlot == index
-                                                                                ? Theme.of(context).primaryColor
-                                                                                : Theme.of(context).disabledColor,
-                                                                          ),
-                                                                        ),
-                                                                        child: Row(
-                                                                          children: [
-                                                                            Icon(Icons.history,
-                                                                                color: orderProvider.selectTimeSlot == index
-                                                                                    ? Theme.of(context).cardColor
-                                                                                    : Theme.of(context).disabledColor,
-                                                                                size: 20),
-                                                                            const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                                                                            Text(
-                                                                              '${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].startTime!, context)} '
-                                                                              '- ${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].endTime!, context)}',
-                                                                              style: poppinsRegular.copyWith(
-                                                                                fontSize: Dimensions.fontSizeLarge,
-                                                                                color: orderProvider.selectTimeSlot == index
-                                                                                    ? Theme.of(context).cardColor
-                                                                                    : Theme.of(context).disabledColor,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                        const SizedBox(height: 20),
-                                                      ]),
-                                                    ),
-                                                  ),
+                                                  // // Time Slot
+                                                  // CustomShadowWidget(
+                                                  //   margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeSmall),
+                                                  //   padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeDefault),
+                                                  //   child: Align(
+                                                  //     alignment: Provider.of<LocalizationProvider>(context, listen: false).isLtr ? Alignment.topLeft : Alignment.topRight,
+                                                  //     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                  //       Padding(
+                                                  //         padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeDefault),
+                                                  //         child: Row(children: [
+                                                  //           Text(getTranslated('preference_time', context),
+                                                  //               style: poppinsMedium.copyWith(
+                                                  //                 fontSize: Dimensions.fontSizeLarge,
+                                                  //               )),
+                                                  //           const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                  //           Tooltip(
+                                                  //             triggerMode: ResponsiveHelper.isDesktop(context) ? null : TooltipTriggerMode.tap,
+                                                  //             message: getTranslated('select_your_preference_time', context),
+                                                  //             child: Icon(Icons.info_outline, color: Theme.of(context).disabledColor, size: Dimensions.paddingSizeLarge),
+                                                  //           ),
+                                                  //         ]),
+                                                  //       ),
+                                                  //       CustomSingleChildListWidget(
+                                                  //           scrollDirection: Axis.horizontal,
+                                                  //           itemCount: 3,
+                                                  //           itemBuilder: (index) {
+                                                  //             return Padding(
+                                                  //               padding: const EdgeInsets.symmetric(horizontal: 2),
+                                                  //               child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                                                  //                 Radio(
+                                                  //                   activeColor: Theme.of(context).primaryColor,
+                                                  //                   value: index,
+                                                  //                   groupValue: orderProvider.selectDateSlot,
+                                                  //                   onChanged: (value) => orderProvider.updateDateSlot(index),
+                                                  //                 ),
+                                                  //                 const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                  //                 Text(
+                                                  //                   index == 0
+                                                  //                       ? getTranslated('today', context)
+                                                  //                       : index == 1
+                                                  //                           ? getTranslated('tomorrow', context)
+                                                  //                           : DateConverterHelper.estimatedDate(DateTime.now().add(const Duration(days: 2))),
+                                                  //                   style: poppinsRegular.copyWith(
+                                                  //                     color: index == orderProvider.selectDateSlot
+                                                  //                         ? Theme.of(context).primaryColor
+                                                  //                         : Theme.of(context).textTheme.bodyLarge?.color,
+                                                  //                   ),
+                                                  //                 ),
+                                                  //                 const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                  //               ]),
+                                                  //             );
+                                                  //           }),
+                                                  //       const SizedBox(height: Dimensions.paddingSizeDefault),
+                                                  //       orderProvider.timeSlots == null
+                                                  //           ? CustomLoaderWidget(color: Theme.of(context).primaryColor)
+                                                  //           : CustomSingleChildListWidget(
+                                                  //               scrollDirection: Axis.horizontal,
+                                                  //               itemCount: orderProvider.timeSlots?.length ?? 0,
+                                                  //               itemBuilder: (index) {
+                                                  //                 return Padding(
+                                                  //                   padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
+                                                  //                   child: InkWell(
+                                                  //                     hoverColor: Colors.transparent,
+                                                  //                     onTap: () => orderProvider.updateTimeSlot(index),
+                                                  //                     child: Container(
+                                                  //                       padding: const EdgeInsets.symmetric(
+                                                  //                           vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeSmall),
+                                                  //                       alignment: Alignment.center,
+                                                  //                       decoration: BoxDecoration(
+                                                  //                         color:
+                                                  //                             orderProvider.selectTimeSlot == index ? Theme.of(context).primaryColor : Theme.of(context).cardColor,
+                                                  //                         borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                                  //                         boxShadow: [
+                                                  //                           BoxShadow(
+                                                  //                             color: Theme.of(context).shadowColor,
+                                                  //                             spreadRadius: .5,
+                                                  //                             blurRadius: .5,
+                                                  //                           )
+                                                  //                         ],
+                                                  //                         border: Border.all(
+                                                  //                           color: orderProvider.selectTimeSlot == index
+                                                  //                               ? Theme.of(context).primaryColor
+                                                  //                               : Theme.of(context).disabledColor,
+                                                  //                         ),
+                                                  //                       ),
+                                                  //                       child: Row(
+                                                  //                         children: [
+                                                  //                           Icon(Icons.history,
+                                                  //                               color: orderProvider.selectTimeSlot == index
+                                                  //                                   ? Theme.of(context).cardColor
+                                                  //                                   : Theme.of(context).disabledColor,
+                                                  //                               size: 20),
+                                                  //                           const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                                  //                           Text(
+                                                  //                             '${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].startTime!, context)} '
+                                                  //                             '- ${DateConverterHelper.stringToStringTime(orderProvider.timeSlots![index].endTime!, context)}',
+                                                  //                             style: poppinsRegular.copyWith(
+                                                  //                               fontSize: Dimensions.fontSizeLarge,
+                                                  //                               color: orderProvider.selectTimeSlot == index
+                                                  //                                   ? Theme.of(context).cardColor
+                                                  //                                   : Theme.of(context).disabledColor,
+                                                  //                             ),
+                                                  //                           ),
+                                                  //                         ],
+                                                  //                       ),
+                                                  //                     ),
+                                                  //                   ),
+                                                  //                 );
+                                                  //               },
+                                                  //             ),
+                                                  //       const SizedBox(height: 20),
+                                                  //     ]),
+                                                  //   ),
+                                                  // ),
 
                                                   if (!ResponsiveHelper.isDesktop(context))
                                                     DetailsWidget(
