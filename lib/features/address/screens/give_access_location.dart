@@ -30,8 +30,7 @@ class GiveAccessLocation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LocationProvider locationProvider =
-        Provider.of<LocationProvider>(context, listen: false);
+    final LocationProvider locationProvider = Provider.of<LocationProvider>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBarWidget(
         isBackButtonExist: false,
@@ -93,11 +92,9 @@ class GiveAccessLocation extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                icon: const Icon(Icons.arrow_back,
-                                    color: Colors.black)),
+                                icon: const Icon(Icons.arrow_back, color: Colors.black)),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -111,89 +108,51 @@ class GiveAccessLocation extends StatelessWidget {
                                   SizedBox(
                                       width: double.maxFinite,
                                       child: TypeAheadField<PredictionModel>(
-                                        suggestionsCallback: (pattern) async =>
-                                            await locationProvider
-                                                .searchLocation(
-                                                    context, pattern),
-                                        builder:
-                                            (context, controller, focusNode) =>
-                                                TextField(
+                                        suggestionsCallback: (pattern) async => await locationProvider.searchLocation(context, pattern),
+                                        builder: (context, controller, focusNode) => TextField(
                                           controller: controller,
                                           focusNode: focusNode,
-                                          textInputAction:
-                                              TextInputAction.search,
+                                          textInputAction: TextInputAction.search,
                                           autofocus: true,
-                                          textCapitalization:
-                                              TextCapitalization.words,
-                                          keyboardType:
-                                              TextInputType.streetAddress,
+                                          textCapitalization: TextCapitalization.words,
+                                          keyboardType: TextInputType.streetAddress,
                                           decoration: InputDecoration(
-                                            hintText: getTranslated(
-                                                'e.g. BTM layout', context),
+                                            hintText: getTranslated('e.g. BTM layout', context),
                                             border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                  style: BorderStyle.none,
-                                                  width: 0),
+                                              borderRadius: BorderRadius.circular(10),
+                                              borderSide: const BorderSide(style: BorderStyle.none, width: 0),
                                             ),
-                                            hintStyle: Theme.of(context)
-                                                .textTheme
-                                                .displayMedium!
-                                                .copyWith(
-                                                  fontSize: Dimensions
-                                                      .fontSizeDefault,
-                                                  color: Theme.of(context)
-                                                      .disabledColor,
+                                            hintStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                                  fontSize: Dimensions.fontSizeDefault,
+                                                  color: Theme.of(context).disabledColor,
                                                 ),
                                             filled: true,
-                                            fillColor: Color(0xffF2F2F3),
+                                            fillColor: const Color(0xffF2F2F3),
                                           ),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displayMedium!
-                                              .copyWith(
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge!
-                                                    .color,
-                                                fontSize:
-                                                    Dimensions.fontSizeLarge,
+                                          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                                color: Theme.of(context).textTheme.bodyLarge!.color,
+                                                fontSize: Dimensions.fontSizeLarge,
                                               ),
                                         ),
-                                        itemBuilder: (context, suggestion) =>
-                                            SearchItemWidget(
-                                                suggestion: suggestion),
-                                        onSelected:
-                                            (PredictionModel suggestion) async {
-                                          await locationProvider.setLocation(
-                                              suggestion.placeId,
-                                              suggestion.description,
-                                              null);
-                                          pushToAddAddress(isManual:true);
+                                        itemBuilder: (context, suggestion) => SearchItemWidget(suggestion: suggestion),
+                                        onSelected: (PredictionModel suggestion) async {
+                                          await locationProvider.setLocation(suggestion.placeId, suggestion.description, null);
+                                          pushToAddAddress(isManual: true);
                                         },
-                                        loadingBuilder: (context) =>
-                                            CustomLoaderWidget(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                        errorBuilder: (context, error) =>
-                                            const SearchItemWidget(),
-                                        emptyBuilder: (context) =>
-                                            const SearchItemWidget(),
+                                        loadingBuilder: (context) => CustomLoaderWidget(color: Theme.of(context).primaryColor),
+                                        errorBuilder: (context, error) => const SearchItemWidget(),
+                                        emptyBuilder: (context) => const SearchItemWidget(),
                                       )),
                                   ListTile(
                                     onTap: () {
                                       pushToAddAddress();
                                     },
-                                    visualDensity:
-                                        VisualDensity(horizontal: -4),
-                                    leading: SvgPicture.asset(
-                                        Images.currentLocationIcon),
+                                    visualDensity: const VisualDensity(horizontal: -4),
+                                    leading: SvgPicture.asset(Images.currentLocationIcon),
                                     contentPadding: EdgeInsets.zero,
                                     title: Text(
                                       "Use Current Location",
-                                      style: poppinsSemiBold.copyWith(
-                                          fontSize: 12),
+                                      style: poppinsSemiBold.copyWith(fontSize: 12),
                                     ),
                                   )
                                 ],
@@ -207,7 +166,7 @@ class GiveAccessLocation extends StatelessWidget {
               backgroundColor: const Color(0xffF2F2F3),
               textColor: Colors.black,
             ),
-            SizedBox(
+            const SizedBox(
               height: 70,
             )
           ],
@@ -216,12 +175,29 @@ class GiveAccessLocation extends StatelessWidget {
     );
   }
 
-  void pushToAddAddress({isManual=false}) async {
-    Navigator.of(Get.context!).pushNamed(RouteHelper.getAddAddressRoute(
-        'address', 'add', AddressModel(),
-        fromStart: true,
-      fromManualAddress: isManual
-    ));
+  void pushToAddAddress({isManual = false}) async {
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Adjust the radius as needed
+      ),
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          width: double.maxFinite,
+          decoration: const BoxDecoration(
+            color: Colors.white, // Ensure background color matches
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded top corners
+          ),
+          child: AddNewAddressScreen(
+            address: AddressModel(),
+            fromStart: true,
+            fromManualAddAddress: isManual,
+          ),
+        );
+      },
+    );
 
   }
 }
