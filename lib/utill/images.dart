@@ -151,6 +151,7 @@ class Images {
   static const String orderIcon = 'assets/svg/orderIcon.svg';
   static const String cartIconBottom = 'assets/svg/cartIcon.svg';
   static const String setting = 'assets/svg/Setting.svg';
+  static const String categories = 'assets/svg/Category.svg';
 
   static const String myAccount = 'assets/svg/my_account.png';
   static const String myAddress = 'assets/svg/my_address.png';

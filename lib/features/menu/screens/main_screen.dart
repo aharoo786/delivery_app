@@ -188,6 +188,7 @@ class _MainScreenState extends State<MainScreen> {
                               ]),
                         ),
                   body: splash.screenList[splash.pageIndex].screen,
+                  // body: SizedBox(),
                 ),
               ),
             );

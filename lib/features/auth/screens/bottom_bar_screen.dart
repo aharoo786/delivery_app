@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../common/widgets/custom_image_widget.dart';
 import '../../../utill/images.dart';
+import '../../category/screens/all_categories_screen.dart';
 import '../../order/screens/order_list_screen.dart';
 import '../../profile/providers/profile_provider.dart';
 import '../../splash/providers/splash_provider.dart';
@@ -38,6 +39,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   final List<Widget> _widgetOption = [
     HomeScreen(),
+    AllCategoriesScreen(),
     CartScreen(),
     OrderListScreen(),
     AccountScreen()
@@ -94,6 +96,14 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                         Theme.of(context).primaryColor, BlendMode.srcIn),
                   ),
                   label: "Home"),
+              BottomNavigationBarItem(
+                  icon: SvgPicture.asset(Images.categories),
+                  activeIcon: SvgPicture.asset(
+                    Images.categories,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).primaryColor, BlendMode.srcIn),
+                  ),
+                  label: "Categories"),
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(Images.cartIconBottom),
                   activeIcon: SvgPicture.asset(
