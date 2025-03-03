@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_grocery/common/enums/footer_type_enum.dart';
 import 'package:flutter_grocery/features/cart/screens/coupon_screen.dart';
 import 'package:flutter_grocery/features/cart/widgets/cart_button_widget.dart';
@@ -18,13 +19,19 @@ import 'package:flutter_grocery/common/widgets/no_data_widget.dart';
 import 'package:flutter_grocery/common/widgets/web_app_bar_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/models/config_model.dart';
 import '../../../common/providers/localization_provider.dart';
+import '../../../common/providers/product_provider.dart';
 import '../../../common/widgets/custom_loader_widget.dart';
 import '../../../common/widgets/custom_shadow_widget.dart';
 import '../../../common/widgets/custom_single_child_list_widget.dart';
+import '../../../common/widgets/title_widget.dart';
 import '../../../helper/date_converter_helper.dart';
+import '../../../helper/route_helper.dart';
 import '../../../utill/color_resources.dart';
+import '../../../utill/product_type.dart';
 import '../../../utill/styles.dart';
+import '../../home/widgets/home_item_widget.dart';
 import '../widgets/cart_details_widget.dart';
 import '../widgets/delivery_option_widget.dart';
 
@@ -43,6 +50,10 @@ class _CartScreenState extends State<CartScreen> {
     _couponController.clear();
     Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
     Provider.of<OrderProvider>(context, listen: false).setOrderType('delivery', notify: false);
+    final productProvider = Provider.of<ProductProvider>(context, listen: false);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      productProvider.getItemList(1, isUpdate: false, productType: ProductType.dailyItem);
+    });
 
     super.initState();
   }
@@ -93,162 +104,42 @@ class _CartScreenState extends State<CartScreen> {
                               width: Dimensions.webScreenWidth,
                               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 // Product
-
-                                const SizedBox(height: 24),
-                                Text(
-                                  'Cart',
-                                  style: poppinsSemiBold.copyWith(
-                                    fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 20,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-
-                                _cartScreenWidget(
-                                    context: context,
-                                    icon: Icons.location_on_outlined,
-                                    isImage: false,
-                                    text: "Delivery Address",
-                                    subTitle: '12th Main Road, Sector 6, HSR Layout, Bengaluru, Karnataka,...'),
-
-                                const SizedBox(height: 56),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      'Items in your cart',
-                                      style: poppinsSemiBold.copyWith(
+                                      'Cart',
+                                      style: poppinsBold.copyWith(
                                         fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 20,
                                       ),
                                     ),
                                     Text(
-                                      '+ Add More',
-                                      style: poppinsSemiBold.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 14,
-                                          color: Theme.of(context).primaryColor),
+                                      '${cart.cartList.length} Items',
+                                      style: poppinsMedium.copyWith(
+                                        fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
+                                      ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 16),
-
                                 const CartProductListWidget(),
                                 const SizedBox(height: Dimensions.paddingSizeDefault),
-                                Container(
-                                  height: 50,
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).disabledColor.withOpacity(0.05),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    'Add Cooking Instruction',
-                                    style: poppinsSemiBold.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 14,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: Dimensions.paddingSizeDefault),
-                                Text('Delivery Time', style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
-                                const SizedBox(height: Dimensions.paddingSizeDefault),
+                                const Divider(color: ColorResources.borderColor),
+                                Consumer<ProductProvider>(builder: (context, productProvider, child) {
+                                  bool isDalyProduct = (productProvider.dailyProductModel == null || (productProvider.dailyProductModel?.products?.isNotEmpty ?? false));
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        cart.showSchedule0rStandard(true, false);
-                                      },
-                                      child: Container(
-                                        width: 150,
-                                        height: 60,
-                                        padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeExtraSmall),
-                                        margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
-                                        decoration: cart.isShowStandardTime
-                                            ? BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1))
-                                            : BoxDecoration(
-                                                color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: ColorResources.borderColor, width: 1)),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              Images.clock,
-                                              height: 20,
-                                              width: 20,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Standard',
-                                                  style: poppinsRegular.copyWith(color: Colors.black, fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600
-                                                      // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                                                      ),
-                                                ),
-                                                Text(
-                                                  '20-30 Mins',
-                                                  style: poppinsRegular.copyWith(color: Colors.black, fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeSmall
-                                                      // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                    Text(
+                                      'Delivery Options',
+                                      style: poppinsSemiBold.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        await Provider.of<OrderProvider>(context, listen: false).initializeTimeSlot();
-                                        cart.showSchedule0rStandard(false, true);
-                                      },
-                                      child: Container(
-                                        width: 150,
-                                        height: 60,
-                                        padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeExtraSmall),
-                                        // alignment: Alignment.center,
-                                        margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
-                                        decoration: cart.isShowScheduleTime
-                                            ? BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1))
-                                            : BoxDecoration(
-                                                color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: ColorResources.borderColor, width: 1)),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              Images.dateIcon,
-                                              height: 20,
-                                              width: 20,
-                                            ),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Schedule',
-                                                  style: poppinsRegular.copyWith(color: Colors.black, fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600
-                                                      // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                                                      ),
-                                                ),
-                                                Text(
-                                                  'Select Time',
-                                                  style: poppinsRegular.copyWith(color: Colors.black, fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeSmall
-                                                      // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                    HomeItemWidget(productList: productProvider.dailyProductModel?.products),
+                                  ]);
+                                }),
+                                const SizedBox(height: Dimensions.paddingSizeDefault),
+                                const Divider(color: ColorResources.borderColor),
                                 const SizedBox(height: Dimensions.paddingSizeDefault),
                                 if (cart.isShowScheduleTime)
                                   // Time Slot
@@ -361,43 +252,26 @@ class _CartScreenState extends State<CartScreen> {
                                   color: ColorResources.borderColor,
                                 ),
                                 const SizedBox(height: Dimensions.paddingSizeDefault),
-                                GestureDetector(
-                                    onTap: () {
-                                      cart.showDeliveryInstructions();
-                                    },
-                                    child: _cartScreenWidget(
-                                        context: context,
-                                        icon: Images.instruction,
-                                        isImage: true,
-                                        text: "Delivery Instructions",
-                                        subTitle: Provider.of<OrderProvider>(context).orderType,
-                                        isNotFromDeliveryInstructions: false)),
-                                if (cart.isDeliveryInstructionOpen)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).cardColor,
-                                      borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
-                                    ),
-                                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                      DeliveryOptionWidget(value: 'delivery', title: getTranslated('home_delivery', context)),
-                                      if (configModel.selfPickup == 1) ...[
-                                        DeliveryOptionWidget(value: 'self_pickup', title: getTranslated('self_pickup', context)),
-                                      ],
-                                    ]),
-                                  ),
-                                const SizedBox(height: Dimensions.paddingSizeDefault),
-                                const Divider(
-                                  color: ColorResources.borderColor,
-                                ),
-                                const SizedBox(height: Dimensions.paddingSizeDefault),
-
                                 Consumer<CouponProvider>(builder: (context, couponProvider, child) {
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                                        return CouponScreen(subTotal: subTotal);
-                                      }));
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)), // Rounded top corners
+                                        ),
+                                        backgroundColor: Colors.transparent, // Important: Makes sure the background is clear
+                                        builder: (context) {
+                                          return SizedBox(
+                                            height: MediaQuery.of(context).size.height * 0.6,
+                                            width: double.maxFinite,
+                                            child: ClipRRect(
+                                                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)), // Ensure modal is clipped
+                                                child: CouponScreen(subTotal: subTotal, comesFromCart: true)),
+                                          );
+                                        },
+                                      );
                                     },
                                     child: _cartScreenWidget(
                                         context: context,
@@ -412,6 +286,47 @@ class _CartScreenState extends State<CartScreen> {
 
                                 const SizedBox(height: Dimensions.paddingSizeDefault),
 
+                                const Divider(
+                                  color: ColorResources.borderColor,
+                                ),
+                                const SizedBox(height: Dimensions.paddingSizeDefault),
+                                Text(
+                                  'Delivery Options',
+                                  style: poppinsSemiBold.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).cardColor,
+                                    borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                    boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 1))],
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: DeliveryOptionWidget(
+                                          value: 'delivery',
+                                          title: getTranslated('home_delivery', context),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      if (configModel.selfPickup == 1)
+                                        Expanded(
+                                          child: DeliveryOptionWidget(
+                                            value: 'self_pickup',
+                                            title: getTranslated('self_pickup', context),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(height: Dimensions.paddingSizeDefault),
                                 const Divider(
                                   color: ColorResources.borderColor,
                                 ),
