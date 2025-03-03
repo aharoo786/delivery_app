@@ -122,7 +122,7 @@ class PlaceOrderButtonWidget extends StatelessWidget {
 
             CustomButtonWidget(
               borderRadius: fromOfflinePayment ? Dimensions.radiusSizeLarge : Dimensions.radiusSizeDefault,
-            buttonText: getTranslated(fromOfflinePayment ? 'submit' : 'place_order', context),
+            buttonText: getTranslated(fromOfflinePayment ? 'submit' : 'Make Payment', context),
             onPressed: () async{
               if(fromOfflinePayment){
                 Navigator.pop(context);

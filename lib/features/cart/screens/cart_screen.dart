@@ -129,7 +129,7 @@ class _CartScreenState extends State<CartScreen> {
 
                                   return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                     Text(
-                                      'Delivery Options',
+                                      'Popular with your order',
                                       style: poppinsSemiBold.copyWith(
                                         fontWeight: FontWeight.w600,
                                         fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
