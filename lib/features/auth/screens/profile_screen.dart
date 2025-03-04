@@ -42,10 +42,12 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     super.initState();
 
-    _isLoggedIn = Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
+    _isLoggedIn =
+        Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
 
     if (_isLoggedIn) {
-      Provider.of<ProfileProvider>(context, listen: false).getUserInfo(true, isUpdate: true);
+      Provider.of<ProfileProvider>(context, listen: false)
+          .getUserInfo(true, isUpdate: true);
     }
   }
 
@@ -59,221 +61,241 @@ class _AccountScreenState extends State<AccountScreen> {
       //
       //   }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
       // ),
-      body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 56,
-            ),
-            // Profile Section
-            Center(
+      body: !_isLoggedIn
+          ? const NotLoggedInWidget()
+          : SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _isLoggedIn
-                      ? Consumer<ProfileProvider>(builder: (context, profileProvider, child) {
-                          return profileProvider.userInfoModel == null
-                              ? const SizedBox.shrink()
-                              : Column(
-                                  children: [
-                                    // ProfileHeaderWidget(),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Profile Section
+                  Center(
+                    child: Column(
+                      children: [
+                        _isLoggedIn
+                            ? Consumer<ProfileProvider>(
+                                builder: (context, profileProvider, child) {
+                                return profileProvider.userInfoModel == null
+                                    ? const SizedBox.shrink()
+                                    : Column(
                                         children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${profileProvider.userInfoModel?.fName ?? ''} ${profileProvider.userInfoModel?.lName ?? ''}',
-                                                style: poppinsMedium.copyWith(fontWeight: FontWeight.w700, fontSize: Dimensions.fontSizeOverLarge),
-                                              ),
-                                              Text(
-                                                profileProvider.userInfoModel!.phone ?? '',
-                                                style: poppinsRegular.copyWith(fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeDefault),
-                                              ),
-                                            ],
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).pushNamed(RouteHelper.profile, arguments: const ProfileScreen());
-                                            },
-                                            child: Container(
-                                              height: 48,
-                                              width: 48,
-                                              margin: const EdgeInsets.only(right: 16),
-                                              padding: const EdgeInsets.all(10),
-                                              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xffF2F2F3)),
-                                              child: SvgPicture.asset(
-                                                Images.userIconBottom,
-                                                color: Colors.black,
-                                              ),
+                                          // ProfileHeaderWidget(),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${profileProvider.userInfoModel?.fName ?? ''} ${profileProvider.userInfoModel?.lName ?? ''}',
+                                                      style: poppinsMedium.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontSize: Dimensions
+                                                              .fontSizeOverLarge),
+                                                    ),
+                                                    Text(
+                                                      profileProvider
+                                                              .userInfoModel!
+                                                              .phone ??
+                                                          '',
+                                                      style: poppinsRegular.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: Dimensions
+                                                              .fontSizeDefault),
+                                                    ),
+                                                  ],
+                                                ),
+                                                // GestureDetector(
+                                                //   onTap: () {
+                                                //     Navigator.of(context).pushNamed(RouteHelper.profile, arguments: const ProfileScreen());
+                                                //   },
+                                                //   child: Container(
+                                                //     height: 48,
+                                                //     width: 48,
+                                                //     margin: const EdgeInsets.only(right: 16),
+                                                //     padding: const EdgeInsets.all(10),
+                                                //     decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xffF2F2F3)),
+                                                //     child: SvgPicture.asset(
+                                                //       Images.userIconBottom,
+                                                //       color: Colors.black,
+                                                //     ),
+                                                //   ),
+                                                // )
+                                              ],
                                             ),
-                                          )
+                                          ),
                                         ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                        })
-                      : const NotLoggedInWidget(),
+                                      );
+                              })
+                            : const NotLoggedInWidget(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 26),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myAccount,
+                    icon: Icons.person_outline,
+                    title: 'My Account',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const ProfileScreen();
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myOrder,
+                    icon: Icons.person_outline,
+                    title: 'My order',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return OrderListScreen(
+                          showAppBar: true,
+                        );
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myPayment,
+                    icon: Icons.settings_outlined,
+                    title: 'Payment',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return WalletScreen(
+                          showAppBar: true,
+                        );
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myAddress,
+                    icon: Icons.settings_outlined,
+                    title: 'Address',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return AddressListScreen(
+                          showAppBar: true,
+                        );
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myFav,
+                    icon: Icons.settings_outlined,
+                    title: 'Favourites',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const WishListScreen();
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: false,
+                    svgPath: Images.loyaltyPoint,
+                    icon: Icons.loyalty,
+                    title: getTranslated('loyalty_point', context),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const LoyaltyScreen();
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.referralIcon,
+                    icon: Icons.settings_outlined,
+                    title: getTranslated('referAndEarn', context),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const ReferAndEarnScreen();
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myPromoCode,
+                    icon: Icons.settings_outlined,
+                    title: 'Promo Codes',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return CouponScreen();
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.mySettings,
+                    icon: Icons.settings_outlined,
+                    title: 'Settings',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const SettingsScreen();
+                      }));
+                    },
+                  ),
+
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myHelp,
+                    icon: Icons.info_outline,
+                    title: getTranslated('terms_and_condition', context),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const HtmlViewerScreen(
+                            htmlType: HtmlType.termsAndCondition);
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myHelp,
+                    icon: Icons.info_outline,
+                    title: 'About us',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const HtmlViewerScreen(
+                            htmlType: HtmlType.aboutUs);
+                      }));
+                    },
+                  ),
+                  AccountOption(
+                    isImg: true,
+                    svgPath: Images.myHelp,
+                    icon: Icons.info_outline,
+                    title: 'Help',
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                        return const HtmlViewerScreen(
+                            htmlType: HtmlType.aboutUs);
+                      }));
+                    },
+                  ),
+
+                  AccountOption(
+                    icon: Icons.logout,
+                    title: 'Log Out',
+                    iconColor: Theme.of(context).colorScheme.error,
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const SignOutDialogWidget());
+                    },
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 26),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myAccount,
-              icon: Icons.person_outline,
-              title: 'My Account',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return const ProfileScreen();
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myOrder,
-              icon: Icons.person_outline,
-              title: 'My order',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return OrderListScreen(
-                    showAppBar: true,
-                  );
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myPayment,
-              icon: Icons.settings_outlined,
-              title: 'Payment',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return WalletScreen(
-                    showAppBar: true,
-                  );
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myAddress,
-              icon: Icons.settings_outlined,
-              title: 'Address',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return AddressListScreen(
-                    showAppBar: true,
-                  );
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myFav,
-              icon: Icons.settings_outlined,
-              title: 'Favourites',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx){
-                  return const WishListScreen();
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: false,
-              svgPath: Images.loyaltyPoint,
-              icon: Icons.loyalty,
-              title: 'loyalty points',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx){
-                  return const LoyaltyScreen();
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.referralIcon,
-              icon: Icons.settings_outlined,
-              title: 'refer and earn',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx){
-                  return const ReferAndEarnScreen();
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myPromoCode,
-              icon: Icons.settings_outlined,
-              title: 'Promocodes',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx){
-                  return CouponScreen();
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.mySettings,
-              icon: Icons.settings_outlined,
-              title: 'Settings',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return const SettingsScreen();
-                }));
-              },
-            ),
-
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myHelp,
-              icon: Icons.info_outline,
-              title: 'terms and conditions',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return const HtmlViewerScreen(htmlType: HtmlType.termsAndCondition);
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myHelp,
-              icon: Icons.info_outline,
-              title: 'About us',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return const HtmlViewerScreen(htmlType: HtmlType.aboutUs);
-                }));
-              },
-            ),
-            AccountOption(
-              isImg: true,
-              svgPath: Images.myHelp,
-              icon: Icons.info_outline,
-              title: 'Help',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return const HtmlViewerScreen(htmlType: HtmlType.aboutUs);
-                }));
-              },
-            ),
-
-            AccountOption(
-              icon: Icons.logout,
-              title: 'Log Out',
-              iconColor: Theme.of(context).colorScheme.error,
-              onTap: (){
-                showDialog(context: context, barrierDismissible: false, builder: (context) => const SignOutDialogWidget());
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -308,7 +330,16 @@ class AccountOption extends StatelessWidget {
   final bool isImg;
   final Function()? onTap;
 
-  const AccountOption({super.key, required this.icon, required this.title, this.trailing, this.iconColor, this.onTap, this.isSvg = false, this.svgPath, this.isImg = false});
+  const AccountOption(
+      {super.key,
+      required this.icon,
+      required this.title,
+      this.trailing,
+      this.iconColor,
+      this.onTap,
+      this.isSvg = false,
+      this.svgPath,
+      this.isImg = false});
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +363,8 @@ class AccountOption extends StatelessWidget {
                   )
                 : Icon(
                     icon,
-                    color: iconColor ?? Theme.of(context).textTheme.bodyMedium?.color,
+                    color: iconColor ??
+                        Theme.of(context).textTheme.bodyMedium?.color,
                     size: 20,
                   ),
         title: Text(title,
@@ -379,7 +411,8 @@ class SwitchOption extends StatelessWidget {
           value: value,
           activeTrackColor: const Color(0xff40C979),
           inactiveTrackColor: Colors.grey,
-          thumbColor: WidgetStateProperty.all(Theme.of(context).secondaryHeaderColor),
+          thumbColor:
+              WidgetStateProperty.all(Theme.of(context).secondaryHeaderColor),
           onChanged: (bool newValue) {},
           trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
         ),

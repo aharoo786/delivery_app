@@ -122,7 +122,7 @@ class BannersWidget extends StatelessWidget {
                                             image:
                                                 '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.bannerImageUrl}'
                                                 '/${bannerProvider.bannerList![index].image}',
-                                            fit: BoxFit.cover,
+                                            fit: BoxFit.contain,
                                           ),
                                         ),
                                       ),
@@ -132,7 +132,7 @@ class BannersWidget extends StatelessWidget {
                               ),
                             ),
                             SizedBox(
-                              height: 22,
+                              height: 10,
                             ),
                             if (!ResponsiveHelper.isDesktop(context))
                               BannerIndicatorView(),
@@ -193,11 +193,11 @@ class BannerIndicatorView extends StatelessWidget {
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   height: 5,
-                  width: 10,
+                  width: index == bannerProvider.currentIndex?20:10,
                   decoration: BoxDecoration(
                       color: index == bannerProvider.currentIndex
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).primaryColor.withOpacity(0.5),
+                          ? Colors.black
+                          :  Colors.black.withOpacity(0.5),
                       borderRadius:
                           BorderRadius.circular(Dimensions.radiusSizeDefault)),
                 );

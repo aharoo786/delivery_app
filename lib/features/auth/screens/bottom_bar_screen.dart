@@ -138,7 +138,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   label: _isLoggedIn ? "" : "Account"),
             ],
             onTap: (value) async {
-              Provider.of<SplashProvider>(context, listen: false).bottomBarIndex = value;
+              Provider.of<SplashProvider>(context, listen: false)
+                  .bottomBarIndex = value;
               setState(() {
                 widget.index = value;
               });
@@ -166,14 +167,14 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           ],
         ),
         child: ClipOval(
-            child: CustomImageWidget(
-          placeholder: Images.placeHolder,
-          height: 40,
-          width: 40,
-          fit: BoxFit.cover,
-          image:
-              '${splashProvider.baseUrls?.customerImageUrl}/${profileProvider.userInfoModel?.image}',
-        )),
+                child: CustomImageWidget(
+                placeholder: Images.avatar,
+                height: 40,
+                width: 40,
+                fit: BoxFit.cover,
+                image:
+                    '${splashProvider.baseUrls?.customerImageUrl}/${profileProvider.userInfoModel?.image}',
+              )),
       );
     });
   }

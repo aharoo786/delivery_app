@@ -167,8 +167,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           animationType: AnimationType.fade,
                           pinTheme: PinTheme(
                             shape: PinCodeFieldShape.box,
-                            fieldHeight: 56,
-                            fieldWidth: 56,
+                            fieldHeight: 50,
+                            fieldWidth: 50,
                             borderWidth: 1,
                             borderRadius: BorderRadius.circular(4),
                             selectedColor: Colors.black,

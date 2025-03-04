@@ -31,8 +31,9 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
         color: Theme.of(context).textTheme.bodyLarge!.color,
         onPressed: () => onBackPressed != null ? onBackPressed!() : Navigator.pop(context),
       ) : const SizedBox(),
-      backgroundColor: Theme.of(context).cardColor,
+      backgroundColor: Colors.white,
       elevation: isElevation ? 2 : 0,
+      scrolledUnderElevation: 0,
       actions: [
         fromCategory ? PopupMenuButton(
             elevation: 20,

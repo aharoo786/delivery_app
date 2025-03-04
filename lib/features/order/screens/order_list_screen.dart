@@ -122,6 +122,7 @@ class _OrderListScreenState extends State<OrderListScreen>
           ? Consumer<OrderProvider>(builder: (context, orderProvider, child) {
               return Column(
                 children: [
+                  SizedBox(height: 40,),
                   ResponsiveHelper.isDesktop(context)
                       ? Padding(
                           padding: const EdgeInsets.symmetric(

@@ -23,6 +23,7 @@ import 'package:flutter_grocery/helper/route_helper.dart';
 import 'package:flutter_grocery/localization/language_constraints.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/product_type.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/widgets/custom_text_field_widget.dart';
@@ -119,29 +120,59 @@ class _HomeScreenState extends State<HomeScreen> {
             width: Dimensions.webScreenWidth,
             child: Column(children: [
               const SizedBox(
-                height: 10,
+                height: 50,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: Dimensions.paddingSizeDefault),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteHelper.searchProduct);
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: CustomTextFieldWidget(
-                      isShowBorder: false,
-                      fillColor: const Color(0xffF5F5F5),
-                      isShowPrefixIcon: true,
-                      isEnabled: false,
-                      prefixAssetUrl: Images.search,
-                      hintText: "Search here",
-                      prefixAssetImageColor: Theme.of(context).disabledColor,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, RouteHelper.searchProduct);
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          child: CustomTextFieldWidget(
+                            isShowBorder: false,
+                            fillColor: const Color(0xffF5F5F5),
+                            isShowPrefixIcon: true,
+                            isEnabled: false,
+                            prefixAssetUrl: Images.search,
+                            hintText: "Search here",
+                            prefixAssetImageColor:
+                                Theme.of(context).disabledColor,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigator.of(context).pushNamed(
+                        //     RouteHelper.profile,
+                        //     arguments: const ProfileScreen());
+                      },
+                      child: Container(
+                        height: 48,
+                        width: 48,
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Color(0xffF2F2F3)),
+                        child: SvgPicture.asset(
+                          Images.notification,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
               /// Category
               Padding(
                 padding: EdgeInsets.only(

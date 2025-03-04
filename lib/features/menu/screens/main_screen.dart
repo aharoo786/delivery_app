@@ -21,6 +21,7 @@ import 'package:flutter_grocery/features/refer_and_earn/screens/refer_and_earn_s
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../auth/providers/auth_provider.dart';
 import '../../profile/screens/profile_screen.dart';
 
 // List<MainScreenModel> screenList = [
@@ -65,11 +66,14 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   bool canExit = kIsWeb;
+  late bool _isLoggedIn;
 
   @override
   void initState() {
     final SplashProvider splashProvider =
         Provider.of<SplashProvider>(context, listen: false);
+    _isLoggedIn =
+        Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
     splashProvider.initializeScreenList();
     print("----------(INITIALIZED)----------${widget.isReload}");
     if (widget.isReload) {
@@ -115,78 +119,77 @@ class _MainScreenState extends State<MainScreen> {
                   //             configModel: splash.configModel),
                   //       )
                   //     : null,
-                  appBar: ResponsiveHelper.isDesktop(context)
-                      ? null
-                      :splash.bottomBarIndex == 3 ?null:PreferredSize(
-                          preferredSize: Size.fromHeight(65),
-                          child: AppBar(
-                              backgroundColor: Theme.of(context).cardColor,
-                              centerTitle: true,
-                              elevation: 0,
-                              scrolledUnderElevation: 0,
-                              leading: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 5, left: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Deliver Now",
-                                      style: poppinsRegular.copyWith(
-                                          color: Color(0xff868E96)),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(
-                                      height: 2,
-                                    ),
-                                    Consumer<LocationProvider>(
-                                      builder: (BuildContext context, value,
-                                          Widget? child) {
-                                        return Row(
-                                          children: [
-                                            Text(
-                                              value.address!.isEmpty
-                                                  ? "Address.."
-                                                  : value.address ?? "",
-                                              style: poppinsSemiBold.copyWith(
-                                                  fontSize: 20),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Icon(Icons
-                                                .keyboard_arrow_down_rounded)
-                                          ],
-                                        );
-                                      },
-                                    )
-                                  ],
-                                ),
-                              ),
-                              leadingWidth: 168,
-                              actions: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        RouteHelper.profile,
-                                        arguments: const ProfileScreen());
-                                  },
-                                  child: Container(
-                                    height: 48,
-                                    width: 48,
-                                    margin: EdgeInsets.only(right: 16),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xffF2F2F3)),
-                                    child: SvgPicture.asset(
-                                      Images.userIconBottom,
-                                      color: Colors.black,
-                                    ),
+                  appBar: splash.bottomBarIndex == 4 && _isLoggedIn
+                      ? AppBar(
+                          backgroundColor: Theme.of(context).cardColor,
+                          centerTitle: true,
+                          elevation: 0,
+                          automaticallyImplyLeading: false,
+                          scrolledUnderElevation: 0,
+                          // leading: Padding(
+                          //   padding:
+                          //   const EdgeInsets.only(top: 5, left: 16),
+                          //   child: Column(
+                          //     crossAxisAlignment:
+                          //     CrossAxisAlignment.start,
+                          //     children: [
+                          //       Text(
+                          //         "Deliver Now",
+                          //         style: poppinsRegular.copyWith(
+                          //             color: Color(0xff868E96)),
+                          //         maxLines: 1,
+                          //         overflow: TextOverflow.ellipsis,
+                          //       ),
+                          //       SizedBox(
+                          //         height: 2,
+                          //       ),
+                          //       Consumer<LocationProvider>(
+                          //         builder: (BuildContext context, value,
+                          //             Widget? child) {
+                          //           return Row(
+                          //             children: [
+                          //               Text(
+                          //                 value.address!.isEmpty
+                          //                     ? "Address.."
+                          //                     : value.address ?? "",
+                          //                 style: poppinsSemiBold
+                          //                     .copyWith(fontSize: 20),
+                          //                 maxLines: 1,
+                          //                 overflow:
+                          //                 TextOverflow.ellipsis,
+                          //               ),
+                          //               Icon(Icons
+                          //                   .keyboard_arrow_down_rounded)
+                          //             ],
+                          //           );
+                          //         },
+                          //       )
+                          //     ],
+                          //   ),
+                          // ),
+                          actions: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      RouteHelper.profile,
+                                      arguments: const ProfileScreen());
+                                },
+                                child: Container(
+                                  height: 48,
+                                  width: 48,
+                                  margin: EdgeInsets.only(right: 16),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xffF2F2F3)),
+                                  child: SvgPicture.asset(
+                                    Images.userIconBottom,
+                                    color: Colors.black,
                                   ),
-                                )
-                              ]),
-                        ),
+                                ),
+                              )
+                            ])
+                      : null,
                   body: splash.screenList[splash.pageIndex].screen,
                   // body: SizedBox(),
                 ),
