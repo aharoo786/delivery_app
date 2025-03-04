@@ -18,7 +18,8 @@ import '../../splash/providers/splash_provider.dart';
 
 class CouponScreen extends StatefulWidget {
   final double subTotal;
-  CouponScreen({super.key, this.subTotal = 0.0});
+  final bool comesFromCart;
+  CouponScreen({super.key, this.subTotal = 0.0, this.comesFromCart = false});
 
   @override
   State<CouponScreen> createState() => _CouponScreenState();
@@ -40,15 +41,23 @@ class _CouponScreenState extends State<CouponScreen> {
     return Scaffold(
       appBar: (ResponsiveHelper.isDesktop(context)
           ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
-          : AppBar(
-              backgroundColor: Colors.white,
-              scrolledUnderElevation: 0.0,
-              leading: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(Icons.arrow_back, color: Colors.black)),
-            )),
+          : widget.comesFromCart
+              ? AppBar(
+                  backgroundColor: Colors.white,
+                  scrolledUnderElevation: 0.0,
+                  leading: const SizedBox.shrink(),
+                  title: const Icon(Icons.keyboard_arrow_down),
+                  centerTitle: true, // Ensures centering
+                )
+              : AppBar(
+                  backgroundColor: Colors.white,
+                  scrolledUnderElevation: 0.0,
+                  leading: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(Icons.arrow_back, color: Colors.black)),
+                )),
       body: Consumer<CouponProvider>(builder: (context, couponProvider, child) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
@@ -134,7 +143,7 @@ class _CouponScreenState extends State<CouponScreen> {
 
                               print(coupon.discountType);
                             },
-                            child: _searchScreenCategoryWidget(context: context, coupon: coupon , couponProvider: couponProvider),
+                            child: _searchScreenCategoryWidget(context: context, coupon: coupon, couponProvider: couponProvider),
                           );
                         },
                       ),
@@ -148,7 +157,7 @@ class _CouponScreenState extends State<CouponScreen> {
     );
   }
 
-  _searchScreenCategoryWidget({context, required CouponModel coupon , required CouponProvider couponProvider}) {
+  _searchScreenCategoryWidget({context, required CouponModel coupon, required CouponProvider couponProvider}) {
     return Container(
       width: 84,
       margin: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraSmall, horizontal: 2),

@@ -23,149 +23,144 @@ class ImageNoteUploadWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final ConfigModel? configModel = Provider.of<SplashProvider>(context, listen: false).configModel;
 
-    return (configModel?.orderImageStatus ?? false) ?  CustomShadowWidget(
-      margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeSmall),
-      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeDefault),
-      child: Consumer<OrderImageNoteProvider>(
-        builder: (context, imageNoteProvider, _) {
-          return Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Row(mainAxisSize: MainAxisSize.min, children: [
-                Text(configModel?.orderImageLabelName ?? '', style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge)),
-                const SizedBox(width: Dimensions.paddingSizeSmall),
+    return (configModel?.orderImageStatus ?? false)
+        ? CustomShadowWidget(
+            child: Consumer<OrderImageNoteProvider>(builder: (context, imageNoteProvider, _) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// **Title**
+                  Text(
+                    "Upload Prescription",
+                    style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge),
+                  ),
+                  const SizedBox(height: Dimensions.paddingSizeDefault),
 
-                Text('(${getTranslated('max_size', context)})', style: poppinsRegular.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                  fontSize: Dimensions.fontSizeSmall,
-                ), maxLines: 2, overflow: TextOverflow.ellipsis,),
-              ]),
+                  /// **Images Row**
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        /// **Uploaded Images**
+                        ...List.generate(
+                          imageNoteProvider.imageFiles?.length ?? 0,
+                          (index) => Padding(
+                            padding: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
+                            child: Stack(
+                              children: [
+                                /// **Image Container**
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: ResponsiveHelper.isWeb()
+                                        ? Image.network(
+                                            imageNoteProvider.imageFiles![index]!.path,
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.file(
+                                            File(imageNoteProvider.imageFiles![index]!.path),
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
 
-              Flexible(child: TextButton(
-                onPressed: ()=> _onImageUpload(context),
-                child: Text(
-                  getTranslated( 'add', context),
-                  style: poppinsRegular.copyWith(color: Theme.of(context).primaryColor),
-                ),
-              )),
-            ]),
-            const Divider(height: 1),
-
-            if(imageNoteProvider.imageFiles?.isEmpty ?? false) InkWell(
-              onTap: ()=> _onImageUpload(context),
-              child: Padding(
-                padding: const EdgeInsets.only(top: Dimensions.paddingSizeDefault),
-                child: Stack(children: [
-                    Container(width: 100, height: 100,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      child: const ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(Dimensions.paddingSizeDefault)),
-                        child: CustomAssetImageWidget(Images.placeHolder),
-                      ),
-                    ),
-
-                    Positioned(top: 0, right: 0, child: Padding(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                      child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(Dimensions.paddingSizeDefault)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                            child: Icon(Icons.file_upload_outlined,color: Theme.of(context).primaryColor, size: Dimensions.paddingSizeLarge),
-                          )),
-                    )),
-
-                  ]),
-              ),
-            ),
-
-
-            CustomSingleChildListWidget(
-              scrollDirection: Axis.horizontal,
-              itemCount: imageNoteProvider.imageFiles?.length ?? 0,
-              itemBuilder: (index){
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Stack(children: [
-                    Container(width: 100, height: 100,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeDefault)),
-                        child: ResponsiveHelper.isWeb()? Image.network(imageNoteProvider.imageFiles![index]!.path, width: 100, height: 100,
-                          fit: BoxFit.cover,
-                        ):Image.file(File(imageNoteProvider.imageFiles![index]!.path), width: 100, height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ) ,
-                    ),
-
-                    Positioned(top: 0, right: 0, child: Padding(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                      child: InkWell(
-                        onTap :() => imageNoteProvider.removeImage(index),
-                        child: Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(Dimensions.paddingSizeDefault)),
+                                /// **Delete Button (X)**
+                                Positioned(
+                                  top: 5,
+                                  right: 5,
+                                  child: InkWell(
+                                    onTap: () => imageNoteProvider.removeImage(index),
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                              child: Icon(Icons.clear,color: Colors.red,size: 15,),
-                            )),
+                          ),
+                        ),
 
-                      ),
-                    )),
-
-                  ]),
-                );
-              },
-            ),
-
-
-
-
-          ]);
-        }
-      ),
-    ) : const SizedBox();
+                        /// **"Add Image" Box**
+                        InkWell(
+                          onTap: () => _onImageUpload(context),
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400, width: 1.5),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add, color: Colors.green, size: 30),
+                                SizedBox(height: 5),
+                                Text("Add Image", style: TextStyle(color: Colors.green, fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }),
+          )
+        : const SizedBox();
   }
 
-
+  /// **Image Upload Function**
   void _onImageUpload(BuildContext context) {
     final OrderImageNoteProvider orderImageNoteProvider = Provider.of<OrderImageNoteProvider>(context, listen: false);
 
-    if(kIsWeb) {
+    if (kIsWeb) {
       orderImageNoteProvider.onPickImage(false);
-
-    }else {
-      ResponsiveHelper.showDialogOrBottomSheet(context,  CustomAlertDialogWidget(
-        child: Column(children: [
-          ListTile(
-            onTap: (){
-              Navigator.pop(context);
-              orderImageNoteProvider.onPickImage(false, fromCamera: true);
-            },
-            leading: const Icon(Icons.camera_alt),
-            title: Text(getTranslated('camera', context)),
+    } else {
+      ResponsiveHelper.showDialogOrBottomSheet(
+        context,
+        CustomAlertDialogWidget(
+          child: Column(
+            children: [
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  orderImageNoteProvider.onPickImage(false, fromCamera: true);
+                },
+                leading: const Icon(Icons.camera_alt),
+                title: Text(getTranslated('camera', context)),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  orderImageNoteProvider.onPickImage(false);
+                },
+                leading: const Icon(Icons.image),
+                title: Text(getTranslated('media', context)),
+              ),
+            ],
           ),
-
-          ListTile(
-            onTap: (){
-              Navigator.pop(context);
-              orderImageNoteProvider.onPickImage(false);
-            },                          leading: const Icon(Icons.image),
-            title: Text(getTranslated('media', context)),
-          ),
-
-        ]),
-      ));
+        ),
+      );
     }
   }
 }

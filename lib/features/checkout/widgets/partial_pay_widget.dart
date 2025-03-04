@@ -59,8 +59,6 @@ class PartialPayWidget extends StatelessWidget {
               border: Border.all(color: Theme.of(context).primaryColor, width: 0.5),
               borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
             ),
-            padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-            margin: const EdgeInsets.all(Dimensions.paddingSizeDefault),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [

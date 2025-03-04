@@ -46,11 +46,10 @@ class DiscountedPriceWidget extends StatelessWidget {
           TextSpan(
             style: poppinsSemiBold.copyWith(
               fontSize: Dimensions.fontSizeDefault,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
               color: ColorResources.priceColor,
-              // color: Theme.of(context).textTheme.titleMedium?.color,
             ),
-            text: PriceConverterHelper.convertPrice(context, (cart.discountedPrice ?? 0) * (isUnitPrice ? 1 : cart.quantity ?? 1)),
+            text: 'Total ${PriceConverterHelper.convertPrice(context, (cart.discountedPrice ?? 0) * (isUnitPrice ? 1 : cart.quantity ?? 1))}',
           ),
 
 
