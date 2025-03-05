@@ -50,7 +50,7 @@ class DetailsWidget extends StatelessWidget {
 
     return Consumer2<CartProvider, OrderProvider>(builder: (context, cart, orderProvider, child) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const PaymentSectionWidget(),
+
 
         const SizedBox(height: Dimensions.paddingSizeDefault),
         const Divider(color: ColorResources.borderColor),
@@ -266,6 +266,8 @@ class DetailsWidget extends StatelessWidget {
         const SizedBox(height: Dimensions.paddingSizeDefault),
         const Divider(color: ColorResources.borderColor),
         const SizedBox(height: Dimensions.paddingSizeDefault),
+
+
         CustomShadowWidget(
           child: CustomTextFieldWidget(
             fillColor: Theme.of(context).canvasColor,
@@ -277,6 +279,13 @@ class DetailsWidget extends StatelessWidget {
             capitalization: TextCapitalization.sentences,
           ),
         ),
+        const SizedBox(height: Dimensions.paddingSizeDefault),
+        const Divider(color: ColorResources.borderColor),
+        const SizedBox(height: Dimensions.paddingSizeDefault),
+        const PaymentSectionWidget(),
+        const SizedBox(height: Dimensions.paddingSizeDefault),
+        const Divider(color: ColorResources.borderColor),
+        const SizedBox(height: Dimensions.paddingSizeDefault),
       ]);
     });
   }
