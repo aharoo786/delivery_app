@@ -65,12 +65,7 @@ class _CartScreenState extends State<CartScreen> {
     final CartProvider cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: widget.isBackEnable != null
-          ? CustomAppBarWidget(
-              title: "",
-              isCenter: false,
-            )
-          : null,
+      appBar: widget.isBackEnable != null ? const CustomAppBarWidget(title: "", isCenter: false) : null,
       body: Center(
         child: Consumer<CouponProvider>(builder: (context, couponProvider, _) {
           return Consumer<CartProvider>(
