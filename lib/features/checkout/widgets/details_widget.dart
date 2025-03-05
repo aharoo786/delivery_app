@@ -71,92 +71,94 @@ class DetailsWidget extends StatelessWidget {
         Text('Delivery Time', style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
         const SizedBox(height: Dimensions.paddingSizeDefault),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
-              onTap: () {
-                cart.showSchedule0rStandard(true, false);
-              },
-              child: Container(
-                width: 150,
-                height: 60,
-                padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeExtraSmall),
-                margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
-                decoration: cart.isShowStandardTime
-                    ? BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1))
-                    : BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: ColorResources.borderColor, width: 1)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      Images.clock,
-                      height: 20,
-                      width: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Standard',
-                          style: poppinsRegular.copyWith(color: Colors.black, fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600
-                              // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                              ),
-                        ),
-                        Text(
-                          '20-30 Mins',
-                          style: poppinsRegular.copyWith(color: Colors.black, fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeSmall
-                              // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  cart.showSchedule0rStandard(true, false);
+                },
+                child: Container(
+                  // width: 150,
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeExtraSmall),
+                  decoration: cart.isShowStandardTime
+                      ? BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1))
+                      : BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: ColorResources.borderColor, width: 1)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Images.clock,
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Standard',
+                            style: poppinsRegular.copyWith(color: Colors.black, fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600
+                                // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
+                                ),
+                          ),
+                          Text(
+                            '20-30 Mins',
+                            style: poppinsRegular.copyWith(color: Colors.black, fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeSmall
+                                // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () async {
-                cart.showSchedule0rStandard(false, true);
-              },
-              child: Container(
-                width: 150,
-                height: 60,
-                padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeExtraSmall),
-                // alignment: Alignment.center,
-                margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
-                decoration: cart.isShowScheduleTime
-                    ? BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1))
-                    : BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: ColorResources.borderColor, width: 1)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      Images.dateIcon,
-                      height: 20,
-                      width: 20,
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Schedule',
-                          style: poppinsRegular.copyWith(color: Colors.black, fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600
-                              // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                              ),
-                        ),
-                        Text(
-                          'Select Time',
-                          style: poppinsRegular.copyWith(color: Colors.black, fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeSmall
-                              // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+            const SizedBox(width: 20),
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  cart.showSchedule0rStandard(false, true);
+                },
+                child: Container(
+                  // width: 150,
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: Dimensions.paddingSizeExtraSmall),
+                  // alignment: Alignment.center,
+                  decoration: cart.isShowScheduleTime
+                      ? BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1))
+                      : BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: ColorResources.borderColor, width: 1)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        Images.dateIcon,
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Schedule',
+                            style: poppinsRegular.copyWith(color: Colors.black, fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600
+                                // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
+                                ),
+                          ),
+                          Text(
+                            'Select Time',
+                            style: poppinsRegular.copyWith(color: Colors.black, fontWeight: FontWeight.w400, fontSize: Dimensions.fontSizeSmall
+                                // color: categoryProvider.selectedCategoryIndex == -1 ? Theme.of(context).canvasColor : Colors.black ,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
