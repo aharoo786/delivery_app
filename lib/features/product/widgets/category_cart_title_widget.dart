@@ -58,7 +58,7 @@ class CategoryCartTitleWidget extends StatelessWidget {
                   // Navigator.pop(context);
                   // splashProvider.setPageIndex(2);
                   Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => CartScreen(
+                      builder: (context) => const CartScreen(
                             isBackEnable: true,
                           )));
                 },

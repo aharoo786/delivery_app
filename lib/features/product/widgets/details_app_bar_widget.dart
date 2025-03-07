@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/providers/cart_provider.dart';
 import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
@@ -5,6 +6,8 @@ import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:flutter_grocery/utill/styles.dart';
 import 'package:flutter_grocery/features/menu/screens/menu_screen.dart';
 import 'package:provider/provider.dart';
+
+import '../../cart/screens/cart_screen.dart';
 
 class DetailsAppBarWidget extends StatefulWidget implements PreferredSizeWidget {
   final String? title;
@@ -69,8 +72,12 @@ class DetailsAppBarWidgetState extends State<DetailsAppBarWidget> with SingleTic
                 ),
               ]),
               onPressed: () {
-                Provider.of<SplashProvider>(context, listen: false).setPageIndex(2);
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const MenuScreen()));
+                Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (context) => const CartScreen(
+                      isBackEnable: true,
+                    )));
+                // Provider.of<SplashProvider>(context, listen: false).setPageIndex(2);
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const MenuScreen()));
               },
             ),
           );

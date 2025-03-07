@@ -172,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+
               /// Category
               Padding(
                 padding: EdgeInsets.only(

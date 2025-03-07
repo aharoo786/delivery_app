@@ -34,16 +34,14 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
   Widget build(BuildContext context) {
     final double screenWeight = MediaQuery.sizeOf(context).width;
 
-    return Consumer<ProductProvider>(
-      builder: (context, productProvider, _) {
-        return Column(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TitleWidget(title: getTranslated('all_items', context)),
-
-              Selector<SplashProvider, ConfigModel?>(
-                selector: (_, splashProvider)=> splashProvider.configModel,
+    return Consumer<ProductProvider>(builder: (context, productProvider, _) {
+      return Column(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TitleWidget(title: getTranslated('all_items', context)),
+            Selector<SplashProvider, ConfigModel?>(
+                selector: (_, splashProvider) => splashProvider.configModel,
                 builder: (context, config, _) {
                   return PopupMenuButton<ProductFilterType>(
                     padding: const EdgeInsets.all(0),
@@ -52,35 +50,48 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                       productProvider.onChangeProductFilterType(result);
                       productProvider.getAllProductList(1, true);
                     },
-                    itemBuilder: (BuildContext c) => <PopupMenuEntry<ProductFilterType>>[
+                    itemBuilder: (BuildContext c) =>
+                        <PopupMenuEntry<ProductFilterType>>[
                       PopupMenuItem<ProductFilterType>(
                         value: ProductFilterType.latest,
-                        child: _PopUpItem(title: getTranslated('latest_items', context), type: ProductFilterType.latest),
+                        child: _PopUpItem(
+                            title: getTranslated('latest_items', context),
+                            type: ProductFilterType.latest),
                       ),
-
                       PopupMenuItem<ProductFilterType>(
                         value: ProductFilterType.popular,
-                        child: _PopUpItem(title: getTranslated('popular_items', context), type: ProductFilterType.popular),
+                        child: _PopUpItem(
+                            title: getTranslated('popular_items', context),
+                            type: ProductFilterType.popular),
                       ),
-
-                     if(config?.recommendedProductStatus ?? false) PopupMenuItem<ProductFilterType>(
-                        value: ProductFilterType.recommended,
-                        child: _PopUpItem(title: getTranslated('recommend_items', context), type: ProductFilterType.recommended),
-                      ),
-
-                     if(config?.trendingProductStatus ?? false) PopupMenuItem<ProductFilterType>(
-                        value: ProductFilterType.trending,
-                        child: _PopUpItem(title: getTranslated('trending_items', context), type: ProductFilterType.trending),
-                      ),
-
+                      if (config?.recommendedProductStatus ?? false)
+                        PopupMenuItem<ProductFilterType>(
+                          value: ProductFilterType.recommended,
+                          child: _PopUpItem(
+                              title: getTranslated('recommend_items', context),
+                              type: ProductFilterType.recommended),
+                        ),
+                      if (config?.trendingProductStatus ?? false)
+                        PopupMenuItem<ProductFilterType>(
+                          value: ProductFilterType.trending,
+                          child: _PopUpItem(
+                              title: getTranslated('trending_items', context),
+                              type: ProductFilterType.trending),
+                        ),
                     ],
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeSmall),
-                      margin: EdgeInsets.only(right: ResponsiveHelper.isDesktop(context) ? 0 :Dimensions.paddingSizeSmall),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: Dimensions.paddingSizeSmall,
+                          vertical: Dimensions.paddingSizeSmall),
+                      margin: EdgeInsets.only(
+                          right: ResponsiveHelper.isDesktop(context)
+                              ? 0
+                              : Dimensions.paddingSizeSmall),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Theme.of(context).primaryColor),
+                        border:
+                            Border.all(color: Theme.of(context).primaryColor),
                       ),
                       child: Icon(
                         Icons.filter_list,
@@ -89,48 +100,71 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                       ),
                     ),
                   );
-                }
-              ),
-            ],
-          ),
-
-          PaginatedListWidget(
-            onPaginate: (int? offset) async => await productProvider.getAllProductList(offset!, false),
-            offset: productProvider.allProductModel?.offset,
-            totalSize: productProvider.allProductModel?.totalSize,
-            limit: productProvider.allProductModel?.limit,
-            scrollController: widget.scrollController,
-            itemView: Column(children: [
-
-              (productProvider.allProductModel != null && productProvider.allProductModel != null &&  productProvider.allProductModel!.products!.isEmpty) ?  NoDataWidget(
-                isFooter: false, title: getTranslated('not_product_found', context),
-              ) : GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                  mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                  childAspectRatio: ResponsiveHelper.isDesktop(context) ? 0.7 : ResponsiveHelper.isTab(context) ? ( screenWeight > 860 ? 0.9 : 0.60) : 0.6,
-                  crossAxisCount: ResponsiveHelper.isDesktop(context) ? 5 : ResponsiveHelper.isTab(context) ? 3  : 2,
-                ),
-                itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeSmall,
-                  vertical: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeLarge,
-                ),
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return productProvider.allProductModel?.products != null ?  ProductWidget(
-                    product: productProvider.allProductModel!.products![index],
-                    isCenter: true, isGrid: true,
-                  ) : WebProductShimmerWidget(isEnabled: productProvider.allProductModel == null);
-                },
-              ),
-
-            ]),
-          ),
-        ]);
-      }
-    );
+                }),
+          ],
+        ),
+        PaginatedListWidget(
+          onPaginate: (int? offset) async =>
+              await productProvider.getAllProductList(offset!, false),
+          offset: productProvider.allProductModel?.offset,
+          totalSize: productProvider.allProductModel?.totalSize,
+          limit: productProvider.allProductModel?.limit,
+          scrollController: widget.scrollController,
+          itemView: Column(children: [
+            (productProvider.allProductModel != null &&
+                    productProvider.allProductModel != null &&
+                    productProvider.allProductModel!.products!.isEmpty)
+                ? NoDataWidget(
+                    isFooter: false,
+                    title: getTranslated('not_product_found', context),
+                  )
+                : GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisSpacing:
+                          ResponsiveHelper.isDesktop(context) ? 13 : 10,
+                      mainAxisSpacing:
+                          ResponsiveHelper.isDesktop(context) ? 13 : 10,
+                      childAspectRatio: ResponsiveHelper.isDesktop(context)
+                          ? 0.7
+                          : ResponsiveHelper.isTab(context)
+                              ? (screenWeight > 860 ? 0.9 : 0.60)
+                              : 0.8,
+                      crossAxisCount: ResponsiveHelper.isDesktop(context)
+                          ? 5
+                          : ResponsiveHelper.isTab(context)
+                              ? 3
+                              : 2,
+                    ),
+                    itemCount: productProvider.allProductModel?.products != null
+                        ? productProvider.allProductModel?.products?.length
+                        : 10,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveHelper.isDesktop(context)
+                          ? 0
+                          : Dimensions.paddingSizeSmall,
+                      vertical: ResponsiveHelper.isDesktop(context)
+                          ? 0
+                          : Dimensions.paddingSizeLarge,
+                    ),
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return productProvider.allProductModel?.products != null
+                          ? ProductWidget(
+                              product: productProvider
+                                  .allProductModel!.products![index],
+                              isCenter: true,
+                              isGrid: true,
+                            )
+                          : WebProductShimmerWidget(
+                              isEnabled:
+                                  productProvider.allProductModel == null);
+                    },
+                  ),
+          ]),
+        ),
+      ]);
+    });
   }
 }
 
@@ -138,18 +172,23 @@ class _PopUpItem extends StatelessWidget {
   final String title;
   final ProductFilterType type;
   const _PopUpItem({
-    required this.title, required this.type,
+    required this.title,
+    required this.type,
   });
 
   @override
   Widget build(BuildContext context) {
-    return OnHoverWidget(child: Consumer<ProductProvider>(
-      builder: (context, productProvider, _) {
-        return Text(title, style: poppinsMedium.copyWith(
-          color: type == productProvider.selectedFilterType ? Theme.of(context).primaryColor : null,
-          fontSize: type == productProvider.selectedFilterType ? Dimensions.fontSizeLarge : null,
-        ));
-      }
-    ));
+    return OnHoverWidget(child:
+        Consumer<ProductProvider>(builder: (context, productProvider, _) {
+      return Text(title,
+          style: poppinsMedium.copyWith(
+            color: type == productProvider.selectedFilterType
+                ? Theme.of(context).primaryColor
+                : null,
+            fontSize: type == productProvider.selectedFilterType
+                ? Dimensions.fontSizeLarge
+                : null,
+          ));
+    }));
   }
 }

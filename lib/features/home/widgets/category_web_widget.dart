@@ -90,19 +90,20 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                                                   .categoryList![index].name!
                                               : getTranslated(
                                                   'view_all', context),
-                                          style: poppinsBold,
+                                          style: poppinsBold.copyWith(
+                                              fontSize: 12),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         SizedBox(
-                                          height: 7,
+                                          height: 5,
                                         ),
                                         index != 5
                                             ? Expanded(
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 30),
+                                                          left: 15,bottom: 5),
                                                   child: CustomImageWidget(
                                                     image:
                                                         '${splashProvider.baseUrls?.categoryImageUrl}/${categoryProvider.categoryList?[index].image}',

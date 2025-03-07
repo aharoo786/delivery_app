@@ -5,6 +5,7 @@ import 'package:flutter_grocery/features/home/screens/home_screens.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../../common/providers/cart_provider.dart';
 import '../../../common/widgets/custom_image_widget.dart';
 import '../../../utill/images.dart';
 import '../../category/screens/all_categories_screen.dart';
@@ -105,11 +106,50 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   ),
                   label: "Categories"),
               BottomNavigationBarItem(
-                  icon: SvgPicture.asset(Images.cartIconBottom),
-                  activeIcon: SvgPicture.asset(
-                    Images.cartIconBottom,
-                    colorFilter: ColorFilter.mode(
-                        Theme.of(context).primaryColor, BlendMode.srcIn),
+                  icon: Stack(
+                    children: [
+                      SvgPicture.asset(Images.cartIconBottom),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).primaryColor),
+                          child: Text(
+                              '${Provider.of<CartProvider>(context).cartList.length}',
+                              style: TextStyle(
+                                  color: Theme.of(context).cardColor,
+                                  fontSize: 10)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  activeIcon: Stack(
+                    children: [
+                      SvgPicture.asset(
+                        Images.cartIconBottom,
+                        colorFilter: ColorFilter.mode(
+                            Theme.of(context).primaryColor, BlendMode.srcIn),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).primaryColor),
+                          child: Text(
+                              '${Provider.of<CartProvider>(context).cartList.length}',
+                              style: TextStyle(
+                                  color: Theme.of(context).cardColor,
+                                  fontSize: 10)),
+                        ),
+                      ),
+
+                    ],
                   ),
                   label: "Cart"),
               BottomNavigationBarItem(
@@ -167,14 +207,14 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           ],
         ),
         child: ClipOval(
-                child: CustomImageWidget(
-                placeholder: Images.avatar,
-                height: 40,
-                width: 40,
-                fit: BoxFit.cover,
-                image:
-                    '${splashProvider.baseUrls?.customerImageUrl}/${profileProvider.userInfoModel?.image}',
-              )),
+            child: CustomImageWidget(
+          placeholder: Images.avatar,
+          height: 40,
+          width: 40,
+          fit: BoxFit.cover,
+          image:
+              '${splashProvider.baseUrls?.customerImageUrl}/${profileProvider.userInfoModel?.image}',
+        )),
       );
     });
   }

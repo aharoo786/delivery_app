@@ -20,7 +20,7 @@ class DeliveryOptionWidget extends StatelessWidget {
           onTap: () => order.setOrderType(value),
           borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
           child: Container(
-            height: 50,
+            height: 40,
             // padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
@@ -37,6 +37,7 @@ class DeliveryOptionWidget extends StatelessWidget {
                   value: value,
                   groupValue: order.orderType,
                   activeColor: Theme.of(context).dividerColor,
+                  visualDensity: VisualDensity(horizontal: -4),
                   onChanged: (String? value) => order.setOrderType(value),
                 ),
                 Text(

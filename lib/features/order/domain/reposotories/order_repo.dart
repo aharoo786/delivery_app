@@ -59,12 +59,14 @@ class OrderRepo {
 
   Future<ApiResponseModel> placeOrder(PlaceOrderModel orderBody, {List<XFile?>? imageNote}) async {
     try {
+      print('OrderRepo.placeOrder ${imageNote}');
       final response = await dioClient!.postMultipart(
         AppConstants.placeOrderUri,
         files: imageNote ?? [],
         fileKey: 'order_images',
         data: orderBody.toJson(),
       );
+      print('OrderRepo.placeOrder kk${response.data}');
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));

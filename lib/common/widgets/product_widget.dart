@@ -645,7 +645,7 @@ class _ProductGridWidget extends StatelessWidget {
                             child: Text(
                               product.name ?? '',
                               style: poppinsSemiBold.copyWith(
-                                  fontSize: Dimensions.fontSizeLarge),
+                                  fontSize: Dimensions.fontSizeDefault),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               textAlign:
@@ -717,27 +717,26 @@ class _ProductGridWidget extends StatelessWidget {
                                 children: [
                                   product.price! > priceWithDiscount
                                       ? CustomDirectionalityWidget(
-                                    child: Text(
-                                      PriceConverterHelper.convertPrice(
-                                          context, product.price),
-                                      style: poppinsRegular.copyWith(
-                                        fontSize:
-                                        Dimensions.fontSizeSmall,
-                                        color: Theme.of(context)
-                                            .disabledColor,
-                                        decoration:
-                                        TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  )
+                                          child: Text(
+                                            PriceConverterHelper.convertPrice(
+                                                context, product.price),
+                                            style: poppinsRegular.copyWith(
+                                              fontSize:
+                                                  Dimensions.fontSizeSmall,
+                                              color: Theme.of(context)
+                                                  .disabledColor,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                            ),
+                                          ),
+                                        )
                                       : const SizedBox(),
                                   CustomDirectionalityWidget(
                                       child: Text(
-                                        PriceConverterHelper.convertPrice(
-                                            context, priceWithDiscount),
-                                        style: poppinsMedium.copyWith(
-                                            fontSize: 13),
-                                      )),
+                                    PriceConverterHelper.convertPrice(
+                                        context, priceWithDiscount),
+                                    style: poppinsMedium.copyWith(fontSize: 13),
+                                  )),
                                   Text(
                                     '/${product.capacity} ${product.unit}',
                                     style: poppinsRegular.copyWith(
@@ -746,8 +745,7 @@ class _ProductGridWidget extends StatelessWidget {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                //  const Spacer(),
-
+                                  //  const Spacer(),
                                 ],
                               ),
                         // const SizedBox(height: Dimensions.paddingSizeSmall),
@@ -758,7 +756,7 @@ class _ProductGridWidget extends StatelessWidget {
           ]),
           product.discount != 0
               ? Positioned.fill(
-                  top: 10,
+                  top: 11,
                   right: 20,
                   // left: 100,
                   child: Align(
@@ -810,7 +808,7 @@ class _ProductGridWidget extends StatelessWidget {
                           }
                         },
                         child: Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Theme.of(context).cardColor,
@@ -938,12 +936,13 @@ class _DiscountTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
-      height: 54,
-      width: 42,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+
+      height: 40,
+      width: 35,
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage(Images.discountTagPng), fit: BoxFit.cover),
+            image: AssetImage(Images.discountTagPng), fit: BoxFit.contain),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -953,7 +952,7 @@ class _DiscountTag extends StatelessWidget {
               product.discountType == 'percent'
                   ? '${product.discount?.toStringAsFixed(0)}%\nOFF'
                   : '${PriceConverterHelper.convertPrice(context, product.discount)}\nOFF',
-              style: poppinsBold.copyWith(fontSize: 14),
+              style: poppinsBold.copyWith(fontSize: 12),
               textAlign: TextAlign.center,
             ),
           ),

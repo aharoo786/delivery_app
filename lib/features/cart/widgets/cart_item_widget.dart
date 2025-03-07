@@ -22,12 +22,15 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CartProvider cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final CartProvider cartProvider =
+        Provider.of<CartProvider>(context, listen: false);
     String? variationText = _getVariationValue();
 
     return Container(
       margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeDefault),
-      decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () {
           Navigator.of(context).pushNamed(
@@ -46,12 +49,15 @@ class CartItemWidget extends StatelessWidget {
             key: UniqueKey(),
             onDismissed: (DismissDirection direction) {
               cartProvider.setExistData(null);
-              Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
+              Provider.of<CouponProvider>(context, listen: false)
+                  .removeCouponData(false);
               cartProvider.removeItemFromCart(index, context);
             },
             child: Container(
-              height: 104,
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.radiusSizeSmall, horizontal: Dimensions.paddingSizeSmall),
+              height: 90,
+              padding: const EdgeInsets.symmetric(
+                  vertical: Dimensions.radiusSizeSmall,
+                  horizontal: Dimensions.paddingSizeSmall),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 // color: Colors.red,
@@ -65,17 +71,26 @@ class CartItemWidget extends StatelessWidget {
                 // ],
               ),
               child: Row(
-                  crossAxisAlignment: ResponsiveHelper.isDesktop(context) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-                  mainAxisAlignment: ResponsiveHelper.isDesktop(context) ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+                  crossAxisAlignment: ResponsiveHelper.isDesktop(context)
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
+                  mainAxisAlignment: ResponsiveHelper.isDesktop(context)
+                      ? MainAxisAlignment.spaceBetween
+                      : MainAxisAlignment.start,
                   children: [
                     Container(
-                      decoration: BoxDecoration(border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.05)), borderRadius: BorderRadius.circular(10)),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.05)),
+                          borderRadius: BorderRadius.circular(10)),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: CustomImageWidget(
-                          image: '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${cart.image}',
-                          height: ResponsiveHelper.isDesktop(context) ? 100 : 104,
-                          width: ResponsiveHelper.isDesktop(context) ? 100 : 104,
+                          image:
+                              '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${cart.image}',
+                          height: 80,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -83,14 +98,20 @@ class CartItemWidget extends StatelessWidget {
                     const SizedBox(width: Dimensions.paddingSizeSmall),
                     !ResponsiveHelper.isDesktop(context)
                         ? Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              const SizedBox(
-                                height: 12,
-                              ),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
 
-                              Text(cart.name ?? 'Product name',
-                                  style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeDefault, fontWeight: FontWeight.w600), maxLines: 2, overflow: TextOverflow.ellipsis),
-                              /*
+                                  Text(cart.name ?? 'Product name',
+                                      style: poppinsMedium.copyWith(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w600),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis),
+                                  /*
                       const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
                       if(cart.product?.variations?.isNotEmpty ?? false)  Row(children: [
@@ -109,151 +130,250 @@ class CartItemWidget extends StatelessWidget {
                       DiscountedPriceWidget(cart: cart, leadingText: '${getTranslated('unit', context)}: ',),
                       */
 
-                              // Row(children: [
-                              //   Text('${getTranslated('unit', context)}: ', style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall)),
-                              //
-                              //   if((cart.discountedPrice ?? 0) < (cart.price ?? 0)) CustomDirectionalityWidget(child: Text(
-                              //     PriceConverterHelper.convertPrice(context, (cart.price ?? 0) * 1),
-                              //     style: poppinsRegular.copyWith(
-                              //       fontSize: Dimensions.fontSizeDefault,
-                              //       color: Theme.of(context).disabledColor,
-                              //       decoration: TextDecoration.lineThrough,
-                              //     ),
-                              //   )),
-                              //
-                              //   if((cart.discountedPrice ?? 0) < (cart.price ?? 0) ) const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                              //
-                              //   CustomDirectionalityWidget(child: Text(
-                              //     PriceConverterHelper.convertPrice(context, (cart.discountedPrice ?? 0) * 1),
-                              //     style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault),
-                              //     maxLines: 2,
-                              //   ))
-                              // ]),
-                              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                              const Spacer(),
+                                  // Row(children: [
+                                  //   Text('${getTranslated('unit', context)}: ', style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall)),
+                                  //
+                                  //   if((cart.discountedPrice ?? 0) < (cart.price ?? 0)) CustomDirectionalityWidget(child: Text(
+                                  //     PriceConverterHelper.convertPrice(context, (cart.price ?? 0) * 1),
+                                  //     style: poppinsRegular.copyWith(
+                                  //       fontSize: Dimensions.fontSizeDefault,
+                                  //       color: Theme.of(context).disabledColor,
+                                  //       decoration: TextDecoration.lineThrough,
+                                  //     ),
+                                  //   )),
+                                  //
+                                  //   if((cart.discountedPrice ?? 0) < (cart.price ?? 0) ) const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                  //
+                                  //   CustomDirectionalityWidget(child: Text(
+                                  //     PriceConverterHelper.convertPrice(context, (cart.discountedPrice ?? 0) * 1),
+                                  //     style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault),
+                                  //     maxLines: 2,
+                                  //   ))
+                                  // ]),
+                                  // const SizedBox(
+                                  //     height: Dimensions.pa),
+                                  const Spacer(),
 
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(28),
-                                    ),
-                                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                      (ResponsiveHelper.isDesktop(context) && cart.quantity == 1)
-                                          ? Padding(
-                                        padding: const EdgeInsets.only(left: Dimensions.paddingSizeSmall),
-                                        child: IconButton(
-                                          onPressed: () {
-                                            cartProvider.removeItemFromCart(index, context);
-                                            cartProvider.setExistData(null);
-                                          },
-                                          icon: const RotatedBox(quarterTurns: 2, child: Icon(CupertinoIcons.delete, color: Colors.red, size: 20)),
-                                        ),
-                                      )
-                                          : InkWell(
-                                        onTap: () {
-                                          Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
-                                          if (cart.quantity! > 1) {
-                                            cartProvider.setCartQuantity(false, index, showMessage: true, context: context);
-                                          } else if (cart.quantity == 1) {
-                                            cartProvider.removeItemFromCart(index, context);
-                                            cartProvider.setExistData(null);
-                                          }
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Theme.of(context).disabledColor.withOpacity(0.2),
-                                              shape: BoxShape.circle
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : Dimensions.paddingSizeSmall,
-                                              vertical: Dimensions.radiusSizeSmall),
-                                          child: const Icon(Icons.remove, size: 20, color: Colors.black),
-                                        ),
-                                      ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
                                       Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                                        child: Text(cart.quantity.toString(),
-                                            style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge)),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          if (cart.product!.maximumOrderQuantity == null || cart.quantity! < cart.product!.maximumOrderQuantity!) {
-                                            if (cart.quantity! < cart.stock!) {
-                                              Provider.of<CouponProvider>(context, listen: false).removeCouponData(false);
-                                              cartProvider.setCartQuantity(true, index, showMessage: true, context: context);
-                                            } else {
-                                              showCustomSnackBarHelper(getTranslated('out_of_stock', context));
-                                            }
-                                          } else {
-                                            showCustomSnackBarHelper(
-                                                '${getTranslated('you_can_add_max', context)} ${cart.product!.maximumOrderQuantity} ${getTranslated(cart.product!.maximumOrderQuantity! > 1 ? 'items' : 'item', context)} ${getTranslated('only', context)}');
-                                          }
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).dividerColor,
-                                            shape: BoxShape.circle
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: Dimensions.paddingSizeSmall,
-                                              vertical: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeDefault : Dimensions.radiusSizeSmall),
-                                          child: const Icon(Icons.add, size: 20, color: Colors.white),
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(28),
                                         ),
+                                        child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              (ResponsiveHelper.isDesktop(
+                                                          context) &&
+                                                      cart.quantity == 1)
+                                                  ? Padding(
+                                                      padding: const EdgeInsets
+                                                          .only(
+                                                          left: Dimensions
+                                                              .paddingSizeSmall),
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          cartProvider
+                                                              .removeItemFromCart(
+                                                                  index,
+                                                                  context);
+                                                          cartProvider
+                                                              .setExistData(
+                                                                  null);
+                                                        },
+                                                        icon: const RotatedBox(
+                                                            quarterTurns: 2,
+                                                            child: Icon(
+                                                                CupertinoIcons
+                                                                    .delete,
+                                                                color:
+                                                                    Colors.red,
+                                                                size: 20)),
+                                                      ),
+                                                    )
+                                                  : GestureDetector(
+                                                      onTap: () {
+                                                        Provider.of<CouponProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .removeCouponData(
+                                                                false);
+                                                        if (cart.quantity! >
+                                                            1) {
+                                                          cartProvider
+                                                              .setCartQuantity(
+                                                                  false, index,
+                                                                  showMessage:
+                                                                      true,
+                                                                  context:
+                                                                      context);
+                                                        } else if (cart
+                                                                .quantity ==
+                                                            1) {
+                                                          cartProvider
+                                                              .removeItemFromCart(
+                                                                  index,
+                                                                  context);
+                                                          cartProvider
+                                                              .setExistData(
+                                                                  null);
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .disabledColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            shape: BoxShape
+                                                                .circle),
+                                                        padding:
+                                                            EdgeInsets.all(2),
+                                                        child: const Icon(
+                                                            Icons.remove,
+                                                            size: 20,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ),
+                                              Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                child: Text(
+                                                    cart.quantity.toString(),
+                                                    style: poppinsSemiBold.copyWith(
+                                                        fontSize: Dimensions
+                                                            .fontSizeExtraLarge)),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (cart.product!
+                                                              .maximumOrderQuantity ==
+                                                          null ||
+                                                      cart.quantity! <
+                                                          cart.product!
+                                                              .maximumOrderQuantity!) {
+                                                    if (cart.quantity! <
+                                                        cart.stock!) {
+                                                      Provider.of<CouponProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .removeCouponData(
+                                                              false);
+                                                      cartProvider
+                                                          .setCartQuantity(
+                                                              true, index,
+                                                              showMessage: true,
+                                                              context: context);
+                                                    } else {
+                                                      showCustomSnackBarHelper(
+                                                          getTranslated(
+                                                              'out_of_stock',
+                                                              context));
+                                                    }
+                                                  } else {
+                                                    showCustomSnackBarHelper(
+                                                        '${getTranslated('you_can_add_max', context)} ${cart.product!.maximumOrderQuantity} ${getTranslated(cart.product!.maximumOrderQuantity! > 1 ? 'items' : 'item', context)} ${getTranslated('only', context)}');
+                                                  }
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Theme.of(context)
+                                                          .dividerColor,
+                                                      shape: BoxShape.circle),
+                                                  padding:
+                                                  EdgeInsets.all(2),
+                                                  child: const Icon(Icons.add,
+                                                      size: 20,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ]),
                                       ),
-                                    ]),
-                                  ),
-                                  DiscountedPriceWidget(cart: cart, isUnitPrice: false, leadingText: null),
-
-                                ],
-                              ), //'${getTranslated('total', context)}: ',
-                            ]),
+                                      DiscountedPriceWidget(
+                                          cart: cart,
+                                          isUnitPrice: false,
+                                          leadingText: null),
+                                    ],
+                                  ), //'${getTranslated('total', context)}: ',
+                                ]),
                           )
                         : Expanded(
-                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                              Expanded(
-                                flex: 6,
-                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  Text(cart.name ?? '',
-                                      style: poppinsRegular.copyWith(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis),
-                                  const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                                  if (cart.product?.variations?.isNotEmpty ?? false)
-                                    Wrap(children: [
-                                      Text('${getTranslated('variation', context)}: ', style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
-                                      Text(variationText!,
-                                          style: poppinsRegular.copyWith(
-                                            fontSize: Dimensions.fontSizeSmall,
-                                            color: Theme.of(context).disabledColor,
-                                          )),
-                                    ]),
-                                  DiscountedPriceWidget(
-                                    cart: cart,
-                                    leadingText: '${getTranslated('unit', context)}: ',
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 6,
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(cart.name ?? '',
+                                              style: poppinsRegular.copyWith(
+                                                fontSize:
+                                                    Dimensions.fontSizeDefault,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis),
+                                          const SizedBox(
+                                              height: Dimensions
+                                                  .paddingSizeExtraSmall),
+                                          if (cart.product?.variations
+                                                  ?.isNotEmpty ??
+                                              false)
+                                            Wrap(children: [
+                                              Text(
+                                                  '${getTranslated('variation', context)}: ',
+                                                  style: poppinsRegular.copyWith(
+                                                      fontSize: Dimensions
+                                                          .fontSizeExtraSmall)),
+                                              Text(variationText!,
+                                                  style:
+                                                      poppinsRegular.copyWith(
+                                                    fontSize: Dimensions
+                                                        .fontSizeSmall,
+                                                    color: Theme.of(context)
+                                                        .disabledColor,
+                                                  )),
+                                            ]),
+                                          DiscountedPriceWidget(
+                                            cart: cart,
+                                            leadingText:
+                                                '${getTranslated('unit', context)}: ',
+                                          ),
+                                          const SizedBox(
+                                              height: Dimensions
+                                                  .paddingSizeExtraSmall),
+                                        ]),
                                   ),
-                                  const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+                                  const SizedBox(
+                                      width: Dimensions.paddingSizeLarge),
+                                  Expanded(
+                                    flex: 4,
+                                    child: Row(children: [
+                                      Text('${cart.capacity} ${cart.unit}',
+                                          style: poppinsMedium.copyWith(
+                                            fontSize:
+                                                Dimensions.fontSizeDefault,
+                                            color:
+                                                Theme.of(context).disabledColor,
+                                          )),
+                                      const SizedBox(
+                                          width: Dimensions.paddingSizeDefault),
+                                      DiscountedPriceWidget(
+                                          cart: cart, isUnitPrice: false),
+                                    ]),
+                                  ),
+                                  const SizedBox(
+                                      width: Dimensions.paddingSizeSmall),
                                 ]),
-                              ),
-                              const SizedBox(width: Dimensions.paddingSizeLarge),
-                              Expanded(
-                                flex: 4,
-                                child: Row(children: [
-                                  Text('${cart.capacity} ${cart.unit}',
-                                      style: poppinsMedium.copyWith(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        color: Theme.of(context).disabledColor,
-                                      )),
-                                  const SizedBox(width: Dimensions.paddingSizeDefault),
-                                  DiscountedPriceWidget(cart: cart, isUnitPrice: false),
-                                ]),
-                              ),
-                              const SizedBox(width: Dimensions.paddingSizeSmall),
-                            ]),
                           ),
 
                     /*
@@ -335,7 +455,8 @@ class CartItemWidget extends StatelessWidget {
       if (variationTypes.length == cart.product?.choiceOptions?.length) {
         int index = 0;
         for (var choice in cart.product?.choiceOptions ?? []) {
-          variationText = '$variationText${(index == 0) ? '' : ',  '}${choice.title} - ${variationTypes[index]}';
+          variationText =
+              '$variationText${(index == 0) ? '' : ',  '}${choice.title} - ${variationTypes[index]}';
           index = index + 1;
         }
       } else {

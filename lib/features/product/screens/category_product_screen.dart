@@ -63,20 +63,15 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
     categoryProvider.initializeAllSortBy(context);
 
     return Scaffold(
-      appBar: (ResponsiveHelper.isDesktop(context)
-          ? const PreferredSize(
-              preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
-          : CustomAppBarWidget(
-              title: "",
-              isCenter: false,
-              fromCategory: true,
-            )) as PreferredSizeWidget?,
+      appBar: CustomAppBarWidget(
+        title: "",
+        isCenter: false,
+        fromCategory: true,
+      ),
       body: Consumer<CategoryProvider>(
           builder: (context, productProvider, child) {
         return Column(
-          crossAxisAlignment: ResponsiveHelper.isDesktop(context)
-              ? CrossAxisAlignment.center
-              : CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
                 padding: const EdgeInsets.symmetric(
@@ -141,7 +136,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                         padding: const EdgeInsets.only(
                                             left:
                                                 Dimensions.paddingSizeDefault),
-                                        child: InkWell(
+                                        child: GestureDetector(
                                           onTap: () {
                                             categoryProvider
                                                 .onChangeSelectIndex(-1);
@@ -149,7 +144,6 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                                 .initCategoryProductList(
                                                     widget.categoryId);
                                           },
-                                          hoverColor: Colors.transparent,
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal:
@@ -196,7 +190,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                           scrollDirection: Axis.horizontal,
                                           itemBuilder: (BuildContext context,
                                               int index) {
-                                            return InkWell(
+                                            return GestureDetector(
                                               onTap: () {
                                                 categoryProvider
                                                     .onChangeSelectIndex(index);
@@ -205,7 +199,6 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     .initCategoryProductList(
                                                         '${categoryProvider.subCategoryList![index].id}');
                                               },
-                                              hoverColor: Colors.transparent,
                                               child: Container(
                                                 padding: const EdgeInsets
                                                     .symmetric(
@@ -299,20 +292,10 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                             child: GridView.builder(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisSpacing:
-                                    ResponsiveHelper.isDesktop(context)
-                                        ? 13
-                                        : 10,
-                                mainAxisSpacing:
-                                    ResponsiveHelper.isDesktop(context)
-                                        ? 13
-                                        : 10,
-                                childAspectRatio:
-                                    ResponsiveHelper.isDesktop(context)
-                                        ? (1 / 1.4)
-                                        : (1 / 1.8),
-                                crossAxisCount:
-                                    ResponsiveHelper.isDesktop(context) ? 5 : 2,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                childAspectRatio: 0.7,
+                                crossAxisCount: 2,
                               ),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: Dimensions.paddingSizeSmall,
@@ -325,7 +308,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                 return ProductWidget(
                                     product: productProvider
                                         .subCategoryProductList[index],
-                                    isCenter: true,
+                                    isCenter: false,
                                     isGrid: true);
                               },
                             ),
