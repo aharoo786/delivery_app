@@ -165,7 +165,7 @@ class _AddNewAddressScreenState extends State<AddAddressBottomsheet> {
     final userModel =
         Provider.of<ProfileProvider>(context, listen: false).userInfoModel;
 
-    locationProvider.setPickedAddressLatLon(null, null, isUpdate: false);
+    // locationProvider.setPickedAddressLatLon(null, null, isUpdate: false);
 
     if (widget.address == null) {
       locationProvider.setAddAddressData(false);

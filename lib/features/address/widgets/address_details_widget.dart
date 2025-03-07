@@ -129,7 +129,7 @@ class _AddressDetailsWidgetState extends State<AddressDetailsWidget> {
                     SizedBox(
                       width: 200,
                       child: Text(
-                        getTranslated('${locationProvider.address}', context),
+                        getTranslated(locationProvider.address ?? '', context),
                         style: Theme.of(context)
                             .textTheme
                             .displaySmall!

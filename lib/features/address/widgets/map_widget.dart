@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/features/address/domain/models/address_model.dart';
 import 'package:flutter_grocery/features/address/providers/location_provider.dart';
@@ -20,9 +19,12 @@ class MapWidget extends StatelessWidget {
   final AddressModel? address;
 
   const MapWidget({
-    super.key, required this.isEnableUpdate,
-    this.fromManualAddAdddress=false,
-    this.address, required this.fromCheckout,  this.height=130,
+    super.key,
+    required this.isEnableUpdate,
+    this.fromManualAddAdddress = false,
+    this.address,
+    required this.fromCheckout,
+    this.height = 130,
   });
 
   @override
@@ -38,21 +40,20 @@ class MapWidget extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-        child: Stack(
-            clipBehavior: Clip.none, children: [
+        child: Stack(clipBehavior: Clip.none, children: [
           GoogleMap(
             minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
-              target: (isEnableUpdate && (locationProvider.pickedAddressLatitude?.isNotEmpty ?? false) && (locationProvider.pickedAddressLongitude?.isNotEmpty ?? false)) ? LatLng(
-                double.parse(locationProvider.pickedAddressLatitude!),
-                double.parse(locationProvider.pickedAddressLongitude!),
-              ) : LatLng(locationProvider.position.latitude.toInt()  == 0
-                  ? double.parse(branch.latitude!)
-                  : locationProvider.position.latitude, locationProvider.position.longitude.toInt() == 0
-                  ? double.parse(branch.longitude!)
-                  : locationProvider.position.longitude,
-              ),
+              target: (isEnableUpdate && (locationProvider.pickedAddressLatitude?.isNotEmpty ?? false) && (locationProvider.pickedAddressLongitude?.isNotEmpty ?? false))
+                  ? LatLng(
+                      double.parse(locationProvider.pickedAddressLatitude!),
+                      double.parse(locationProvider.pickedAddressLongitude!),
+                    )
+                  : LatLng(
+                      locationProvider.position.latitude.toInt() == 0 ? double.parse(branch.latitude!) : locationProvider.position.latitude,
+                      locationProvider.position.longitude.toInt() == 0 ? double.parse(branch.longitude!) : locationProvider.position.longitude,
+                    ),
               zoom: 8,
             ),
             zoomControlsEnabled: false,
@@ -60,93 +61,97 @@ class MapWidget extends StatelessWidget {
             indoorViewEnabled: true,
             mapToolbarEnabled: false,
             onCameraIdle: () {
-              if(address != null && !fromCheckout) {
+              if (address != null && !fromCheckout) {
                 locationProvider.updatePosition(locationProvider.cameraPosition, true, null);
                 locationProvider.isUpdateAddress = true;
-              }else {
-                if(locationProvider.isUpdateAddress) {
+              } else {
+                if (locationProvider.isUpdateAddress) {
                   locationProvider.updatePosition(locationProvider.cameraPosition, true, null);
-                }else {
+                } else {
                   locationProvider.isUpdateAddress = true;
                 }
               }
-
             },
             onCameraMove: ((position) => locationProvider.cameraPosition = position),
             onMapCreated: (GoogleMapController controller) {
-
               if (!isEnableUpdate && locationProvider.mapController != null) {
-                if(!fromManualAddAdddress){
-                  AddressHelper.checkPermission(() =>
-                      locationProvider.getCurrentLocation(
-                        context, true, mapController: locationProvider.mapController,
-                      ));
+                if (!fromManualAddAdddress) {
+                  AddressHelper.checkPermission(
+                    () => locationProvider.getCurrentLocation(
+                      context,
+                      true,
+                      mapController: locationProvider.mapController,
+                    ),
+                  );
                 }
-
               }
-
 
               locationProvider.mapController = controller;
 
               print("----------------(WHEN CREATING LAT LON)----------------${locationProvider.pickedAddressLatitude} and ${locationProvider.pickedAddressLongitude}");
 
               if (!isEnableUpdate && locationProvider.mapController != null) {
-                if(locationProvider.pickedAddressLatitude == null && locationProvider.pickedAddressLongitude == null){
+                if (locationProvider.pickedAddressLatitude == null && locationProvider.pickedAddressLongitude == null) {
                   print("Hello ");
-                  if(!fromManualAddAdddress){
-                    AddressHelper.checkPermission(()=>locationProvider.getCurrentLocation(
-                      context, true, mapController: locationProvider.mapController,
-                    ));
+                  if (!fromManualAddAdddress) {
+                    AddressHelper.checkPermission(() => locationProvider.getCurrentLocation(
+                          context,
+                          true,
+                          mapController: locationProvider.mapController,
+                        ));
                   }
-
-                }else{
+                } else {
                   print("Hello From Else");
                   Future.delayed(const Duration(milliseconds: 800)).then((value) {
-                    locationProvider.mapController = controller;
-                    locationProvider.mapController!.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                      target:  LatLng(
+                    // locationProvider.mapController = controller;
+                    locationProvider.mapController?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                      target: LatLng(
                         double.parse(locationProvider.pickedAddressLatitude ?? '0'),
                         double.parse(locationProvider.pickedAddressLongitude ?? '0'),
-                      ), zoom: 17,
+                      ),
+                      zoom: 17,
                     )));
                   });
                 }
-              }else{
+              } else {
                 Future.delayed(const Duration(milliseconds: 800)).then((value) {
-                  locationProvider.mapController = controller;
-                  double latitude = double.tryParse(locationProvider.pickedAddressLatitude ?? '') ?? 0;
-                  double longitude = double.tryParse(locationProvider.pickedAddressLongitude ?? '') ?? 0;
-                  locationProvider.mapController!.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                    target:  LatLng(latitude, longitude), zoom: 17,
+                  print('_pickedAddressLatitude: ${locationProvider.pickedAddressLatitude}');
+                  print('_pickedAddressLongitude: ${locationProvider.pickedAddressLongitude}');
+                  // locationProvider.mapController = controller;
+                  double latitude = double.parse(locationProvider.pickedAddressLatitude ?? '');
+                  double longitude = double.parse(locationProvider.pickedAddressLongitude ?? '');
+                  locationProvider.mapController?.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                    target: LatLng(latitude, longitude),
+                    zoom: 17,
                   )));
                 });
               }
-
             },
           ),
-          locationProvider.loading ? Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-              )) : const SizedBox(),
-
+          locationProvider.loading
+              ? Center(
+                  child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                ))
+              : const SizedBox(),
           Container(
               width: MediaQuery.of(context).size.width,
               alignment: Alignment.center,
               height: MediaQuery.of(context).size.height,
-              child:Icon(
+              child: Icon(
                 Icons.location_on,
                 color: Theme.of(context).primaryColor,
                 size: 35,
-              )
-          ),
-
+              )),
           Positioned(
             bottom: 10,
             right: 0,
             child: InkWell(
-              onTap: () => AddressHelper.checkPermission(()=>locationProvider.getCurrentLocation(
-                context, true, mapController: locationProvider.mapController,
-              )),
+              onTap: () => AddressHelper.checkPermission(() => locationProvider.getCurrentLocation(
+                    context,
+                    true,
+                    mapController: locationProvider.mapController,
+                  )),
               child: Container(
                 width: ResponsiveHelper.isDesktop(context) ? 40 : 30,
                 height: ResponsiveHelper.isDesktop(context) ? 40 : 30,
@@ -163,30 +168,35 @@ class MapWidget extends StatelessWidget {
               ),
             ),
           ),
-
-          if(ResponsiveHelper.isDesktop(context)) Positioned.fill(
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: SizedBox(
-                width: 500,
-                child: SearchBarView(margin: Dimensions.paddingSizeSmall, onTap: (){
-                  showDialog(context: context, builder: (context) => Container(
-                    width: 400,
-                    margin: const EdgeInsets.only(left:  600, top: 50),
-                    child: SearchDialogWidget(mapController: locationProvider.mapController),
-                  ), barrierDismissible: true);
-                }),
+          if (ResponsiveHelper.isDesktop(context))
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: 500,
+                  child: SearchBarView(
+                      margin: Dimensions.paddingSizeSmall,
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => Container(
+                                  width: 400,
+                                  margin: const EdgeInsets.only(left: 600, top: 50),
+                                  child: SearchDialogWidget(mapController: locationProvider.mapController),
+                                ),
+                            barrierDismissible: true);
+                      }),
+                ),
               ),
             ),
-          ),
-
           Positioned(
             top: 10,
             right: 0,
             child: InkWell(
               onTap: () {
                 Navigator.pushNamed(
-                  context, RouteHelper.getSelectLocationRoute(),
+                  context,
+                  RouteHelper.getSelectLocationRoute(),
                   arguments: SelectLocationScreen(googleMapController: locationProvider.mapController),
                 );
               },
@@ -206,7 +216,6 @@ class MapWidget extends StatelessWidget {
               ),
             ),
           ),
-
         ]),
       ),
     );

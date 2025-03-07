@@ -22,14 +22,28 @@ class LocationProvider with ChangeNotifier {
   LocationProvider({required this.sharedPreferences, required this.locationRepo});
 
   Position _position = Position(
-    longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 1,
-    altitude: 1, heading: 1, speed: 1, speedAccuracy: 1,
-    altitudeAccuracy: 0, headingAccuracy: 0,
+    longitude: 0,
+    latitude: 0,
+    timestamp: DateTime.now(),
+    accuracy: 1,
+    altitude: 1,
+    heading: 1,
+    speed: 1,
+    speedAccuracy: 1,
+    altitudeAccuracy: 0,
+    headingAccuracy: 0,
   );
   Position _pickPosition = Position(
-    longitude: 0, latitude: 0, timestamp: DateTime.now(),
-    accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1,
-    altitudeAccuracy: 0, headingAccuracy: 0,
+    longitude: 0,
+    latitude: 0,
+    timestamp: DateTime.now(),
+    accuracy: 1,
+    altitude: 1,
+    heading: 1,
+    speed: 1,
+    speedAccuracy: 1,
+    altitudeAccuracy: 0,
+    headingAccuracy: 0,
   );
 
   bool _loading = false;
@@ -48,8 +62,6 @@ class LocationProvider with ChangeNotifier {
   String? _pickedAddressLatitude;
   String? _pickedAddressLongitude;
 
-
-
   bool get loading => _loading;
   Position get position => _position;
   Position get pickPosition => _pickPosition;
@@ -64,13 +76,13 @@ class LocationProvider with ChangeNotifier {
   String? get pickedAddressLatitude => _pickedAddressLatitude;
   String? get pickedAddressLongitude => _pickedAddressLongitude;
 
-  set setAddress(String? addressValue)=> _address = addressValue;
+  set setAddress(String? addressValue) => _address = addressValue;
 
-
-  setPickedAddressLatLon(String? lat, String? lon, {bool isUpdate = true}){
+  setPickedAddressLatLon(String? lat, String? lon, {bool isUpdate = true}) {
     _pickedAddressLatitude = lat;
     _pickedAddressLongitude = lon;
-    if(isUpdate){
+
+    if (isUpdate) {
       notifyListeners();
     }
   }
@@ -88,21 +100,26 @@ class LocationProvider with ChangeNotifier {
     try {
       Position newLocalData = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       myPosition = newLocalData;
-
-    }catch(e) {
+    } catch (e) {
       myPosition = Position(
         latitude: double.parse('0'),
         longitude: double.parse('0'),
-        timestamp: DateTime.now(), accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1,
-        altitudeAccuracy: 0, headingAccuracy: 0,
+        timestamp: DateTime.now(),
+        accuracy: 1,
+        altitude: 1,
+        heading: 1,
+        speed: 1,
+        speedAccuracy: 1,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
       );
     }
-    if(fromAddress) {
+    if (fromAddress) {
+      print('fromAddress');
       _position = myPosition;
-
-    }else {
+    } else {
+      print('not fromAddress');
       _pickPosition = myPosition;
-
     }
 
     if (mapController != null) {
@@ -110,10 +127,12 @@ class LocationProvider with ChangeNotifier {
         CameraPosition(target: LatLng(myPosition.latitude, myPosition.longitude), zoom: 17),
       ));
     }
+
+    setPickedAddressLatLon(myPosition.latitude.toString(), myPosition.longitude.toString());
     // String _myPlaceMark;
     String getAddress = await getAddressFromGeocode(LatLng(myPosition.latitude, myPosition.longitude));
 
-    if(fromAddress) {
+    if (fromAddress) {
       _address = placeMarkToAddress(getAddress);
     }
     _loading = false;
@@ -121,26 +140,40 @@ class LocationProvider with ChangeNotifier {
   }
 
   void updatePosition(CameraPosition? position, bool fromAddress, String? address, {bool forceNotify = true}) async {
-    if(_updateAddAddressData) {
+    if (_updateAddAddressData) {
       _loading = true;
-      if(forceNotify){
+      if (forceNotify) {
         notifyListeners();
       }
-
 
       try {
         if (fromAddress) {
           print('---------------(FROM ADDRESS POSITION)---------${position?.target.latitude} and ${position?.target.longitude}');
           _position = Position(
-            latitude: position!.target.latitude, longitude: position.target.longitude, timestamp: DateTime.now(),
-            heading: 1, accuracy: 1, altitude: 1, speedAccuracy: 1, speed: 1, altitudeAccuracy: 0, headingAccuracy: 0,
+            latitude: position!.target.latitude,
+            longitude: position.target.longitude,
+            timestamp: DateTime.now(),
+            heading: 1,
+            accuracy: 1,
+            altitude: 1,
+            speedAccuracy: 1,
+            speed: 1,
+            altitudeAccuracy: 0,
+            headingAccuracy: 0,
           );
         } else {
           print('---------------(FROM ADDRESS Pick Positon)---------${position?.target.latitude} and ${position?.target.longitude}');
           _pickPosition = Position(
-            latitude: position!.target.latitude, longitude: position.target.longitude, timestamp: DateTime.now(),
-            heading: 1, accuracy: 1, altitude: 1, speedAccuracy: 1, speed: 1,
-            altitudeAccuracy: 0, headingAccuracy: 0,
+            latitude: position!.target.latitude,
+            longitude: position.target.longitude,
+            timestamp: DateTime.now(),
+            heading: 1,
+            accuracy: 1,
+            altitude: 1,
+            speedAccuracy: 1,
+            speed: 1,
+            altitudeAccuracy: 0,
+            headingAccuracy: 0,
           );
         }
         if (_changeAddress) {
@@ -149,7 +182,6 @@ class LocationProvider with ChangeNotifier {
 
           print("------(CHANGE ADDRESS)----------Address: $address and PickedAddress: $_pickAddress and Force Notify : $forceNotify");
           notifyListeners();
-
         } else {
           _changeAddress = true;
         }
@@ -158,15 +190,13 @@ class LocationProvider with ChangeNotifier {
       }
       _loading = false;
 
-      if(forceNotify){
+      if (forceNotify) {
         notifyListeners();
       }
-
-    }else {
+    } else {
       _updateAddAddressData = true;
     }
   }
-
 
   // delete user address
   void deleteUserAddressByID(int? id, int index, Function callback) async {
@@ -180,9 +210,7 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
-
   // user address
-
 
   Future<ResponseModel?> initAddressList() async {
     ResponseModel? responseModel;
@@ -207,11 +235,11 @@ class LocationProvider with ChangeNotifier {
   String? get errorMessage => _errorMessage;
   String? _addressStatusMessage = '';
   String? get addressStatusMessage => _addressStatusMessage;
-  updateAddressStatusMessage({String? message}){
+  updateAddressStatusMessage({String? message}) {
     _addressStatusMessage = message;
   }
 
-  void onChangeErrorMessage({String? message}){
+  void onChangeErrorMessage({String? message}) {
     _errorMessage = message;
   }
 
@@ -232,7 +260,6 @@ class LocationProvider with ChangeNotifier {
       responseModel = ResponseModel(true, message);
       _addressStatusMessage = message;
     } else {
-
       responseModel = ResponseModel(false, ApiCheckerHelper.getError(apiResponse).errors?.first.message);
     }
     _isLoading = false;
@@ -258,7 +285,6 @@ class LocationProvider with ChangeNotifier {
     } else {
       _errorMessage = ApiCheckerHelper.getError(apiResponse).errors![0].message;
       responseModel = ResponseModel(false, errorMessage);
-
     }
     notifyListeners();
     return responseModel;
@@ -280,10 +306,9 @@ class LocationProvider with ChangeNotifier {
 
   // for Label Us
 
-
   updateAddressIndex(int index, bool notify) {
     _selectAddressIndex = index;
-    if(notify) {
+    if (notify) {
       notifyListeners();
     }
   }
@@ -303,19 +328,33 @@ class LocationProvider with ChangeNotifier {
     detail = PlacesDetailsResponse.fromJson(response.response?.data);
 
     _pickPosition = Position(
-      longitude: detail.result.geometry!.location.lat, latitude: detail.result.geometry!.location.lng,
-      timestamp: DateTime.now(), accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1,
-      altitudeAccuracy: 0, headingAccuracy: 0,
+      longitude: detail.result.geometry!.location.lat,
+      latitude: detail.result.geometry!.location.lng,
+      timestamp: DateTime.now(),
+      accuracy: 1,
+      altitude: 1,
+      heading: 1,
+      speed: 1,
+      speedAccuracy: 1,
+      altitudeAccuracy: 0,
+      headingAccuracy: 0,
     );
 
     _pickAddress = address;
     _address = address;
     _changeAddress = false;
+    // _pickedAddressLatitude = '${detail.result.geometry?.location.lat}';
+    // _pickedAddressLongitude = '${detail.result.geometry?.location.lng}';
 
-    if(mapController != null) {
-      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(
-        detail.result.geometry!.location.lat, detail.result.geometry!.location.lng,
-      ), zoom: 16)));
+
+
+    if (mapController != null) {
+      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(
+            detail.result.geometry!.location.lat,
+            detail.result.geometry!.location.lng,
+          ),
+          zoom: 16)));
     }
     _loading = false;
     notifyListeners();
@@ -332,39 +371,34 @@ class LocationProvider with ChangeNotifier {
     _position = _pickPosition;
     _address = _pickAddress;
     _updateAddAddressData = false;
-    if(isUpdate){
+    if (isUpdate) {
       notifyListeners();
     }
   }
-
 
   void setPickData() {
     _pickPosition = _position;
     _pickAddress = _address;
   }
 
-
-
   Future<String> getAddressFromGeocode(LatLng latLng) async {
     ApiResponseModel response = await locationRepo.getAddressFromGeocode(latLng);
     String address = 'Unknown Location Found';
-    if(response.response!.statusCode == 200 && response.response!.data['status'] == 'OK') {
+    if (response.response!.statusCode == 200 && response.response!.data['status'] == 'OK') {
       address = response.response!.data['results'][0]['formatted_address'].toString();
-    }else {
+    } else {
       ApiCheckerHelper.checkApi(response);
     }
     return address;
   }
 
   Future<List<PredictionModel>> searchLocation(BuildContext context, String text) async {
-    if(text.isNotEmpty) {
-
+    if (text.isNotEmpty) {
       ApiResponseModel response = await locationRepo.searchLocation(text);
       if (response.response?.statusCode == 200 && response.response!.data['status'] == 'OK') {
         _predictionList = [];
-        response.response!.data['predictions'].forEach((prediction) =>
-            _predictionList.add(PredictionModel.fromJson(prediction)));
-      }else{
+        response.response!.data['predictions'].forEach((prediction) => _predictionList.add(PredictionModel.fromJson(prediction)));
+      } else {
         _predictionList = [];
       }
     }
@@ -375,7 +409,6 @@ class LocationProvider with ChangeNotifier {
     return placeMark;
   }
 
-
   Future<AddressModel?> getLastOrderedAddress() async {
     AddressModel? addressModel;
     ApiResponseModel apiResponse = await locationRepo.getLastOrderedAddress();
@@ -385,11 +418,11 @@ class LocationProvider with ChangeNotifier {
     return addressModel;
   }
 
-  int? getAddressIndex(AddressModel address){
+  int? getAddressIndex(AddressModel address) {
     int? index;
-    if(_addressList != null) {
-      for(int i = 0; i < _addressList!.length; i ++) {
-        if(_addressList![i].id == address.id) {
+    if (_addressList != null) {
+      for (int i = 0; i < _addressList!.length; i++) {
+        if (_addressList![i].id == address.id) {
           index = i;
           break;
         }
@@ -397,8 +430,4 @@ class LocationProvider with ChangeNotifier {
     }
     return index;
   }
-
-
-
-
 }

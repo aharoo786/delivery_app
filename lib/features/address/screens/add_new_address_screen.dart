@@ -1,5 +1,6 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_grocery/common/enums/footer_type_enum.dart';
 import 'package:flutter_grocery/common/widgets/custom_app_bar_widget.dart';
 import 'package:flutter_grocery/common/widgets/footer_web_widget.dart';
@@ -25,23 +26,15 @@ class AddNewAddressScreen extends StatefulWidget {
   final bool fromStart;
   final bool fromManualAddAddress;
   final AddressModel? address;
-  const AddNewAddressScreen(
-      {super.key,
-      this.isEnableUpdate = true,
-      this.fromStart = false,
-      this.fromManualAddAddress = false,
-      this.address,
-      this.fromCheckout = false});
+  const AddNewAddressScreen({super.key, this.isEnableUpdate = true, this.fromStart = false, this.fromManualAddAddress = false, this.address, this.fromCheckout = false});
 
   @override
   State<AddNewAddressScreen> createState() => _AddNewAddressScreenState();
 }
 
 class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
-  final TextEditingController _contactPersonNameController =
-      TextEditingController();
-  final TextEditingController _contactPersonNumberController =
-      TextEditingController();
+  final TextEditingController _contactPersonNameController = TextEditingController();
+  final TextEditingController _contactPersonNumberController = TextEditingController();
   final TextEditingController _streetNumberController = TextEditingController();
   final TextEditingController _houseNumberController = TextEditingController();
   final TextEditingController _florNumberController = TextEditingController();
@@ -58,12 +51,12 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   @override
   void initState() {
     super.initState();
-
-    _initLoading();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initLoading();
+    });
 
     if (widget.address != null && !widget.fromCheckout) {
-      Provider.of<LocationProvider>(context, listen: false).setAddress =
-          widget.address?.address;
+      Provider.of<LocationProvider>(context, listen: false).setAddress = widget.address?.address;
     }
   }
 
@@ -74,15 +67,11 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
 
     return Scaffold(
       appBar: (ResponsiveHelper.isDesktop(context)
-          ? const PreferredSize(
-              preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
+          ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
           : CustomAppBarWidget(
-              title: widget.isEnableUpdate
-                  ? getTranslated('update_address', context)
-                  : getTranslated('add_new_address', context),
+              title: widget.isEnableUpdate ? getTranslated('update_address', context) : getTranslated('add_new_address', context),
             )) as PreferredSizeWidget?,
-      body: Consumer<LocationProvider>(
-          builder: (context, locationProvider, child) {
+      body: Consumer<LocationProvider>(builder: (context, locationProvider, child) {
         return Column(children: [
           Expanded(
               child: CustomScrollView(slivers: [
@@ -106,10 +95,8 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
                           // for label us
                           if (!ResponsiveHelper.isDesktop(context))
                             AddressDetailsWidget(
-                              contactPersonNameController:
-                                  _contactPersonNameController,
-                              contactPersonNumberController:
-                                  _contactPersonNumberController,
+                              contactPersonNameController: _contactPersonNameController,
+                              contactPersonNumberController: _contactPersonNumberController,
                               addressNode: _addressNode,
                               nameNode: _nameNode,
                               numberNode: _numberNode,
@@ -122,7 +109,7 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
                               stateNode: _stateNode,
                               florNumberController: _florNumberController,
                               florNode: _floorNode,
-                              countryCode: countryCode!,
+                              countryCode: countryCode ?? '',
                               onValueChange: (code) {
                                 countryCode = code;
                               },
@@ -133,41 +120,31 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
           ])),
           if (!ResponsiveHelper.isDesktop(context))
             AddAddressWidget(
-              isEnableUpdate: widget.isEnableUpdate,
-              fromCheckout: widget.fromCheckout,
-              contactPersonNumberController: _contactPersonNumberController,
-              contactPersonNameController: _contactPersonNameController,
-              address: widget.address,
-              streetNumberController: _streetNumberController,
-              houseNumberController: _houseNumberController,
-              floorNumberController: _florNumberController,
-              countryCode: countryCode!,
-              fromStart: widget.fromStart,
-                fromManualAddAddress:widget.fromManualAddAddress
-
-            ),
+                isEnableUpdate: widget.isEnableUpdate,
+                fromCheckout: widget.fromCheckout,
+                contactPersonNumberController: _contactPersonNumberController,
+                contactPersonNameController: _contactPersonNameController,
+                address: widget.address,
+                streetNumberController: _streetNumberController,
+                houseNumberController: _houseNumberController,
+                floorNumberController: _florNumberController,
+                countryCode: countryCode ?? '',
+                fromStart: widget.fromStart,
+                fromManualAddAddress: widget.fromManualAddAddress),
         ]);
       }),
     );
   }
 
   Future<void> _initLoading() async {
-    countryCode = CountryCode.fromCountryCode(
-            Provider.of<SplashProvider>(context, listen: false)
-                .configModel!
-                .country!)
-        .code;
+    countryCode = CountryCode.fromCountryCode(Provider.of<SplashProvider>(context, listen: false).configModel!.country!).code;
 
-    final locationProvider =
-        Provider.of<LocationProvider>(context, listen: false);
-    final AuthProvider authProvider =
-        Provider.of<AuthProvider>(context, listen: false);
-    final SplashProvider splashProvider =
-        Provider.of<SplashProvider>(context, listen: false);
-    final userModel =
-        Provider.of<ProfileProvider>(context, listen: false).userInfoModel;
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
+    final userModel = Provider.of<ProfileProvider>(context, listen: false).userInfoModel;
 
-    locationProvider.setPickedAddressLatLon(null, null, isUpdate: false);
+    // locationProvider.setPickedAddressLatLon(null, null, isUpdate: false);
 
     if (widget.address == null) {
       locationProvider.setAddAddressData(false);
@@ -178,8 +155,8 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
     locationProvider.onChangeErrorMessage(message: '');
 
     if (widget.isEnableUpdate && widget.address != null) {
-      String? code =
-          CountryPick.getCountryCode('${widget.address!.contactPersonNumber}');
+      print('google map initialize');
+      String? code = CountryPick.getCountryCode('${widget.address!.contactPersonNumber}');
       if (code != null) {
         countryCode = CountryCode.fromDialCode(code).code;
       }
@@ -187,10 +164,8 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
       locationProvider.isUpdateAddress = false;
 
       if (splashProvider.configModel?.googleMapStatus ?? false) {
-        if ((widget.address?.longitude?.isNotEmpty ?? false) &&
-            (widget.address?.latitude?.isNotEmpty ?? false)) {
-          locationProvider.setPickedAddressLatLon(
-              widget.address?.latitude ?? '', widget.address?.longitude ?? '');
+        if ((widget.address?.longitude?.isNotEmpty ?? false) && (widget.address?.latitude?.isNotEmpty ?? false)) {
+          locationProvider.setPickedAddressLatLon(widget.address?.latitude ?? '', widget.address?.longitude ?? '');
           locationProvider.updatePosition(
             CameraPosition(
                 target: LatLng(
@@ -204,10 +179,8 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
         }
       }
 
-      _contactPersonNameController.text =
-          '${widget.address?.contactPersonName}';
-      _contactPersonNumberController.text =
-          '${widget.address?.contactPersonNumber}';
+      _contactPersonNameController.text = '${widget.address?.contactPersonName}';
+      _contactPersonNumberController.text = '${widget.address?.contactPersonNumber}';
       _streetNumberController.text = widget.address?.streetNumber ?? '';
       _houseNumberController.text = widget.address?.houseNumber ?? '';
       _florNumberController.text = widget.address?.floorNumber ?? '';
@@ -220,21 +193,18 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
         locationProvider.updateAddressIndex(2, false);
       }
     } else {
+      print('else google map initialize');
       if (authProvider.isLoggedIn()) {
         String? code = CountryPick.getCountryCode(userModel?.phone);
 
         if (code != null) {
           countryCode = CountryCode.fromDialCode(code).code;
         }
-        _contactPersonNameController.text =
-            '${userModel?.fName ?? ''}' ' ${userModel?.lName ?? ''}';
-        _contactPersonNumberController.text = (code != null
-            ? (userModel?.phone ?? '').replaceAll(code, '')
-            : userModel?.phone ?? '');
+        _contactPersonNameController.text = '${userModel?.fName ?? ''}' ' ${userModel?.lName ?? ''}';
+        _contactPersonNumberController.text = (code != null ? (userModel?.phone ?? '').replaceAll(code, '') : userModel?.phone ?? '');
       }
     }
 
-    print(
-        "----------------(ADD NEW ADDRESS SCREEN)-------------${locationProvider.pickedAddressLatitude} and ${locationProvider.pickedAddressLongitude}");
+    print("----------------(ADD NEW ADDRESS SCREEN)-------------${locationProvider.pickedAddressLatitude} and ${locationProvider.pickedAddressLongitude}");
   }
 }
