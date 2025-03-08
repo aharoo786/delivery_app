@@ -31,11 +31,7 @@ class OrderDetailsScreen extends StatefulWidget {
   final int? orderId;
   final String? phoneNumber;
 
-  const OrderDetailsScreen(
-      {super.key,
-      required this.orderModel,
-      required this.orderId,
-      this.phoneNumber});
+  const OrderDetailsScreen({super.key, required this.orderModel, required this.orderId, this.phoneNumber});
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
@@ -46,15 +42,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     final splashProvider = Provider.of<SplashProvider>(context, listen: false);
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
 
-    orderProvider.trackOrder(widget.orderId.toString(), null, context, false,
-        phoneNumber: widget.phoneNumber, isUpdate: false);
+    orderProvider.trackOrder(widget.orderId.toString(), null, context, false, phoneNumber: widget.phoneNumber, isUpdate: false);
 
     if (widget.orderModel == null) {
       await splashProvider.initConfig();
     }
     await orderProvider.initializeTimeSlot();
-    orderProvider.getOrderDetails(
-        orderID: widget.orderId.toString(), phoneNumber: widget.phoneNumber);
+    orderProvider.getOrderDetails(orderID: widget.orderId.toString(), phoneNumber: widget.phoneNumber);
   }
 
   @override
@@ -67,35 +61,22 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: (ResponsiveHelper.isDesktop(context)
-          ? const PreferredSize(
-              preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
+          ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
           : CustomAppBarWidget(
               title: 'order_details'.tr,
             )) as PreferredSizeWidget?,
       body: Consumer<OrderProvider>(builder: (context, orderProvider, _) {
-        print(
-            "---------------TRACK MODEL------------${orderProvider.trackModel?.toJson().toString()}");
+        print("---------------TRACK MODEL------------${orderProvider.trackModel?.toJson().toString()}");
 
-        double deliveryCharge =
-            OrderHelper.getDeliveryCharge(orderModel: orderProvider.trackModel);
-        double itemsPrice = OrderHelper.getOrderDetailsValue(
-            orderDetailsList: orderProvider.orderDetails,
-            type: OrderValue.itemPrice);
-        double discount = OrderHelper.getOrderDetailsValue(
-            orderDetailsList: orderProvider.orderDetails,
-            type: OrderValue.discount);
-        double extraDiscount =
-            OrderHelper.getExtraDiscount(trackOrder: orderProvider.trackModel);
-        double tax = OrderHelper.getOrderDetailsValue(
-            orderDetailsList: orderProvider.orderDetails, type: OrderValue.tax);
-        bool isVatInclude = OrderHelper.isVatTaxInclude(
-            orderDetailsList: orderProvider.orderDetails);
-        TimeSlotModel? timeSlot = OrderHelper.getTimeSlot(
-            timeSlotList: orderProvider.allTimeSlots,
-            timeSlotId: orderProvider.trackModel?.timeSlotId);
+        double deliveryCharge = OrderHelper.getDeliveryCharge(orderModel: orderProvider.trackModel);
+        double itemsPrice = OrderHelper.getOrderDetailsValue(orderDetailsList: orderProvider.orderDetails, type: OrderValue.itemPrice);
+        double discount = OrderHelper.getOrderDetailsValue(orderDetailsList: orderProvider.orderDetails, type: OrderValue.discount);
+        double extraDiscount = OrderHelper.getExtraDiscount(trackOrder: orderProvider.trackModel);
+        double tax = OrderHelper.getOrderDetailsValue(orderDetailsList: orderProvider.orderDetails, type: OrderValue.tax);
+        bool isVatInclude = OrderHelper.isVatTaxInclude(orderDetailsList: orderProvider.orderDetails);
+        TimeSlotModel? timeSlot = OrderHelper.getTimeSlot(timeSlotList: orderProvider.allTimeSlots, timeSlotId: orderProvider.trackModel?.timeSlotId);
 
-        double subTotal = OrderHelper.getSubTotalAmount(
-            itemsPrice: itemsPrice, tax: tax, isVatInclude: isVatInclude);
+        double subTotal = OrderHelper.getSubTotalAmount(itemsPrice: itemsPrice, tax: tax, isVatInclude: isVatInclude);
 
         double total = OrderHelper.getTotalOrderAmount(
           subTotal: subTotal,
@@ -104,107 +85,27 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           deliveryCharge: deliveryCharge,
           couponDiscount: orderProvider.trackModel?.couponDiscountAmount,
         );
-        int itemsQuantity =
-            OrderHelper.getOrderItemQuantity(orderProvider.orderDetails);
+        int itemsQuantity = OrderHelper.getOrderItemQuantity(orderProvider.orderDetails);
 
-        return (orderProvider.orderDetails == null ||
-                orderProvider.trackModel == null)
-            ? Center(
-                child:
-                    CustomLoaderWidget(color: Theme.of(context).primaryColor))
+        return (orderProvider.orderDetails == null || orderProvider.trackModel == null)
+            ? Center(child: CustomLoaderWidget(color: Theme.of(context).primaryColor))
             : orderProvider.orderDetails!.isNotEmpty
                 ? SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: Dimensions.fontSizeLarge),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'My Orders',
-                                style: poppinsSemiBold.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: ResponsiveHelper.isDesktop(context)
-                                      ? Dimensions.fontSizeExtraLarge
-                                      : 28,
-                                ),
-                              ),
-                              const SizedBox(height: Dimensions.fontSizeMaxLarge),
-                              Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 60,
-                                      width: 60,
-                                      alignment: Alignment.center,
-                                      //padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(
-                                              //DEE2E6
-                                              color: ColorResources.borderColor,
-                                              width: 1)),
-                                      child: Image.asset(
-                                        Images.chicken,
-                                        fit: BoxFit.cover,
-                                        width: 100,
-                                        height: 100,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Chicken Dum Biryani ',
-                                          style: poppinsSemiBold.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: ResponsiveHelper.isDesktop(
-                                                    context)
-                                                ? Dimensions.fontSizeExtraLarge
-                                                : 18,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 8,
-                                        ),
-                                        Text(
-                                          'BTM Layout',
-                                          style: poppinsSemiBold.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: ResponsiveHelper.isDesktop(
-                                                    context)
-                                                ? Dimensions.fontSizeExtraLarge
-                                                : 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ]),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
-                              Divider(
-                                color: ColorResources.borderColor,
-                              ),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
                               _statusWidget(
                                   title: "Order ID",
                                   subtitle: '#${orderProvider.trackModel?.id}',
-                                  status: getTranslated(
-                                      orderProvider.trackModel!.orderStatus,
-                                      context),
+                                  status: getTranslated(orderProvider.trackModel!.orderStatus, context),
                                   orderProvider: orderProvider,
                                   context: context),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
+                              const SizedBox(height: Dimensions.paddingSizeDefault),
                               _statusWidget(
                                   title: "Date & Time",
                                   subtitle:
@@ -212,46 +113,34 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   status: "",
                                   orderProvider: orderProvider,
                                   context: context),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
+                              const SizedBox(height: Dimensions.paddingSizeDefault),
                               _statusWidget(
                                   title: "Delivered to",
-                                  subtitle:
-                                      '${orderProvider.trackModel?.deliveryAddress?.address} ',
+                                  subtitle: '${orderProvider.trackModel?.deliveryAddress?.address} ',
                                   status: "",
                                   orderProvider: orderProvider,
                                   context: context),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
+                              const SizedBox(height: Dimensions.paddingSizeDefault),
                               _statusWidget(
                                   title: "Payment Method",
-                                  subtitle: getPaymentMethodText(
-                                          orderProvider, context) +
-                                      getAdditionalPaymentText(
-                                          orderProvider, context),
+                                  subtitle: getPaymentMethodText(orderProvider, context) + getAdditionalPaymentText(orderProvider, context),
                                   status: "",
                                   orderProvider: orderProvider,
                                   context: context),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
-                              Divider(
-                                color: ColorResources.borderColor,
-                              ),
-                              const SizedBox(
-                                  height: Dimensions.paddingSizeDefault),
+                              const SizedBox(height: Dimensions.paddingSizeDefault),
+                              const Divider(color: ColorResources.borderColor),
+                              const SizedBox(height: Dimensions.paddingSizeDefault),
                               Text(
-                                '${getTranslated(itemsQuantity > 1 ? 'items' : 'item', context)}',
+                                getTranslated(itemsQuantity > 1 ? 'items' : 'item', context),
                                 style: poppinsSemiBold.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: ResponsiveHelper.isDesktop(context)
-                                      ? Dimensions.fontSizeExtraLarge
-                                      : 16,
+                                  fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(height: Dimensions.paddingSizeDefault),
+                        const SizedBox(height: Dimensions.paddingSizeDefault),
                         const OrderedProductListWidget(),
                         const SizedBox(height: Dimensions.paddingSizeDefault),
                         Padding(
@@ -263,32 +152,26 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 'Billing Details',
                                 style: poppinsSemiBold.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: ResponsiveHelper.isDesktop(context)
-                                      ? Dimensions.fontSizeExtraLarge
-                                      : 16,
+                                  fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
                                 ),
                               ),
-                              SizedBox(height: Dimensions.paddingSizeDefault),
+                              const SizedBox(height: Dimensions.paddingSizeDefault),
                               OrderAmountWidget(
                                 extraDiscount: extraDiscount,
                                 itemsPrice: itemsPrice,
                                 tax: tax,
                                 subTotal: subTotal,
                                 discount: discount,
-                                couponDiscount:
-                                orderProvider.trackModel?.couponDiscountAmount ??
-                                    0,
+                                couponDiscount: orderProvider.trackModel?.couponDiscountAmount ?? 0,
                                 deliveryCharge: deliveryCharge,
                                 total: total,
                                 isVatInclude: isVatInclude,
-                                paymentList: OrderHelper.getPaymentList(
-                                    orderProvider.trackModel),
+                                paymentList: OrderHelper.getPaymentList(orderProvider.trackModel),
                                 orderModel: widget.orderModel,
                                 phoneNumber: widget.phoneNumber,
-                                weightChargeAmount:
-                                orderProvider.trackModel?.weightChargeAmount,
+                                weightChargeAmount: orderProvider.trackModel?.weightChargeAmount,
                               ),
-                              SizedBox(height: Dimensions.paddingSizeExtraLarge),
+                              const SizedBox(height: Dimensions.paddingSizeExtraLarge),
                               CustomButtonWidget(
                                 buttonText: 'Reorder',
                                 onPressed: () {},
@@ -296,14 +179,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             ],
                           ),
                         ),
-
                       ],
                     ),
                   )
-                : NoDataWidget(
-                    isShowButton: true,
-                    image: Images.box,
-                    title: 'order_not_found'.tr);
+                : NoDataWidget(isShowButton: true, image: Images.box, title: 'order_not_found'.tr);
       }),
     );
   }
@@ -404,69 +283,60 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   _statusWidget({context, title, subtitle, status, orderProvider}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: poppinsSemiBold.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: ResponsiveHelper.isDesktop(context)
-                    ? Dimensions.fontSizeExtraLarge
-                    : 18,
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(subtitle,
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
                 style: poppinsSemiBold.copyWith(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 13,
-                    color: Theme.of(context).textTheme.bodyLarge?.color)),
-            SizedBox(
-              height: 4,
-            ),
-          ],
-        ),
-        Spacer(),
-        status == ""
-            ? SizedBox()
-            : Row(
-                children: [
-                  Icon(
-                    Icons.done,
-                    color: OrderStatus.pending.name ==
-                            orderProvider.trackModel!.orderStatus
-                        ? ColorResources.colorBlue.withOpacity(0.8)
-                        : OrderStatus.out_for_delivery.name ==
-                                orderProvider.trackModel!.orderStatus
-                            ? ColorResources.ratingColor.withOpacity(0.8)
-                            : OrderStatus.canceled.name ==
-                                    orderProvider.trackModel!.orderStatus
-                                ? ColorResources.redColor.withOpacity(0.8)
-                                : ColorResources.colorGreen.withOpacity(0.8),
-                    size: 16,
-                  ),
-                  SizedBox(width: 2),
-                  Text(status,
-                      style: poppinsSemiBold.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: OrderStatus.pending.name ==
-                                  orderProvider.trackModel!.orderStatus
-                              ? ColorResources.colorBlue.withOpacity(0.8)
-                              : OrderStatus.out_for_delivery.name ==
-                                      orderProvider.trackModel!.orderStatus
-                                  ? ColorResources.ratingColor.withOpacity(0.8)
-                                  : OrderStatus.canceled.name ==
-                                          orderProvider.trackModel!.orderStatus
-                                      ? ColorResources.redColor.withOpacity(0.8)
-                                      : ColorResources.colorGreen
-                                          .withOpacity(0.8))),
-                ],
+                  fontWeight: FontWeight.w600,
+                  fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 18,
+                ),
               ),
+              const SizedBox(height: 8),
+              Text(subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: poppinsSemiBold.copyWith(fontWeight: FontWeight.w400, fontSize: 13, color: Theme.of(context).textTheme.bodyLarge?.color)),
+              const SizedBox(height: 4),
+            ],
+          ),
+        ),
+        if (status != "")
+          Row(
+            children: [
+              Icon(
+                Icons.done,
+                color: OrderStatus.pending.name == orderProvider.trackModel!.orderStatus
+                    ? ColorResources.colorBlue.withOpacity(0.8)
+                    : OrderStatus.out_for_delivery.name == orderProvider.trackModel!.orderStatus
+                        ? ColorResources.ratingColor.withOpacity(0.8)
+                        : OrderStatus.canceled.name == orderProvider.trackModel!.orderStatus
+                            ? ColorResources.redColor.withOpacity(0.8)
+                            : ColorResources.colorGreen.withOpacity(0.8),
+                size: 16,
+              ),
+              const SizedBox(width: 2),
+              Text(
+                status,
+                style: poppinsSemiBold.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: OrderStatus.pending.name == orderProvider.trackModel!.orderStatus
+                      ? ColorResources.colorBlue.withOpacity(0.8)
+                      : OrderStatus.out_for_delivery.name == orderProvider.trackModel!.orderStatus
+                          ? ColorResources.ratingColor.withOpacity(0.8)
+                          : OrderStatus.canceled.name == orderProvider.trackModel!.orderStatus
+                              ? ColorResources.redColor.withOpacity(0.8)
+                              : ColorResources.colorGreen.withOpacity(0.8),
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
@@ -500,13 +370,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           name,
           style: poppinsSemiBold.copyWith(
             fontWeight: FontWeight.w600,
-            fontSize: ResponsiveHelper.isDesktop(context)
-                ? Dimensions.fontSizeExtraLarge
-                : 16,
+            fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 16,
           ),
         ),
       ),
-      SizedBox(
+      const SizedBox(
         width: 40,
       ),
       Text(
@@ -525,38 +393,19 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _priceRow(context: context, title: "SubTotal", values: '₹599'),
-        _priceRow(
-            context: context,
-            title: "Promocode",
-            values: '- ₹85',
-            isGreenColor: true),
-        _priceRow(
-            context: context,
-            title: "Delivery fee",
-            values: '₹25',
-            showIcon: true),
-        _priceRow(
-            context: context,
-            title: "Tax & other fees ",
-            values: '₹45',
-            showIcon: true),
-        _priceRow(
-            context: context, title: "Total", values: '₹450', isBold: true),
+        _priceRow(context: context, title: "Promocode", values: '- ₹85', isGreenColor: true),
+        _priceRow(context: context, title: "Delivery fee", values: '₹25', showIcon: true),
+        _priceRow(context: context, title: "Tax & other fees ", values: '₹45', showIcon: true),
+        _priceRow(context: context, title: "Total", values: '₹450', isBold: true),
       ],
     );
   }
 
-  _priceRow(
-      {context,
-      title,
-      values,
-      isGreenColor = false,
-      showIcon = false,
-      isBold = false}) {
+  _priceRow({context, title, values, isGreenColor = false, showIcon = false, isBold = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 8,
         ),
         Row(
@@ -569,39 +418,35 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 fontSize: 14,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
             showIcon
-                ? Icon(
+                ? const Icon(
                     Icons.info_outline_rounded,
                     size: 14,
                   )
-                : SizedBox(),
-            Spacer(),
+                : const SizedBox(),
+            const Spacer(),
             Text(
               values,
               style: poppinsSemiBold.copyWith(
                 fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
-                color: isGreenColor
-                    ? Theme.of(context).primaryColor
-                    : Colors.black,
+                color: isGreenColor ? Theme.of(context).primaryColor : Colors.black,
                 fontSize: 14,
               ),
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 8,
         ),
       ],
     );
   }
 
-  String getPaymentMethodText(
-      OrderProvider orderProvider, BuildContext context) {
-    if (orderProvider.trackModel?.paymentMethod != null &&
-        orderProvider.trackModel!.paymentMethod!.isNotEmpty) {
+  String getPaymentMethodText(OrderProvider orderProvider, BuildContext context) {
+    if (orderProvider.trackModel?.paymentMethod != null && orderProvider.trackModel!.paymentMethod!.isNotEmpty) {
       if (orderProvider.trackModel!.paymentMethod == 'cash_on_delivery') {
         return getTranslated('cash_on_delivery', context);
       } else {
@@ -612,8 +457,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     return 'Digital Payment';
   }
 
-  String getAdditionalPaymentText(
-      OrderProvider orderProvider, BuildContext context) {
+  String getAdditionalPaymentText(OrderProvider orderProvider, BuildContext context) {
     String additionalText = '';
 
     if (orderProvider.trackModel?.paymentStatus == 'partially_paid') {

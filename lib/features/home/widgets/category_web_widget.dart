@@ -26,11 +26,9 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   Widget build(BuildContext context) {
     print('------load-----------');
 
-    final SplashProvider splashProvider =
-        Provider.of<SplashProvider>(context, listen: false);
+    final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
 
-    return Consumer<CategoryProvider>(
-        builder: (context, categoryProvider, child) {
+    return Consumer<CategoryProvider>(builder: (context, categoryProvider, child) {
       print('--------cate-------${categoryProvider.categoryList}');
       return categoryProvider.categoryList == null
           ? const CategoriesShimmerWidget()
@@ -39,15 +37,11 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                   ResponsiveHelper.isDesktop(context)
                       ? CategoryWebWidget(scrollController: scrollController)
                       : GridView.builder(
-                          itemCount:
-                              (categoryProvider.categoryList?.length ?? 0) > 5
-                                  ? 6
-                                  : categoryProvider.categoryList?.length,
+                          itemCount: (categoryProvider.categoryList?.length ?? 0) > 5 ? 6 : categoryProvider.categoryList?.length,
                           padding: const EdgeInsets.all(16),
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: ResponsiveHelper.isMobilePhone()
                                 ? 3
                                 : ResponsiveHelper.isTab(context)
@@ -62,65 +56,46 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                               child: InkWell(
                                 onTap: () {
                                   if (index == 5) {
-                                    Navigator.pushNamed(
-                                        context, RouteHelper.categories);
+                                    Navigator.pushNamed(context, RouteHelper.categories);
                                   } else {
-                                    categoryProvider.onChangeSelectIndex(-1,
-                                        notify: false);
+                                    categoryProvider.onChangeSelectIndex(-1, notify: false);
                                     Navigator.of(context).pushNamed(
-                                      RouteHelper.getCategoryProductsRoute(
-                                          categoryId:
-                                              '${categoryProvider.categoryList![index].id}'),
+                                      RouteHelper.getCategoryProductsRoute(categoryId: '${categoryProvider.categoryList![index].id}' , subCategory: categoryProvider.categoryList?[index].name ?? ''),
                                     );
                                   }
                                 },
                                 child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: 12, top: 12, right: 7),
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xffF2F2F3),
-                                        borderRadius: BorderRadius.circular(8)),
+                                    padding: const EdgeInsets.only(left: 12, top: 12, right: 7),
+                                    decoration: BoxDecoration(color: const Color(0xffF2F2F3), borderRadius: BorderRadius.circular(8)),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          index != 5
-                                              ? categoryProvider
-                                                  .categoryList![index].name!
-                                              : getTranslated(
-                                                  'view_all', context),
-                                          style: poppinsBold.copyWith(
-                                              fontSize: 12),
+                                          index != 5 ? categoryProvider.categoryList![index].name! : getTranslated('view_all', context),
+                                          style: poppinsBold.copyWith(fontSize: 12),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         index != 5
                                             ? Expanded(
                                                 child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 15,bottom: 5),
+                                                  padding: const EdgeInsets.only(left: 15, bottom: 5),
                                                   child: CustomImageWidget(
-                                                    image:
-                                                        '${splashProvider.baseUrls?.categoryImageUrl}/${categoryProvider.categoryList?[index].image}',
+                                                    image: '${splashProvider.baseUrls?.categoryImageUrl}/${categoryProvider.categoryList?[index].image}',
                                                     fit: BoxFit.contain,
                                                   ),
                                                 ),
                                               )
                                             : Expanded(
                                                 child: Container(
-                                                  decoration:
-                                                      const BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Color(0xffF2F2F3),
                                                   ),
                                                   alignment: Alignment.center,
-                                                  child: Text(
-                                                      '${(categoryProvider.categoryList?.length ?? 0) - 5}+',
-                                                      style: poppinsRegular),
+                                                  child: Text('${(categoryProvider.categoryList?.length ?? 0) - 5}+', style: poppinsRegular),
                                                 ),
                                               ),
                                       ],

@@ -10,7 +10,7 @@ import 'package:flutter_grocery/features/search/domain/reposotories/search_repo.
 import 'package:flutter_grocery/helper/api_checker_helper.dart';
 import 'package:flutter_grocery/helper/data_sync_helper.dart';
 
-class CategoryProvider extends ChangeNotifier  {
+class CategoryProvider extends ChangeNotifier {
   final CategoryRepo categoryRepo;
   final ProductRepo productRepo;
   final SearchRepo searchRepo;
@@ -34,14 +34,11 @@ class CategoryProvider extends ChangeNotifier  {
   CategoryModel? get categoryModel => _categoryModel;
   int get selectCategory => _selectCategory;
 
-
-
-  Future<List<CategoryModel>?> getCategoryList( BuildContext context, bool reload, {DataSourceEnum source = DataSourceEnum.local}) async {
-
-    if(_categoryList == null || reload) {
+  Future<List<CategoryModel>?> getCategoryList(BuildContext context, bool reload, {DataSourceEnum source = DataSourceEnum.local}) async {
+    if (_categoryList == null || reload) {
       DataSyncHelper.fetchAndSyncData(
-        fetchFromLocal: ()=> categoryRepo.getCategoryList<CacheResponseData>(source: DataSourceEnum.local),
-        fetchFromClient: ()=> categoryRepo.getCategoryList(source: DataSourceEnum.client),
+        fetchFromLocal: () => categoryRepo.getCategoryList<CacheResponseData>(source: DataSourceEnum.local),
+        fetchFromClient: () => categoryRepo.getCategoryList(source: DataSourceEnum.client),
         onResponse: (data, source) {
           _categoryList = [];
           data.forEach((category) => _categoryList!.add(CategoryModel.fromJson(category)));
@@ -56,14 +53,14 @@ class CategoryProvider extends ChangeNotifier  {
   }
 
   void getCategory(int? id, BuildContext context) async {
-    if(_categoryList == null) {
+    if (_categoryList == null) {
       await getCategoryList(context, true);
       _categoryModel = _categoryList!.firstWhere((category) => category.id == id);
       notifyListeners();
-    }else {
-      try{
+    } else {
+      try {
         _categoryModel = _categoryList!.firstWhere((category) => category.id == id);
-      }catch(e){
+      } catch (e) {
         debugPrint('error : $e');
       }
     }
@@ -97,8 +94,6 @@ class CategoryProvider extends ChangeNotifier  {
     notifyListeners();
   }
 
-
-
   void updateSelectCategory(int index) {
     _selectCategory = index;
     notifyListeners();
@@ -106,18 +101,17 @@ class CategoryProvider extends ChangeNotifier  {
 
   void onChangeSelectIndex(int selectedIndex, {bool notify = true}) {
     _selectedCategoryIndex = selectedIndex;
-    if(notify) {
+    if (notify) {
       notifyListeners();
     }
   }
 
   void onChangeCategoryIndex(int selectedIndex, {bool notify = true}) {
     _categoryIndex = selectedIndex;
-    if(notify) {
+    if (notify) {
       notifyListeners();
     }
   }
-
 
   List<Product> _subCategoryProductList = [];
   bool? _hasData;
@@ -143,10 +137,9 @@ class CategoryProvider extends ChangeNotifier  {
         prices.add(double.parse(product.price.toString()));
       }
       prices.sort();
-      if(subCategoryProductList.isNotEmpty) {
+      if (subCategoryProductList.isNotEmpty) {
         _maxValue = prices[prices.length - 1];
       }
-
     } else {
       ApiCheckerHelper.checkApi(apiResponse);
     }
@@ -154,15 +147,16 @@ class CategoryProvider extends ChangeNotifier  {
   }
 
   void sortCategoryProduct(int filterIndex) {
-    if(filterIndex == 0) {
+    print('index =  $filterIndex');
+    if (filterIndex == 0) {
       _subCategoryProductList.sort((product1, product2) => product1.price!.compareTo(product2.price!));
-    }else if(filterIndex == 1) {
+    } else if (filterIndex == 1) {
       _subCategoryProductList.sort((product1, product2) => product1.price!.compareTo(product2.price!));
       Iterable iterable = _subCategoryProductList.reversed;
       _subCategoryProductList = iterable.toList() as List<Product>;
-    }else if(filterIndex == 2) {
+    } else if (filterIndex == 2) {
       _subCategoryProductList.sort((product1, product2) => product1.name!.toLowerCase().compareTo(product2.name!.toLowerCase()));
-    }else if(filterIndex == 3) {
+    } else if (filterIndex == 3) {
       _subCategoryProductList.sort((product1, product2) => product1.name!.toLowerCase().compareTo(product2.name!.toLowerCase()));
       Iterable iterable = _subCategoryProductList.reversed;
       _subCategoryProductList = iterable.toList() as List<Product>;
@@ -170,6 +164,11 @@ class CategoryProvider extends ChangeNotifier  {
     notifyListeners();
   }
 
+  int selectedSortedIndex = -1;
+  void selectedSortValueUpdate(int value) {
+    selectedSortedIndex = value;
+    notifyListeners();
+  }
 
   void initializeAllSortBy(BuildContext context) {
     if (_allSortBy.isEmpty) {
@@ -177,6 +176,4 @@ class CategoryProvider extends ChangeNotifier  {
       _allSortBy = searchRepo.getAllSortByList();
     }
   }
-
-
 }

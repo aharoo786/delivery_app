@@ -18,36 +18,28 @@ import 'order_details_screen.dart';
 
 class OrderListScreen extends StatefulWidget {
   bool showAppBar;
-   OrderListScreen({super.key,this.showAppBar=false});
+  OrderListScreen({super.key, this.showAppBar = false});
 
   @override
   State<OrderListScreen> createState() => _OrderListScreenState();
 }
 
-class _OrderListScreenState extends State<OrderListScreen>
-    with TickerProviderStateMixin {
+class _OrderListScreenState extends State<OrderListScreen> with TickerProviderStateMixin {
   TabController? _tabController;
 
   @override
   void initState() {
-    final bool isLoggedIn =
-        Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
-    Provider.of<OrderProvider>(context, listen: false)
-        .changeActiveOrderStatus(true, isUpdate: false);
+    final bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
+    Provider.of<OrderProvider>(context, listen: false).changeActiveOrderStatus(true, isUpdate: false);
 
     if (isLoggedIn) {
-      _tabController = TabController(
-          length: 2,
-          initialIndex: 0,
-          vsync: this,
-          animationDuration: const Duration(milliseconds: 100));
+      _tabController = TabController(length: 2, initialIndex: 0, vsync: this, animationDuration: const Duration(milliseconds: 100));
       Provider.of<OrderProvider>(context, listen: false).getOrderList(context);
     }
 
     _tabController?.addListener(() {
       setState(() {
-        final OrderProvider orderProvider =
-            Provider.of<OrderProvider>(context, listen: false);
+        final OrderProvider orderProvider = Provider.of<OrderProvider>(context, listen: false);
         orderProvider.changeActiveOrderStatus(_tabController?.index == 0);
       });
     });
@@ -57,8 +49,7 @@ class _OrderListScreenState extends State<OrderListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoggedIn =
-        Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
+    final bool isLoggedIn = Provider.of<AuthProvider>(context, listen: false).isLoggedIn();
 
     // return  Scaffold(
     //   appBar: ResponsiveHelper.isMobilePhone() ? null: (ResponsiveHelper.isDesktop(context) ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget()) : const AppBarBaseWidget()) as PreferredSizeWidget?,
@@ -107,45 +98,42 @@ class _OrderListScreenState extends State<OrderListScreen>
 
     return Scaffold(
       appBar: ResponsiveHelper.isMobilePhone()
-          ?  widget.showAppBar?AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0.0,
-        leading: IconButton(onPressed: (){
-          Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.black,)),
-      )  : null
-          : (ResponsiveHelper.isDesktop(context)
-              ? const PreferredSize(
-                  preferredSize: Size.fromHeight(120), child: WebAppBarWidget())
-              : const AppBarBaseWidget()) as PreferredSizeWidget?,
+          ? widget.showAppBar
+              ? AppBar(
+                  elevation: 0,
+                  scrolledUnderElevation: 0.0,
+                  leading: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black)),
+                )
+              : null
+          : (ResponsiveHelper.isDesktop(context) ? const PreferredSize(preferredSize: Size.fromHeight(120), child: WebAppBarWidget()) : const AppBarBaseWidget())
+              as PreferredSizeWidget?,
       body: isLoggedIn
           ? Consumer<OrderProvider>(builder: (context, orderProvider, child) {
               return Column(
                 children: [
-                  SizedBox(height: 40,),
+                  const SizedBox(
+                    height: 40,
+                  ),
                   ResponsiveHelper.isDesktop(context)
                       ? Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: Dimensions.paddingSizeExtraLarge),
-                          child: Text("my_orders".tr,
-                              style: poppinsSemiBold.copyWith(
-                                  fontSize: Dimensions.fontSizeLarge)),
+                          padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraLarge),
+                          child: Text("my_orders".tr, style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
                         )
                       : const SizedBox(),
                   Center(
                     child: TabBar(
-                      onTap: (int? index) =>
-                          orderProvider.changeActiveOrderStatus(index == 0),
+                      onTap: (int? index) => orderProvider.changeActiveOrderStatus(index == 0),
                       tabAlignment: TabAlignment.center,
                       controller: _tabController,
                       labelColor: Theme.of(context).textTheme.bodyLarge!.color,
                       indicatorColor: Theme.of(context).primaryColor,
                       indicatorWeight: 3,
-                      unselectedLabelStyle: poppinsRegular.copyWith(
-                          color: Theme.of(context).disabledColor,
-                          fontSize: Dimensions.fontSizeSmall),
-                      labelStyle: poppinsMedium.copyWith(
-                          fontSize: Dimensions.fontSizeSmall),
+                      unselectedLabelStyle: poppinsRegular.copyWith(color: Theme.of(context).disabledColor, fontSize: Dimensions.fontSizeSmall),
+                      labelStyle: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeSmall),
                       tabs: [
                         Tab(text: getTranslated('ongoing', context)),
                         Tab(text: getTranslated('history', context)),
@@ -171,11 +159,8 @@ class _OrderListScreenState extends State<OrderListScreen>
     return Container(
       width: 84,
       // height: 110,
-      margin: const EdgeInsets.symmetric(
-          vertical: Dimensions.paddingSizeExtraSmall, horizontal: 2),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(7),
-          color: Theme.of(context).cardColor),
+      margin: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeExtraSmall, horizontal: 2),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(7), color: Theme.of(context).cardColor),
       child: Column(
         children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -208,37 +193,29 @@ class _OrderListScreenState extends State<OrderListScreen>
                   'Chicken Dum Biryani ',
                   style: poppinsSemiBold.copyWith(
                     fontWeight: FontWeight.w600,
-                    fontSize: ResponsiveHelper.isDesktop(context)
-                        ? Dimensions.fontSizeExtraLarge
-                        : 14,
+                    fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 14,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Text(
                   'BTM Layout',
                   style: poppinsSemiBold.copyWith(
                     fontWeight: FontWeight.w600,
-                    fontSize: ResponsiveHelper.isDesktop(context)
-                        ? Dimensions.fontSizeExtraLarge
-                        : 12,
+                    fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 12,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Text("13/2/23, 8:45PM",
-                    style: poppinsSemiBold.copyWith(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
-                        color: Theme.of(context).textTheme.bodyLarge?.color)),
-                SizedBox(
+                Text("13/2/23, 8:45PM", style: poppinsSemiBold.copyWith(fontWeight: FontWeight.w400, fontSize: 13, color: Theme.of(context).textTheme.bodyLarge?.color)),
+                const SizedBox(
                   height: 4,
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Row(
               children: [
                 Icon(
@@ -246,14 +223,10 @@ class _OrderListScreenState extends State<OrderListScreen>
                   color: Theme.of(context).primaryColor,
                   size: 16,
                 ),
-                SizedBox(width: 2),
+                const SizedBox(width: 2),
                 Text('Delivered',
                     style: poppinsSemiBold.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: ResponsiveHelper.isDesktop(context)
-                            ? Dimensions.fontSizeExtraLarge
-                            : 14,
-                        color: Theme.of(context).primaryColor)),
+                        fontWeight: FontWeight.w600, fontSize: ResponsiveHelper.isDesktop(context) ? Dimensions.fontSizeExtraLarge : 14, color: Theme.of(context).primaryColor)),
               ],
             ),
           ]),
@@ -268,11 +241,11 @@ class _OrderListScreenState extends State<OrderListScreen>
                   fontSize: 16,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                    return OrderDetailsScreen(
+                    return const OrderDetailsScreen(
                       orderModel: null,
                       orderId: null,
                     );
@@ -286,17 +259,17 @@ class _OrderListScreenState extends State<OrderListScreen>
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 4,
               ),
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 11,
               ),
             ],
           ),
           const SizedBox(height: Dimensions.paddingSizeDefault),
-          Divider(
+          const Divider(
             color: ColorResources.borderColor,
           ),
           const SizedBox(height: Dimensions.paddingSizeDefault),

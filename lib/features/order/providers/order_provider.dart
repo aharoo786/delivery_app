@@ -105,7 +105,7 @@ class OrderProvider extends ChangeNotifier {
       _runningOrderList = [];
       _historyOrderList = [];
       apiResponse.response?.data.forEach((order) {
-
+        print(order['items']);
         OrderModel orderModel = OrderModel.fromJson(order);
         if (orderModel.orderStatus == 'pending' ||
             orderModel.orderStatus == 'processing' ||

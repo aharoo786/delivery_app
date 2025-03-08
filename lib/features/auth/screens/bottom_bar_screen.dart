@@ -39,9 +39,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   }
 
   final List<Widget> _widgetOption = [
-    HomeScreen(),
-    AllCategoriesScreen(),
-    CartScreen(),
+    const HomeScreen(),
+    const AllCategoriesScreen(),
+    const CartScreen(),
     OrderListScreen(),
     AccountScreen()
     //Container()
