@@ -241,7 +241,8 @@ class AuthRepo {
   }
 
   Future<bool> clearSharedData() async {
-    await sharedPreferences!.remove(AppConstants.token);
+    // await sharedPreferences?.remove(AppConstants.token);
+    await sharedPreferences?.clear();
 
     if(!kIsWeb) {
       await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.topic);

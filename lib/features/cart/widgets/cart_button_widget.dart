@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/models/config_model.dart';
+import 'package:flutter_grocery/common/widgets/custom_app_bar_widget.dart';
 import 'package:flutter_grocery/common/widgets/custom_button_widget.dart';
 import 'package:flutter_grocery/features/cart/widgets/free_delivery_progressbar_widget.dart';
 import 'package:flutter_grocery/features/checkout/screens/checkout_screen.dart';
@@ -11,6 +12,9 @@ import 'package:flutter_grocery/helper/route_helper.dart';
 import 'package:flutter_grocery/localization/language_constraints.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
 import 'package:provider/provider.dart';
+import '../../auth/providers/auth_provider.dart';
+
+import '../../../common/widgets/not_login_widget.dart';
 
 class CartButtonWidget extends StatelessWidget {
   const CartButtonWidget({
@@ -46,7 +50,6 @@ class CartButtonWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
       child: Column(children: [
-
         CustomButtonWidget(
           buttonText: getTranslated('proceed_to_checkout', context),
           onPressed: () {
@@ -55,41 +58,29 @@ class CartButtonWidget extends StatelessWidget {
                   ' ${getTranslated('minimum_order_amount_is', context)} ${PriceConverterHelper.convertPrice(context, _configModel.minimumOrderValue)}, ${getTranslated('you_have', context)} ${PriceConverterHelper.convertPrice(context, _itemPrice)} ${getTranslated('in_your_cart_please_add_more_item', context)}',
                   isError: true);
             } else {
-              String? orderType =
-                  Provider.of<OrderProvider>(context, listen: false).orderType;
-              double? couponDiscount =
-                  Provider.of<CouponProvider>(context, listen: false).discount;
+              if (!Provider.of<AuthProvider>(context, listen: false).isLoggedIn()) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const Scaffold(appBar: CustomAppBarWidget(title: '') ,body: Center(child: NotLoggedInWidget()))));
+              } else {
+                String? orderType = Provider.of<OrderProvider>(context, listen: false).orderType;
+                double? couponDiscount = Provider.of<CouponProvider>(context, listen: false).discount;
 
-              print(
-                  "--------------------(CART BUTTON WIDGET)--------------Discount: $_discount and Coupon Discount: $couponDiscount and $_isFreeDelivery}");
-              Navigator.pushNamed(
-                context,
-                RouteHelper.getCheckoutRoute(
-                    _total,
-                    _tax,
-                    _discount,
-                    couponDiscount,
-                    orderType,
-                    Provider.of<CouponProvider>(context, listen: false)
-                            .coupon
-                            ?.code ??
-                        '',
-                    _isFreeDelivery ? 'free_delivery' : '',
-                    _weight),
-                arguments: CheckoutScreen(
-                  tax: _tax,
-                  amount: _total,
-                  orderType: orderType,
-                  discount: _discount,
-                  couponDiscount: couponDiscount,
-                  couponCode:
-                      Provider.of<CouponProvider>(context, listen: false)
-                          .coupon
-                          ?.code,
-                  freeDeliveryType: _isFreeDelivery ? 'free_delivery' : '',
-                  weight: _weight,
-                ),
-              );
+                print("--------------------(CART BUTTON WIDGET)--------------Discount: $_discount and Coupon Discount: $couponDiscount and $_isFreeDelivery}");
+                Navigator.pushNamed(
+                  context,
+                  RouteHelper.getCheckoutRoute(_total, _tax, _discount, couponDiscount, orderType, Provider.of<CouponProvider>(context, listen: false).coupon?.code ?? '',
+                      _isFreeDelivery ? 'free_delivery' : '', _weight),
+                  arguments: CheckoutScreen(
+                    tax: _tax,
+                    amount: _total,
+                    orderType: orderType,
+                    discount: _discount,
+                    couponDiscount: couponDiscount,
+                    couponCode: Provider.of<CouponProvider>(context, listen: false).coupon?.code,
+                    freeDeliveryType: _isFreeDelivery ? 'free_delivery' : '',
+                    weight: _weight,
+                  ),
+                );
+              }
             }
           },
         ),

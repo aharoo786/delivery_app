@@ -34,6 +34,12 @@ android {
     namespace "com.royogrocery.user"
     compileSdk 35
 
+    if (project.plugins.hasPlugin("dev.flutter.flutter-gradle-plugin")) {
+        flutter {
+            source '../..'
+        }
+    }
+
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
