@@ -50,48 +50,33 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
                       productProvider.onChangeProductFilterType(result);
                       productProvider.getAllProductList(1, true);
                     },
-                    itemBuilder: (BuildContext c) =>
-                        <PopupMenuEntry<ProductFilterType>>[
+                    itemBuilder: (BuildContext c) => <PopupMenuEntry<ProductFilterType>>[
                       PopupMenuItem<ProductFilterType>(
                         value: ProductFilterType.latest,
-                        child: _PopUpItem(
-                            title: getTranslated('latest_items', context),
-                            type: ProductFilterType.latest),
+                        child: _PopUpItem(title: getTranslated('latest_items', context), type: ProductFilterType.latest),
                       ),
                       PopupMenuItem<ProductFilterType>(
                         value: ProductFilterType.popular,
-                        child: _PopUpItem(
-                            title: getTranslated('popular_items', context),
-                            type: ProductFilterType.popular),
+                        child: _PopUpItem(title: getTranslated('popular_items', context), type: ProductFilterType.popular),
                       ),
                       if (config?.recommendedProductStatus ?? false)
                         PopupMenuItem<ProductFilterType>(
                           value: ProductFilterType.recommended,
-                          child: _PopUpItem(
-                              title: getTranslated('recommend_items', context),
-                              type: ProductFilterType.recommended),
+                          child: _PopUpItem(title: getTranslated('recommend_items', context), type: ProductFilterType.recommended),
                         ),
                       if (config?.trendingProductStatus ?? false)
                         PopupMenuItem<ProductFilterType>(
                           value: ProductFilterType.trending,
-                          child: _PopUpItem(
-                              title: getTranslated('trending_items', context),
-                              type: ProductFilterType.trending),
+                          child: _PopUpItem(title: getTranslated('trending_items', context), type: ProductFilterType.trending),
                         ),
                     ],
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Dimensions.paddingSizeSmall,
-                          vertical: Dimensions.paddingSizeSmall),
-                      margin: EdgeInsets.only(
-                          right: ResponsiveHelper.isDesktop(context)
-                              ? 0
-                              : Dimensions.paddingSizeSmall),
+                      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeSmall),
+                      margin: EdgeInsets.only(right: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeSmall),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(5),
-                        border:
-                            Border.all(color: Theme.of(context).primaryColor),
+                        border: Border.all(color: Theme.of(context).primaryColor),
                       ),
                       child: Icon(
                         Icons.filter_list,
@@ -104,61 +89,47 @@ class _AllProductListWidgetState extends State<AllProductListWidget> {
           ],
         ),
         PaginatedListWidget(
-          onPaginate: (int? offset) async =>
-              await productProvider.getAllProductList(offset!, false),
+          onPaginate: (int? offset) async => await productProvider.getAllProductList(offset!, false),
           offset: productProvider.allProductModel?.offset,
           totalSize: productProvider.allProductModel?.totalSize,
           limit: productProvider.allProductModel?.limit,
           scrollController: widget.scrollController,
           itemView: Column(children: [
-            (productProvider.allProductModel != null &&
-                    productProvider.allProductModel != null &&
-                    productProvider.allProductModel!.products!.isEmpty)
+            (productProvider.allProductModel != null && productProvider.allProductModel != null && productProvider.allProductModel!.products!.isEmpty)
                 ? NoDataWidget(
                     isFooter: false,
                     title: getTranslated('not_product_found', context),
                   )
                 : GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisSpacing:
-                          ResponsiveHelper.isDesktop(context) ? 13 : 10,
-                      mainAxisSpacing:
-                          ResponsiveHelper.isDesktop(context) ? 13 : 10,
+                      crossAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 7,
+                      mainAxisSpacing: ResponsiveHelper.isDesktop(context) ? 13 : 10,
                       childAspectRatio: ResponsiveHelper.isDesktop(context)
                           ? 0.7
                           : ResponsiveHelper.isTab(context)
                               ? (screenWeight > 860 ? 0.9 : 0.60)
-                              : 0.8,
+                              : 0.55,
                       crossAxisCount: ResponsiveHelper.isDesktop(context)
                           ? 5
                           : ResponsiveHelper.isTab(context)
                               ? 3
-                              : 2,
+                              : 3,
                     ),
-                    itemCount: productProvider.allProductModel?.products != null
-                        ? productProvider.allProductModel?.products?.length
-                        : 10,
+                    itemCount: productProvider.allProductModel?.products != null ? productProvider.allProductModel?.products?.length : 10,
                     padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveHelper.isDesktop(context)
-                          ? 0
-                          : Dimensions.paddingSizeSmall,
-                      vertical: ResponsiveHelper.isDesktop(context)
-                          ? 0
-                          : Dimensions.paddingSizeLarge,
+                      horizontal: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeSmall,
+                      vertical: ResponsiveHelper.isDesktop(context) ? 0 : Dimensions.paddingSizeLarge,
                     ),
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       return productProvider.allProductModel?.products != null
                           ? ProductWidget(
-                              product: productProvider
-                                  .allProductModel!.products![index],
+                              product: productProvider.allProductModel!.products![index],
                               isCenter: true,
                               isGrid: true,
                             )
-                          : WebProductShimmerWidget(
-                              isEnabled:
-                                  productProvider.allProductModel == null);
+                          : WebProductShimmerWidget(isEnabled: productProvider.allProductModel == null);
                     },
                   ),
           ]),
@@ -178,16 +149,11 @@ class _PopUpItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OnHoverWidget(child:
-        Consumer<ProductProvider>(builder: (context, productProvider, _) {
+    return OnHoverWidget(child: Consumer<ProductProvider>(builder: (context, productProvider, _) {
       return Text(title,
           style: poppinsMedium.copyWith(
-            color: type == productProvider.selectedFilterType
-                ? Theme.of(context).primaryColor
-                : null,
-            fontSize: type == productProvider.selectedFilterType
-                ? Dimensions.fontSizeLarge
-                : null,
+            color: type == productProvider.selectedFilterType ? Theme.of(context).primaryColor : null,
+            fontSize: type == productProvider.selectedFilterType ? Dimensions.fontSizeLarge : null,
           ));
     }));
   }

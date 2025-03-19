@@ -27,12 +27,7 @@ class ProductWidget extends StatelessWidget {
   final String productType;
   final bool isGrid;
   final bool isCenter;
-  const ProductWidget(
-      {super.key,
-      required this.product,
-      this.productType = ProductType.dailyItem,
-      this.isGrid = false,
-      this.isCenter = false});
+  const ProductWidget({super.key, required this.product, this.productType = ProductType.dailyItem, this.isGrid = false, this.isCenter = false});
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +42,9 @@ class ProductWidget extends StatelessWidget {
       );
     }
 
-    priceWithDiscount = PriceConverterHelper.convertWithDiscount(
-        product.price, product.discount, product.discountType);
+    priceWithDiscount = PriceConverterHelper.convertWithDiscount(product.price, product.discount, product.discountType);
 
-    if (categoryDiscountAmount != null &&
-        categoryDiscountAmount > 0 &&
-        categoryDiscountAmount < priceWithDiscount!) {
+    if (categoryDiscountAmount != null && categoryDiscountAmount > 0 && categoryDiscountAmount < priceWithDiscount!) {
       priceWithDiscount = categoryDiscountAmount;
     }
 
@@ -65,29 +57,18 @@ class ProductWidget extends StatelessWidget {
         CartModel? cartModel;
         if (product.variations!.isNotEmpty) {
           for (int index = 0; index < product.variations!.length; index++) {
-            price = product.variations!.isNotEmpty
-                ? (product.variations![index].price ?? 0)
-                : (product.price ?? 0);
-            stock = product.variations!.isNotEmpty
-                ? product.variations![index].stock
-                : product.totalStock;
+            price = product.variations!.isNotEmpty ? (product.variations![index].price ?? 0) : (product.price ?? 0);
+            stock = product.variations!.isNotEmpty ? product.variations![index].stock : product.totalStock;
             cartModel = CartModel(
                 product.id,
                 product.image!.isNotEmpty ? product.image![0] : '',
                 product.name,
                 price,
-                PriceConverterHelper.convertWithDiscount(
-                    price, product.discount, product.discountType),
+                PriceConverterHelper.convertWithDiscount(price, product.discount, product.discountType),
                 1,
-                product.variations!.isNotEmpty
-                    ? product.variations![index]
-                    : null,
-                (price -
-                    PriceConverterHelper.convertWithDiscount(
-                        price, product.discount, product.discountType)!),
-                (price -
-                    PriceConverterHelper.convertWithDiscount(
-                        price, product.tax, product.taxType)!),
+                product.variations!.isNotEmpty ? product.variations![index] : null,
+                (price - PriceConverterHelper.convertWithDiscount(price, product.discount, product.discountType)!),
+                (price - PriceConverterHelper.convertWithDiscount(price, product.tax, product.taxType)!),
                 product.capacity,
                 product.unit,
                 stock,
@@ -107,16 +88,11 @@ class ProductWidget extends StatelessWidget {
             (product.image?.isNotEmpty ?? false) ? product.image![0] : '',
             product.name,
             price,
-            PriceConverterHelper.convertWithDiscount(
-                price, product.discount, product.discountType),
+            PriceConverterHelper.convertWithDiscount(price, product.discount, product.discountType),
             1,
             null,
-            (price -
-                PriceConverterHelper.convertWithDiscount(
-                    price, product.discount, product.discountType)!),
-            (price -
-                PriceConverterHelper.convertWithDiscount(
-                    price, product.tax, product.taxType)!),
+            (price - PriceConverterHelper.convertWithDiscount(price, product.discount, product.discountType)!),
+            (price - PriceConverterHelper.convertWithDiscount(price, product.tax, product.taxType)!),
             product.capacity,
             product.unit,
             stock,
@@ -141,12 +117,10 @@ class ProductWidget extends StatelessWidget {
                   stock: stock,
                 ))
             : Padding(
-                padding:
-                    const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
+                padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
                 child: InkWell(
                   hoverColor: Colors.transparent,
-                  onTap: () => Navigator.of(context)
-                      .pushNamed(RouteHelper.getProductDetailsRoute(
+                  onTap: () => Navigator.of(context).pushNamed(RouteHelper.getProductDetailsRoute(
                     productId: product.id,
                     formSearch: productType == ProductType.searchItem,
                   )),
@@ -154,36 +128,25 @@ class ProductWidget extends StatelessWidget {
                     isItem: true,
                     child: Container(
                       height: 110,
-                      padding:
-                          const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Theme.of(context).cardColor,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              offset: const Offset(0, 4),
-                              blurRadius: 7,
-                              spreadRadius: 0.1)
-                        ],
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), offset: const Offset(0, 4), blurRadius: 7, spreadRadius: 0.1)],
                       ),
                       child: Row(children: [
                         Stack(
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.05)),
+                                border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.05)),
                                 borderRadius: BorderRadius.circular(10),
                                 color: Theme.of(context).cardColor,
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: CustomImageWidget(
-                                  image:
-                                      '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${product.image!.isNotEmpty ? product.image![0] : ''}',
+                                  image: '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${product.image!.isNotEmpty ? product.image![0] : ''}',
                                   height: 110,
                                   width: 110,
                                   fit: BoxFit.cover,
@@ -198,44 +161,28 @@ class ProductWidget extends StatelessWidget {
                                   )
                                 : const SizedBox(),
                             Positioned(
-                              top: ResponsiveHelper.isDesktop(context)
-                                  ? null
-                                  : 5,
-                              right:
-                                  ResponsiveHelper.isDesktop(context) ? 5 : 5,
-                              bottom: ResponsiveHelper.isDesktop(context)
-                                  ? 5
-                                  : null,
+                              top: ResponsiveHelper.isDesktop(context) ? null : 5,
+                              right: ResponsiveHelper.isDesktop(context) ? 5 : 5,
+                              bottom: ResponsiveHelper.isDesktop(context) ? 5 : null,
                               child: !isExistInCart
                                   ? Tooltip(
-                                      message: getTranslated(
-                                          'click_to_add_to_your_cart', context),
+                                      message: getTranslated('click_to_add_to_your_cart', context),
                                       child: InkWell(
                                           onTap: () {
-                                            if (product.variations == null ||
-                                                product.variations!.isEmpty) {
+                                            if (product.variations == null || product.variations!.isEmpty) {
                                               if (isExistInCart) {
-                                                showCustomSnackBarHelper(
-                                                    'already_added'.tr);
+                                                showCustomSnackBarHelper('already_added'.tr);
                                               } else if (stock! < 1) {
-                                                showCustomSnackBarHelper(
-                                                    'out_of_stock'.tr);
+                                                showCustomSnackBarHelper('out_of_stock'.tr);
                                               } else {
-                                                Provider.of<CartProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .addToCart(cartModel!);
-                                                showCustomSnackBarHelper(
-                                                    'added_to_cart'.tr,
-                                                    isError: false);
+                                                Provider.of<CartProvider>(context, listen: false).addToCart(cartModel!);
+                                                showCustomSnackBarHelper('added_to_cart'.tr, isError: false);
                                               }
                                             } else {
                                               Navigator.of(context).pushNamed(
-                                                RouteHelper
-                                                    .getProductDetailsRoute(
+                                                RouteHelper.getProductDetailsRoute(
                                                   productId: product.id,
-                                                  formSearch: productType ==
-                                                      ProductType.searchItem,
+                                                  formSearch: productType == ProductType.searchItem,
                                                 ),
                                               );
                                             }
@@ -245,134 +192,54 @@ class ProductWidget extends StatelessWidget {
                                             margin: const EdgeInsets.all(2),
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: Theme.of(context)
-                                                      .primaryColor
-                                                      .withOpacity(0.05)),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions
-                                                          .radiusSizeDefault),
-                                              color:
-                                                  Theme.of(context).cardColor,
+                                              border: Border.all(width: 1, color: Theme.of(context).primaryColor.withOpacity(0.05)),
+                                              borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+                                              color: Theme.of(context).cardColor,
                                             ),
-                                            child: Icon(
-                                                Icons.shopping_cart_outlined,
-                                                color: Theme.of(context)
-                                                    .primaryColor),
+                                            child: Icon(Icons.shopping_cart_outlined, color: Theme.of(context).primaryColor),
                                           )),
                                     )
                                   : Consumer<CartProvider>(
-                                      builder: (context, cart, child) =>
-                                          RotatedBox(
-                                        quarterTurns:
-                                            ResponsiveHelper.isDesktop(context)
-                                                ? 0
-                                                : 3,
+                                      builder: (context, cart, child) => RotatedBox(
+                                        quarterTurns: ResponsiveHelper.isDesktop(context) ? 0 : 3,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 1,
-                                                color: Theme.of(context)
-                                                    .primaryColor
-                                                    .withOpacity(0.05)),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            border: Border.all(width: 1, color: Theme.of(context).primaryColor.withOpacity(0.05)),
+                                            borderRadius: BorderRadius.circular(8),
                                             color: Theme.of(context).cardColor,
                                           ),
                                           child: Row(children: [
                                             InkWell(
                                               onTap: () {
-                                                if (cart.cartList[cardIndex!]
-                                                        .quantity! >
-                                                    1) {
-                                                  Provider.of<CartProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .setCartQuantity(
-                                                          false, cardIndex,
-                                                          context: context,
-                                                          showMessage: true);
+                                                if (cart.cartList[cardIndex!].quantity! > 1) {
+                                                  Provider.of<CartProvider>(context, listen: false).setCartQuantity(false, cardIndex, context: context, showMessage: true);
                                                 } else {
-                                                  Provider.of<CartProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .removeItemFromCart(
-                                                          cardIndex, context);
+                                                  Provider.of<CartProvider>(context, listen: false).removeItemFromCart(cardIndex, context);
                                                 }
                                               },
                                               child: RotatedBox(
-                                                quarterTurns:
-                                                    ResponsiveHelper.isDesktop(
-                                                            context)
-                                                        ? 0
-                                                        : 1,
+                                                quarterTurns: ResponsiveHelper.isDesktop(context) ? 0 : 1,
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal: ResponsiveHelper
-                                                              .isDesktop(
-                                                                  context)
-                                                          ? Dimensions
-                                                              .paddingSizeSmall
-                                                          : Dimensions
-                                                              .paddingSizeExtraSmall,
-                                                      vertical: Dimensions
-                                                          .paddingSizeExtraSmall),
-                                                  child: Icon(Icons.remove,
-                                                      size: 20,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge!
-                                                          .color),
+                                                      horizontal: ResponsiveHelper.isDesktop(context) ? Dimensions.paddingSizeSmall : Dimensions.paddingSizeExtraSmall,
+                                                      vertical: Dimensions.paddingSizeExtraSmall),
+                                                  child: Icon(Icons.remove, size: 20, color: Theme.of(context).textTheme.bodyLarge!.color),
                                                 ),
                                               ),
                                             ),
                                             RotatedBox(
-                                              quarterTurns:
-                                                  ResponsiveHelper.isDesktop(
-                                                          context)
-                                                      ? 0
-                                                      : 1,
-                                              child: Text(
-                                                  cart.cartList[cardIndex!]
-                                                      .quantity
-                                                      .toString(),
-                                                  style: poppinsSemiBold.copyWith(
-                                                      fontSize: Dimensions
-                                                          .fontSizeExtraLarge,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge!
-                                                          .color)),
+                                              quarterTurns: ResponsiveHelper.isDesktop(context) ? 0 : 1,
+                                              child: Text(cart.cartList[cardIndex!].quantity.toString(),
+                                                  style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).textTheme.bodyLarge!.color)),
                                             ),
                                             InkWell(
                                               onTap: () {
-                                                if (cart
-                                                            .cartList[
-                                                                cardIndex!]
-                                                            .product!
-                                                            .maximumOrderQuantity ==
-                                                        null ||
-                                                    cart.cartList[cardIndex]
-                                                            .quantity! <
-                                                        cart
-                                                            .cartList[cardIndex]
-                                                            .product!
-                                                            .maximumOrderQuantity!) {
-                                                  if (cart.cartList[cardIndex]
-                                                          .quantity! <
-                                                      cart.cartList[cardIndex]
-                                                          .stock!) {
-                                                    cart.setCartQuantity(
-                                                        true, cardIndex,
-                                                        showMessage: true,
-                                                        context: context);
+                                                if (cart.cartList[cardIndex!].product!.maximumOrderQuantity == null ||
+                                                    cart.cartList[cardIndex].quantity! < cart.cartList[cardIndex].product!.maximumOrderQuantity!) {
+                                                  if (cart.cartList[cardIndex].quantity! < cart.cartList[cardIndex].stock!) {
+                                                    cart.setCartQuantity(true, cardIndex, showMessage: true, context: context);
                                                   } else {
-                                                    showCustomSnackBarHelper(
-                                                        getTranslated(
-                                                            'out_of_stock',
-                                                            context));
+                                                    showCustomSnackBarHelper(getTranslated('out_of_stock', context));
                                                   }
                                                 } else {
                                                   showCustomSnackBarHelper(
@@ -380,18 +247,8 @@ class ProductWidget extends StatelessWidget {
                                                 }
                                               },
                                               child: Padding(
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                    horizontal: Dimensions
-                                                        .paddingSizeSmall,
-                                                    vertical: Dimensions
-                                                        .paddingSizeExtraSmall),
-                                                child: Icon(Icons.add,
-                                                    size: 20,
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge!
-                                                        .color),
+                                                padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeExtraSmall),
+                                                child: Icon(Icons.add, size: 20, color: Theme.of(context).textTheme.bodyLarge!.color),
                                               ),
                                             ),
                                           ]),
@@ -403,104 +260,59 @@ class ProductWidget extends StatelessWidget {
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: Dimensions.paddingSizeSmall),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  product.rating != null
-                                      ? Row(
-                                          mainAxisAlignment: isCenter
-                                              ? MainAxisAlignment.center
-                                              : MainAxisAlignment.start,
-                                          children: [
-                                              const Icon(Icons.star_rounded,
-                                                  color: ColorResources
-                                                      .ratingColor,
-                                                  size: 20),
-                                              const SizedBox(
-                                                  width: Dimensions
-                                                      .paddingSizeExtraSmall),
-                                              Text(
-                                                  product.rating!.isNotEmpty
-                                                      ? double.parse(product
-                                                              .rating![0]
-                                                              .average!)
-                                                          .toStringAsFixed(1)
-                                                      : '0.0',
-                                                  style:
-                                                      poppinsRegular.copyWith(
-                                                          fontSize: Dimensions
-                                                              .fontSizeSmall)),
-                                            ])
-                                      : const SizedBox(),
-                                  Tooltip(
-                                      message: product.name,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 3),
-                                        child: Text(
-                                          product.name ?? '',
-                                          style: poppinsRegular.copyWith(
-                                              fontSize:
-                                                  Dimensions.fontSizeSmall),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      )),
-                                  Text('${product.capacity} ${product.unit}',
-                                      style: poppinsMedium.copyWith(
-                                          fontSize: Dimensions.fontSizeSmall,
-                                          color:
-                                              Theme.of(context).disabledColor)),
-                                  Flexible(
-                                    child: Row(
-                                      children: [
-                                        product.price! > priceWithDiscount!
-                                            ? CustomDirectionalityWidget(
-                                                child: Text(
-                                                PriceConverterHelper
-                                                    .convertPrice(
-                                                        context, product.price),
-                                                style: poppinsRegular.copyWith(
-                                                    fontSize: Dimensions
-                                                        .fontSizeSmall,
-                                                    decoration: TextDecoration
-                                                        .lineThrough,
-                                                    color: Theme.of(context)
-                                                        .disabledColor),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                              ))
-                                            : const SizedBox(),
-                                        product.price! > priceWithDiscount
-                                            ? const SizedBox(
-                                                width: Dimensions
-                                                    .paddingSizeExtraSmall)
-                                            : const SizedBox(),
-                                        CustomDirectionalityWidget(
-                                            child: Text(
-                                          PriceConverterHelper.convertPrice(
-                                              context, priceWithDiscount),
-                                          style: poppinsSemiBold.copyWith(
-                                              fontSize:
-                                                  Dimensions.fontSizeDefault),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        )),
-                                      ],
+                            padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                              product.rating != null
+                                  ? Row(mainAxisAlignment: isCenter ? MainAxisAlignment.center : MainAxisAlignment.start, children: [
+                                      const Icon(Icons.star_rounded, color: ColorResources.ratingColor, size: 20),
+                                      const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                                      Text(product.rating!.isNotEmpty ? double.parse(product.rating![0].average!).toStringAsFixed(1) : '0.0',
+                                          style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall)),
+                                    ])
+                                  : const SizedBox(),
+                              Tooltip(
+                                  message: product.name,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                                    child: Text(
+                                      product.name ?? '',
+                                      style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                ]),
+                                  )),
+                              Text('${product.capacity} ${product.unit}',
+                                  style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor)),
+                              Flexible(
+                                child: Row(
+                                  children: [
+                                    product.price! > priceWithDiscount!
+                                        ? CustomDirectionalityWidget(
+                                            child: Text(
+                                            PriceConverterHelper.convertPrice(context, product.price),
+                                            style: poppinsRegular.copyWith(
+                                                fontSize: Dimensions.fontSizeSmall, decoration: TextDecoration.lineThrough, color: Theme.of(context).disabledColor),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ))
+                                        : const SizedBox(),
+                                    product.price! > priceWithDiscount ? const SizedBox(width: Dimensions.paddingSizeExtraSmall) : const SizedBox(),
+                                    CustomDirectionalityWidget(
+                                        child: Text(
+                                      PriceConverterHelper.convertPrice(context, priceWithDiscount),
+                                      style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    )),
+                                  ],
+                                ),
+                              ),
+                            ]),
                           ),
                         ),
                         Align(
                           alignment: Alignment.topRight,
-                          child: WishButtonWidget(
-                              product: product,
-                              edgeInset: const EdgeInsets.all(5)),
+                          child: WishButtonWidget(product: product, edgeInset: const EdgeInsets.all(5)),
                         ),
                       ]),
                     ),
@@ -545,17 +357,14 @@ class _ProductGridWidget extends StatelessWidget {
         ));
       },
       child: Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                offset: const Offset(0, 4),
-                blurRadius: 7,
-                spreadRadius: 0.1,
-              ),
-            ]),
+        decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusSizeTen), boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            offset: const Offset(0, 4),
+            blurRadius: 7,
+            spreadRadius: 0.1,
+          ),
+        ]),
         child: Stack(children: [
           Column(children: [
             Expanded(
@@ -576,18 +385,13 @@ class _ProductGridWidget extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(
-                        top: Dimensions.paddingSizeSmall,
-                        left: Dimensions.paddingSizeSmall,
-                        right: Dimensions.paddingSizeSmall),
+                    margin: const EdgeInsets.only(top: Dimensions.paddingSizeSmall, left: Dimensions.paddingSizeSmall, right: Dimensions.paddingSizeSmall),
                     width: Dimensions.webScreenWidth,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(
                         Radius.circular(Dimensions.radiusSizeTen),
                       ),
-                      border: Border.all(
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.05)),
+                      border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.05)),
                     ),
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(
@@ -595,9 +399,8 @@ class _ProductGridWidget extends StatelessWidget {
                       ),
                       child: CustomImageWidget(
                         fit: BoxFit.cover,
-                        height: 300,
-                        image:
-                            '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${(product.image?.isNotEmpty ?? false) ? product.image![0] : ''}',
+                        height: 200,
+                        image: '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.productImageUrl}/${(product.image?.isNotEmpty ?? false) ? product.image![0] : ''}',
                       ),
                     ),
                   ),
@@ -607,13 +410,9 @@ class _ProductGridWidget extends StatelessWidget {
             Expanded(
                 flex: 111,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: Dimensions.paddingSizeSmall,
-                      vertical: Dimensions.paddingSizeExtraSmall),
+                  padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeExtraSmall),
                   child: Column(
-                    crossAxisAlignment: isCenter
-                        ? CrossAxisAlignment.center
-                        : CrossAxisAlignment.start,
+                    crossAxisAlignment: isCenter ? CrossAxisAlignment.center : CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -644,32 +443,21 @@ class _ProductGridWidget extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 3),
                             child: Text(
                               product.name ?? '',
-                              style: poppinsSemiBold.copyWith(
-                                  fontSize: Dimensions.fontSizeDefault),
+                              style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeDefault),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              textAlign:
-                                  isCenter ? TextAlign.center : TextAlign.start,
+                              textAlign: isCenter ? TextAlign.center : TextAlign.start,
                             ),
                           )),
                       Column(children: [
-                        if (!isCenter)
-                          const SizedBox(
-                              height: Dimensions.paddingSizeExtraSmall),
-                        if (!isCenter)
-                          Divider(
-                              height: 2,
-                              thickness: 2,
-                              color: Theme.of(context).secondaryHeaderColor),
-                        const SizedBox(
-                            height: Dimensions.paddingSizeExtraSmall),
+                        if (!isCenter) const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+                        if (!isCenter) Divider(height: 2, thickness: 2, color: Theme.of(context).secondaryHeaderColor),
+                        const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
                         isCenter
                             ? Text(
                                 '${product.capacity} ${product.unit}',
-                                style: poppinsRegular.copyWith(
-                                    fontSize: Dimensions.fontSizeSmall,
-                                    color: Theme.of(context).disabledColor),
+                                style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               )
@@ -683,32 +471,22 @@ class _ProductGridWidget extends StatelessWidget {
                                 maxLines: 2,
                                 text: TextSpan(
                                   children: [
-                                    if ((product.price ?? 0) >
-                                        priceWithDiscount)
+                                    if ((product.price ?? 0) > priceWithDiscount)
                                       TextSpan(
                                         style: poppinsRegular.copyWith(
                                           fontSize: Dimensions.fontSizeDefault,
-                                          color:
-                                              Theme.of(context).disabledColor,
-                                          decoration:
-                                              TextDecoration.lineThrough,
+                                          color: Theme.of(context).disabledColor,
+                                          decoration: TextDecoration.lineThrough,
                                         ),
-                                        text: PriceConverterHelper.convertPrice(
-                                            context, (product.price ?? 0)),
+                                        text: PriceConverterHelper.convertPrice(context, (product.price ?? 0)),
                                       ),
-                                    if ((product.price ?? 0) >
-                                        priceWithDiscount)
-                                      const TextSpan(text: '  '),
+                                    if ((product.price ?? 0) > priceWithDiscount) const TextSpan(text: '  '),
                                     TextSpan(
                                       style: poppinsSemiBold.copyWith(
                                         fontSize: Dimensions.fontSizeDefault,
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color,
+                                        color: Theme.of(context).textTheme.titleMedium?.color,
                                       ),
-                                      text: PriceConverterHelper.convertPrice(
-                                          context, priceWithDiscount),
+                                      text: PriceConverterHelper.convertPrice(context, priceWithDiscount),
                                     ),
                                   ],
                                 ),
@@ -718,30 +496,23 @@ class _ProductGridWidget extends StatelessWidget {
                                   product.price! > priceWithDiscount
                                       ? CustomDirectionalityWidget(
                                           child: Text(
-                                            PriceConverterHelper.convertPrice(
-                                                context, product.price),
+                                            PriceConverterHelper.convertPrice(context, product.price),
                                             style: poppinsRegular.copyWith(
-                                              fontSize:
-                                                  Dimensions.fontSizeSmall,
-                                              color: Theme.of(context)
-                                                  .disabledColor,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
+                                              fontSize: Dimensions.fontSizeSmall,
+                                              color: Theme.of(context).disabledColor,
+                                              decoration: TextDecoration.lineThrough,
                                             ),
                                           ),
                                         )
                                       : const SizedBox(),
                                   CustomDirectionalityWidget(
                                       child: Text(
-                                    PriceConverterHelper.convertPrice(
-                                        context, priceWithDiscount),
+                                    PriceConverterHelper.convertPrice(context, priceWithDiscount),
                                     style: poppinsMedium.copyWith(fontSize: 13),
                                   )),
                                   Text(
                                     '/${product.capacity} ${product.unit}',
-                                    style: poppinsRegular.copyWith(
-                                        fontSize: Dimensions.fontSizeSmall,
-                                        color: Theme.of(context).disabledColor),
+                                    style: poppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -781,28 +552,23 @@ class _ProductGridWidget extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: !isExistInCart
                   ? Tooltip(
-                      message:
-                          getTranslated('click_to_add_to_your_cart', context),
+                      message: getTranslated('click_to_add_to_your_cart', context),
                       child: InkWell(
                         onTap: () {
-                          if (product.variations == null ||
-                              product.variations!.isEmpty) {
+                          if (product.variations == null || product.variations!.isEmpty) {
                             if (isExistInCart) {
                               showCustomSnackBarHelper('already_added'.tr);
                             } else if (stock! < 1) {
                               showCustomSnackBarHelper('out_of_stock'.tr);
                             } else {
-                              Provider.of<CartProvider>(context, listen: false)
-                                  .addToCart(cartModel!);
-                              showCustomSnackBarHelper('added_to_cart'.tr,
-                                  isError: false);
+                              Provider.of<CartProvider>(context, listen: false).addToCart(cartModel!);
+                              showCustomSnackBarHelper('added_to_cart'.tr, isError: false);
                             }
                           } else {
                             Navigator.of(context).pushNamed(
                               RouteHelper.getProductDetailsRoute(
                                 productId: product.id,
-                                formSearch:
-                                    productType == ProductType.searchItem,
+                                formSearch: productType == ProductType.searchItem,
                               ),
                             );
                           }
@@ -812,10 +578,7 @@ class _ProductGridWidget extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Theme.of(context).cardColor,
-                              border: Border.all(
-                                  color: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.05)),
+                              border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.05)),
                             ),
                             child: const Icon(
                               Icons.add,
@@ -828,11 +591,7 @@ class _ProductGridWidget extends StatelessWidget {
                         quarterTurns: 3,
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 1,
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withOpacity(0.05)),
+                            border: Border.all(width: 1, color: Theme.of(context).primaryColor.withOpacity(0.05)),
                             borderRadius: BorderRadius.circular(8),
                             color: Theme.of(context).cardColor,
                           ),
@@ -840,31 +599,19 @@ class _ProductGridWidget extends StatelessWidget {
                             InkWell(
                               onTap: () {
                                 if (cart.cartList[cardIndex!].quantity! > 1) {
-                                  Provider.of<CartProvider>(context,
-                                          listen: false)
-                                      .setCartQuantity(false, cardIndex,
-                                          context: context, showMessage: true);
+                                  Provider.of<CartProvider>(context, listen: false).setCartQuantity(false, cardIndex, context: context, showMessage: true);
                                 } else {
-                                  Provider.of<CartProvider>(context,
-                                          listen: false)
-                                      .removeItemFromCart(cardIndex!, context);
+                                  Provider.of<CartProvider>(context, listen: false).removeItemFromCart(cardIndex!, context);
                                 }
                               },
                               child: RotatedBox(
                                 quarterTurns: 1,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal:
-                                          Dimensions.paddingSizeExtraSmall,
-                                      vertical:
-                                          Dimensions.paddingSizeExtraSmall),
+                                  padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeExtraSmall, vertical: Dimensions.paddingSizeExtraSmall),
                                   child: Icon(
                                     Icons.remove,
                                     size: Dimensions.paddingSizeLarge,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                   ),
                                 ),
                               ),
@@ -873,29 +620,17 @@ class _ProductGridWidget extends StatelessWidget {
                               quarterTurns: 1,
                               child: Text(
                                 cart.cartList[cardIndex!].quantity.toString(),
-                                style: poppinsSemiBold.copyWith(
-                                    fontSize: Dimensions.fontSizeExtraLarge,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color),
+                                style: poppinsSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).textTheme.bodyLarge!.color),
                               ),
                             ),
                             InkWell(
                               onTap: () {
-                                if (cart.cartList[cardIndex!].product!
-                                            .maximumOrderQuantity ==
-                                        null ||
-                                    cart.cartList[cardIndex!].quantity! <
-                                        cart.cartList[cardIndex!].product!
-                                            .maximumOrderQuantity!) {
-                                  if (cart.cartList[cardIndex!].quantity! <
-                                      cart.cartList[cardIndex!].stock!) {
-                                    cart.setCartQuantity(true, cardIndex,
-                                        showMessage: true, context: context);
+                                if (cart.cartList[cardIndex!].product!.maximumOrderQuantity == null ||
+                                    cart.cartList[cardIndex!].quantity! < cart.cartList[cardIndex!].product!.maximumOrderQuantity!) {
+                                  if (cart.cartList[cardIndex!].quantity! < cart.cartList[cardIndex!].stock!) {
+                                    cart.setCartQuantity(true, cardIndex, showMessage: true, context: context);
                                   } else {
-                                    showCustomSnackBarHelper(
-                                        getTranslated('out_of_stock', context));
+                                    showCustomSnackBarHelper(getTranslated('out_of_stock', context));
                                   }
                                 } else {
                                   showCustomSnackBarHelper(
@@ -903,15 +638,8 @@ class _ProductGridWidget extends StatelessWidget {
                                 }
                               },
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: Dimensions.paddingSizeSmall,
-                                    vertical: Dimensions.paddingSizeExtraSmall),
-                                child: Icon(Icons.add,
-                                    size: 20,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color),
+                                padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall, vertical: Dimensions.paddingSizeExtraSmall),
+                                child: Icon(Icons.add, size: 20, color: Theme.of(context).textTheme.bodyLarge!.color),
                               ),
                             ),
                           ]),
@@ -937,26 +665,17 @@ class _DiscountTag extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6),
-
       height: 40,
       width: 35,
       decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(Images.discountTagPng), fit: BoxFit.contain),
+        image: DecorationImage(image: AssetImage(Images.discountTagPng), fit: BoxFit.contain),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-            child: Text(
-              product.discountType == 'percent'
-                  ? '${product.discount?.toStringAsFixed(0)}%\nOFF'
-                  : '${PriceConverterHelper.convertPrice(context, product.discount)}\nOFF',
-              style: poppinsBold.copyWith(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+      child: Center(
+        child: Text(
+          product.discountType == 'percent' ? '${product.discount?.toStringAsFixed(0)}%\nOFF' : '${PriceConverterHelper.convertPrice(context, product.discount)}\nOFF',
+          style: poppinsBold.copyWith(fontSize: 9),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
