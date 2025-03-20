@@ -79,52 +79,52 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
             GestureDetector(onTap: (){
               Navigator.pop(context);
             }, child: const Icon(Icons.keyboard_arrow_down_outlined)),
-            if (widget.branches?.isNotEmpty ?? false)
-              CustomShadowWidget(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  (widget.configModel.googleMapStatus ?? false)
-                      ? Container(
-                          height: 200,
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).cardColor,
-                          ),
-                          child: Stack(children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
-                              child: GoogleMap(
-                                minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
-                                mapType: MapType.normal,
-                                initialCameraPosition: CameraPosition(
-                                    target: LatLng(
-                                      double.parse(widget.branches[0].latitude!),
-                                      double.parse(widget.branches[0].longitude!),
-                                    ),
-                                    zoom: 8),
-                                zoomControlsEnabled: true,
-                                markers: _markers,
-                                onMapCreated: (GoogleMapController controller) async {
-                                  await Geolocator.requestPermission();
-                                  _mapController = controller;
-                                  _loading = false;
-                                  _setMarkers(0);
-                                },
-                              ),
-                            ),
-                            _loading
-                                ? Center(
-                                    child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                                  ))
-                                : const SizedBox(),
-                          ]),
-                        )
-                      : const SizedBox.shrink(),
-                ]),
-              ),
-            const SizedBox(height: Dimensions.paddingSizeSmall),
+            // if (widget.branches?.isNotEmpty ?? false)
+            //   CustomShadowWidget(
+            //     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            //       (widget.configModel.googleMapStatus ?? false)
+            //           ? Container(
+            //               height: 200,
+            //               padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+            //               alignment: Alignment.center,
+            //               decoration: BoxDecoration(
+            //                 borderRadius: BorderRadius.circular(10),
+            //                 color: Theme.of(context).cardColor,
+            //               ),
+            //               child: Stack(children: [
+            //                 ClipRRect(
+            //                   borderRadius: BorderRadius.circular(Dimensions.radiusSizeDefault),
+            //                   child: GoogleMap(
+            //                     minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
+            //                     mapType: MapType.normal,
+            //                     initialCameraPosition: CameraPosition(
+            //                         target: LatLng(
+            //                           double.parse(widget.branches[0].latitude!),
+            //                           double.parse(widget.branches[0].longitude!),
+            //                         ),
+            //                         zoom: 8),
+            //                     zoomControlsEnabled: true,
+            //                     markers: _markers,
+            //                     onMapCreated: (GoogleMapController controller) async {
+            //                       await Geolocator.requestPermission();
+            //                       _mapController = controller;
+            //                       _loading = false;
+            //                       _setMarkers(0);
+            //                     },
+            //                   ),
+            //                 ),
+            //                 _loading
+            //                     ? Center(
+            //                         child: CircularProgressIndicator(
+            //                         valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+            //                       ))
+            //                     : const SizedBox(),
+            //               ]),
+            //             )
+            //           : const SizedBox.shrink(),
+            //     ]),
+            //   ),
+            // const SizedBox(height: Dimensions.paddingSizeSmall),
             if (CheckOutHelper.getDeliveryChargeType() == DeliveryChargeType.area.name && !(widget.orderType == OrderType.self_pickup.name)) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),

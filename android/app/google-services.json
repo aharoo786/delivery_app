@@ -7,6 +7,44 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:617710970918:android:97107c3be5b0dd75321ee7",
+        "android_client_info": {
+          "package_name": "com.ridemaidriver.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACutiwcKPE4l_qM1IgCGDlckx_OlYIlZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617710970918:android:83f7b9aad4c368a9321ee7",
+        "android_client_info": {
+          "package_name": "com.ridemaiuser.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACutiwcKPE4l_qM1IgCGDlckx_OlYIlZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:617710970918:android:d1dc6c132c9fa570321ee7",
         "android_client_info": {
           "package_name": "com.royogrocery.user"

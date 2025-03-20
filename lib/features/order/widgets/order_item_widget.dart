@@ -169,7 +169,7 @@ class _TrackOrderView extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              getTranslated(orderProvider.isActiveOrder ? 'View Details' : 're_order', context),
+              getTranslated(orderProvider.isActiveOrder ? 'Track Order' : 're_order', context),
               style: poppinsRegular.copyWith(
                 color: Theme.of(context).textTheme.bodySmall?.color,
                 fontSize: Dimensions.fontSizeDefault,

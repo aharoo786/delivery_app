@@ -24,30 +24,44 @@ class DeliveryAddressWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ConfigModel configModel = Provider.of<SplashProvider>(context, listen: false).configModel!;
+    final ConfigModel configModel =
+        Provider.of<SplashProvider>(context, listen: false).configModel!;
 
     return !selfPickup
         ? CustomShadowWidget(
-            margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault, vertical: Dimensions.paddingSizeSmall),
+            margin: const EdgeInsets.symmetric(
+                horizontal: Dimensions.paddingSizeDefault,
+                vertical: Dimensions.paddingSizeSmall),
             child: Consumer<LocationProvider>(
-              builder: (context, locationProvider, _) => Consumer<OrderProvider>(builder: (context, orderProvider, _) {
+              builder: (context, locationProvider, _) =>
+                  Consumer<OrderProvider>(builder: (context, orderProvider, _) {
                 bool isAvailable = false;
 
-                AddressModel? deliveryAddress = CheckOutHelper.getDeliveryAddress(
+                AddressModel? deliveryAddress =
+                    CheckOutHelper.getDeliveryAddress(
                   addressList: locationProvider.addressList,
-                  selectedAddress: orderProvider.addressIndex == -1 ? null : locationProvider.addressList?[orderProvider.addressIndex],
+                  selectedAddress: orderProvider.addressIndex == -1
+                      ? null
+                      : locationProvider
+                          .addressList?[orderProvider.addressIndex],
                   lastOrderAddress: null,
                 );
 
-                print("-------------(CHECKOUT SCREEN DELIVERY ADDRESS)-------------${deliveryAddress?.toJson().toString()}");
+                print(
+                    "-------------(CHECKOUT SCREEN DELIVERY ADDRESS)-------------${deliveryAddress?.toJson().toString()}");
 
                 if (deliveryAddress != null &&
                     (configModel.googleMapStatus ?? false) &&
-                    CheckOutHelper.getDeliveryChargeType() == DeliveryChargeType.distance.name &&
-                    ((deliveryAddress.latitude != null && deliveryAddress.latitude!.isNotEmpty) && (deliveryAddress.longitude != null && deliveryAddress.longitude!.isNotEmpty))) {
+                    CheckOutHelper.getDeliveryChargeType() ==
+                        DeliveryChargeType.distance.name &&
+                    ((deliveryAddress.latitude != null &&
+                            deliveryAddress.latitude!.isNotEmpty) &&
+                        (deliveryAddress.longitude != null &&
+                            deliveryAddress.longitude!.isNotEmpty))) {
                   isAvailable = CheckOutHelper.isBranchAvailable(
                     branches: configModel.branches ?? [],
-                    selectedBranch: configModel.branches![orderProvider.branchIndex],
+                    selectedBranch:
+                        configModel.branches![orderProvider.branchIndex],
                     selectedAddress: deliveryAddress,
                   );
 
@@ -58,59 +72,134 @@ class DeliveryAddressWidget extends StatelessWidget {
 
                 return locationProvider.addressList == null
                     ? const _DeliverySectionShimmer()
-                    : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                        Text('${getTranslated('delivery_to', context)} -', style: poppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge)),
-                        const Expanded(child: SizedBox()),
-                        TextButton(
-                          onPressed: () => showDialog(context: context, builder: (_) => const AddAddressDialogWidget()),
-                          child: Text(getTranslated(deliveryAddress == null || orderProvider.addressIndex == -1 ? 'add' : 'change', context),
-                              style: poppinsBold.copyWith(color: Theme.of(context).primaryColor)),
-                        ),
-                      ]),
-                      const SizedBox(height: Dimensions.paddingSizeDefault),
-                      deliveryAddress == null || orderProvider.addressIndex == -1
-                          ? Padding(
-                              padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeDefault),
-                              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                Icon(Icons.info_outline_rounded, color: Theme.of(context).colorScheme.error),
-                                const SizedBox(width: Dimensions.paddingSizeSmall),
-                                Text(getTranslated('no_contact_info_added', context), style: poppinsRegular.copyWith(color: Theme.of(context).colorScheme.error)),
-                              ]),
-                            )
-                          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Row(children: [
-                                Icon(Icons.person, color: Theme.of(context).primaryColor.withOpacity(0.5)),
-                                const SizedBox(width: Dimensions.paddingSizeSmall),
-                                Flexible(child: Text(deliveryAddress.contactPersonName ?? '')),
-                              ]),
-                              const SizedBox(height: Dimensions.paddingSizeSmall),
-                              Row(children: [
-                                Icon(Icons.call, color: Theme.of(context).primaryColor.withOpacity(0.5)),
-                                const SizedBox(width: Dimensions.paddingSizeSmall),
-                                Text(deliveryAddress.contactPersonNumber ?? ''),
-                              ]),
-                              const Divider(height: Dimensions.paddingSizeDefault),
-                              Text(deliveryAddress.address ?? '', maxLines: 1, overflow: TextOverflow.ellipsis),
-                              const SizedBox(height: Dimensions.paddingSizeSmall),
-                              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                                if (deliveryAddress.houseNumber != null)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
                                   Text(
-                                    '${getTranslated('house', context)} - ${deliveryAddress.houseNumber}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                      '${getTranslated('delivery_to', context)} -',
+                                      style: poppinsMedium.copyWith(
+                                          fontSize: Dimensions.fontSizeLarge)),
+                                  const Expanded(child: SizedBox()),
+                                  TextButton(
+                                    onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (_) =>
+                                            const AddAddressDialogWidget()),
+                                    child: Text(
+                                        getTranslated(
+                                            deliveryAddress == null ||
+                                                    orderProvider
+                                                            .addressIndex ==
+                                                        -1
+                                                ? 'add'
+                                                : 'change',
+                                            context),
+                                        style: poppinsBold.copyWith(
+                                            color: Theme.of(context)
+                                                .primaryColor)),
                                   ),
-                                const SizedBox(width: Dimensions.paddingSizeSmall),
-                                if (deliveryAddress.floorNumber != null)
-                                  Text(
-                                    '${getTranslated('floor', context)} - ${deliveryAddress.floorNumber}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                              ]),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
-                            ]),
-                    ]);
+                                ]),
+                            const SizedBox(
+                                height: Dimensions.paddingSizeDefault),
+                            deliveryAddress == null ||
+                                    orderProvider.addressIndex == -1
+                                ? Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: Dimensions.paddingSizeDefault),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.info_outline_rounded,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error),
+                                          const SizedBox(
+                                              width:
+                                                  Dimensions.paddingSizeSmall),
+                                          Text(
+                                              getTranslated(
+                                                  'no_contact_info_added',
+                                                  context),
+                                              style: poppinsRegular.copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .error)),
+                                        ]),
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                        Row(children: [
+                                          Icon(Icons.person,
+                                              color: Theme.of(context)
+                                                  .primaryColor
+                                                  .withOpacity(0.5)),
+                                          const SizedBox(
+                                              width:
+                                                  Dimensions.paddingSizeSmall),
+                                          Flexible(
+                                              child: Text(deliveryAddress
+                                                      .contactPersonName ??
+                                                  '')),
+                                        ]),
+                                        const SizedBox(
+                                            height:
+                                                Dimensions.paddingSizeSmall),
+                                        Row(children: [
+                                          Icon(Icons.call,
+                                              color: Theme.of(context)
+                                                  .primaryColor
+                                                  .withOpacity(0.5)),
+                                          const SizedBox(
+                                              width:
+                                                  Dimensions.paddingSizeSmall),
+                                          Text(deliveryAddress
+                                                  .contactPersonNumber ??
+                                              ''),
+                                        ]),
+                                        const Divider(
+                                            height:
+                                                Dimensions.paddingSizeDefault),
+                                        Text(deliveryAddress.address ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis),
+                                        const SizedBox(
+                                            height:
+                                                Dimensions.paddingSizeSmall),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              if (deliveryAddress.houseNumber !=
+                                                  null)
+                                                Text(
+                                                  '${getTranslated('house', context)} - ${deliveryAddress.houseNumber}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              const SizedBox(
+                                                  width: Dimensions
+                                                      .paddingSizeSmall),
+                                              if (deliveryAddress.floorNumber !=
+                                                  null)
+                                                Text(
+                                                  '${getTranslated('floor', context)} - ${deliveryAddress.floorNumber}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                            ]),
+                                        const SizedBox(
+                                            height:
+                                                Dimensions.paddingSizeDefault),
+                                      ]),
+                          ]);
               }),
             ),
           )
@@ -126,12 +215,24 @@ class _DeliverySectionShimmer extends StatelessWidget {
     return Shimmer(
         child: Column(children: [
       Container(
-        margin: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeDefault),
+        margin: const EdgeInsets.symmetric(
+            vertical: Dimensions.paddingSizeSmall,
+            horizontal: Dimensions.paddingSizeDefault),
         child: Column(children: [
           const SizedBox(height: Dimensions.paddingSizeSmall),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Container(height: 14, width: 200, decoration: BoxDecoration(color: Theme.of(context).shadowColor, borderRadius: BorderRadius.circular(2))),
-            Container(height: 14, width: 50, decoration: BoxDecoration(color: Theme.of(context).shadowColor, borderRadius: BorderRadius.circular(2))),
+            Container(
+                height: 14,
+                width: 200,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).shadowColor,
+                    borderRadius: BorderRadius.circular(2))),
+            Container(
+                height: 14,
+                width: 50,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).shadowColor,
+                    borderRadius: BorderRadius.circular(2))),
           ]),
           const Divider(height: Dimensions.paddingSizeDefault),
           Column(
@@ -140,7 +241,9 @@ class _DeliverySectionShimmer extends StatelessWidget {
                 Container(
                     height: Dimensions.paddingSizeLarge,
                     width: Dimensions.paddingSizeLarge,
-                    decoration: BoxDecoration(color: Theme.of(context).shadowColor, borderRadius: BorderRadius.circular(2))),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).shadowColor,
+                        borderRadius: BorderRadius.circular(2))),
                 const SizedBox(width: Dimensions.paddingSizeLarge),
                 Container(
                     height: 14,
@@ -155,7 +258,9 @@ class _DeliverySectionShimmer extends StatelessWidget {
                 Container(
                     height: Dimensions.paddingSizeLarge,
                     width: Dimensions.paddingSizeLarge,
-                    decoration: BoxDecoration(color: Theme.of(context).shadowColor, borderRadius: BorderRadius.circular(2))),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).shadowColor,
+                        borderRadius: BorderRadius.circular(2))),
                 const SizedBox(width: Dimensions.paddingSizeLarge),
                 Container(
                     height: 14,
