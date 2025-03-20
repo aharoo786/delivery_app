@@ -19,8 +19,7 @@ class OnBoardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<OnBoardingProvider>(context, listen: false)
-        .getBoardingList(context);
+    Provider.of<OnBoardingProvider>(context, listen: false).getBoardingList(context);
 
     return CustomPopScopeWidget(child: Scaffold(
       body: SafeArea(child: Consumer<OnBoardingProvider>(
@@ -32,8 +31,7 @@ class OnBoardingScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children:
-                          _pageIndicators(onBoarding.onBoardingList, context),
+                      children: _pageIndicators(onBoarding.onBoardingList, context),
                     ),
                   ),
                   Expanded(
@@ -43,51 +41,35 @@ class OnBoardingScreen extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.all(
-                            Dimensions.paddingSizeExtraLarge),
-                        child: OnBoardingWidget(
-                            onBoardingModel: onBoarding.onBoardingList[index]),
+                        padding: const EdgeInsets.all(Dimensions.paddingSizeExtraLarge),
+                        child: OnBoardingWidget(onBoardingModel: onBoarding.onBoardingList[index]),
                       );
                     },
                     onPageChanged: (index) => onBoarding.setSelectIndex(index),
                   )),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.fontSizeLarge),
+                    padding: const EdgeInsets.symmetric(horizontal: Dimensions.fontSizeLarge),
                     child: CustomButtonWidget(
                         buttonText: "Next",
                         icon: Icons.arrow_forward_outlined,
                         isFrontIcon: false,
                         onPressed: () {
-                          if (onBoarding.selectedIndex ==
-                              onBoarding.onBoardingList.length - 1) {
-                            Provider.of<SplashProvider>(context, listen: false)
-                                .disableIntro();
-                            Navigator.of(context).pushReplacementNamed(
-                                RouteHelper.login,
-                                arguments: const LoginScreen());
+                          if (onBoarding.selectedIndex == onBoarding.onBoardingList.length - 1) {
+                            Provider.of<SplashProvider>(context, listen: false).disableIntro();
+                            Navigator.of(context).pushReplacementNamed(RouteHelper.login, arguments: const LoginScreen());
                           } else {
-                            _pageController.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeIn);
+                            _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
                           }
                         }),
                   ),
                   TextButton(
                     onPressed: () {
-                      Provider.of<SplashProvider>(context, listen: false)
-                          .disableIntro();
-                      Navigator.of(context).pushReplacementNamed(
-                          RouteHelper.login,
-                          arguments: const LoginScreen());
+                      Provider.of<SplashProvider>(context, listen: false).disableIntro();
+                      Navigator.of(context).pushReplacementNamed(RouteHelper.login, arguments: const LoginScreen());
                     },
                     child: Text(
-                      onBoarding.selectedIndex !=
-                              onBoarding.onBoardingList.length - 1
-                          ? getTranslated('skip', context)
-                          : '',
-                      style: poppinsSemiBold.copyWith(
-                          color: Theme.of(context).textTheme.bodyMedium?.color),
+                      onBoarding.selectedIndex != onBoarding.onBoardingList.length - 1 ? getTranslated('skip', context) : '',
+                      style: poppinsSemiBold.copyWith(color: Theme.of(context).textTheme.bodyMedium?.color),
                     ),
                   ),
                   SizedBox(
@@ -110,13 +92,8 @@ class OnBoardingScreen extends StatelessWidget {
           height: 3,
           margin: const EdgeInsets.only(right: 8),
           decoration: BoxDecoration(
-            color: i == Provider.of<OnBoardingProvider>(context).selectedIndex
-                ? Colors.black
-                : ColorResources.getGreyColor(context),
-            borderRadius:
-                i == Provider.of<OnBoardingProvider>(context).selectedIndex
-                    ? BorderRadius.circular(50)
-                    : BorderRadius.circular(25),
+            color: i == Provider.of<OnBoardingProvider>(context).selectedIndex ? Colors.black : ColorResources.getGreyColor(context),
+            borderRadius: i == Provider.of<OnBoardingProvider>(context).selectedIndex ? BorderRadius.circular(50) : BorderRadius.circular(25),
           ),
         ),
       );

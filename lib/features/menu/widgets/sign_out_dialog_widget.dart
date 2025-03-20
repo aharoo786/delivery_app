@@ -9,6 +9,8 @@ import 'package:flutter_grocery/common/widgets/custom_loader_widget.dart';
 import 'package:flutter_grocery/helper/custom_snackbar_helper.dart';
 import 'package:provider/provider.dart';
 
+import '../../splash/providers/splash_provider.dart';
+
 class SignOutDialogWidget extends StatelessWidget {
   const SignOutDialogWidget({super.key});
 
@@ -47,6 +49,7 @@ class SignOutDialogWidget extends StatelessWidget {
                     if(ResponsiveHelper.isWeb()) {
                       Navigator.pushNamedAndRemoveUntil(context, RouteHelper.getMainRoute(), (route) => false);
                     }else {
+                      Provider.of<SplashProvider>(context, listen: false).disableIntro();
                       Navigator.pushNamedAndRemoveUntil(context, RouteHelper.getLoginRoute(), (route) => false);
                     }
                   }

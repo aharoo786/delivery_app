@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/enums/footer_type_enum.dart';
 import 'package:flutter_grocery/common/widgets/custom_app_bar_widget.dart';
@@ -120,11 +118,17 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                             decoration: BoxDecoration(
                                                 color: categoryProvider.selectedCategoryIndex == -2 ? Colors.black : ColorResources.getGreyColor(context),
                                                 borderRadius: BorderRadius.circular(7)),
-                                            child: Text(
-                                              getTranslated('Filters', context),
-                                              style: poppinsRegular.copyWith(
-                                                color: categoryProvider.selectedCategoryIndex == -2 ? Theme.of(context).canvasColor : Colors.black,
-                                              ),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  getTranslated('Filters', context),
+                                                  style: poppinsRegular.copyWith(
+                                                    color: categoryProvider.selectedCategoryIndex == -2 ? Theme.of(context).canvasColor : Colors.black,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                                const Icon(Icons.arrow_drop_down_sharp, size: 15, color: Colors.black)
+                                              ],
                                             ),
                                           ),
                                           onSelected: (String? value) {
@@ -132,16 +136,14 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                             int index = categoryProvider.allSortBy.indexOf(value);
                                             categoryProvider.sortCategoryProduct(index);
                                           },
-
-                                          itemBuilder:(context) {
+                                          itemBuilder: (context) {
                                             return categoryProvider.allSortBy.map((choice) {
                                               return PopupMenuItem(
                                                 value: choice,
                                                 child: Text(getTranslated(choice, context)),
                                               );
                                             }).toList();
-                                          }
-                                      ),
+                                          }),
                                       ListView.builder(
                                           physics: const NeverScrollableScrollPhysics(),
                                           itemCount: categoryProvider.subCategoryList!.length,

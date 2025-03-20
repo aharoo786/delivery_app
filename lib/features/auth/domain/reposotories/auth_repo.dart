@@ -244,6 +244,7 @@ class AuthRepo {
     // await sharedPreferences?.remove(AppConstants.token);
     await sharedPreferences?.clear();
 
+
     if(!kIsWeb) {
       await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.topic);
     }
