@@ -89,7 +89,7 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: widget.deliveryManModel!.latitude != null
+            child: widget.deliveryManModel?.latitude != null
                 ? Stack(children: [
                     GoogleMap(
                       minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
