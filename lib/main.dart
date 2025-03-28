@@ -69,12 +69,13 @@ Future<void> main() async {
   } else {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-            apiKey: "AIzaSyBCtDfdfPqxXDO6rDNlmQC1VJSHOtuyo3w",
-            authDomain: "gem-b5006.firebaseapp.com",
-            projectId: "gem-b5006",
-            storageBucket: "gem-b5006.firebasestorage.app",
-            messagingSenderId: "384321080318",
-            appId: "1:384321080318:web:65a2e979404705cc2c0eaf"));
+      apiKey: "AIzaSyBCtDfdfPqxXDO6rDNlmQC1VJSHOtuyo3w",
+      authDomain: "gem-b5006.firebaseapp.com",
+      projectId: "gem-b5006",
+      storageBucket: "gem-b5006.firebasestorage.app",
+      messagingSenderId: "384321080318",
+      appId: "1:384321080318:web:65a2e979404705cc2c0eaf",
+    ));
 
     await FacebookAuth.instance.webAndDesktopInitialize(
       appId: "YOUR_FACEBOOK_KEY_HERE",

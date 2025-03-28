@@ -2,35 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery/common/enums/footer_type_enum.dart';
 import 'package:flutter_grocery/common/models/config_model.dart';
 import 'package:flutter_grocery/features/order/domain/models/order_model.dart';
-import 'package:flutter_grocery/helper/date_converter_helper.dart';
-import 'package:flutter_grocery/helper/order_helper.dart';
-import 'package:flutter_grocery/helper/price_converter_helper.dart';
 import 'package:flutter_grocery/helper/responsive_helper.dart';
 import 'package:flutter_grocery/localization/language_constraints.dart';
 import 'package:flutter_grocery/features/address/providers/location_provider.dart';
 import 'package:flutter_grocery/features/order/providers/order_provider.dart';
 import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
 import 'package:flutter_grocery/utill/dimensions.dart';
-import 'package:flutter_grocery/utill/images.dart';
 import 'package:flutter_grocery/utill/order_constants.dart';
-import 'package:flutter_grocery/utill/styles.dart';
 import 'package:flutter_grocery/common/widgets/custom_app_bar_widget.dart';
-import 'package:flutter_grocery/common/widgets/custom_directionality_widget.dart';
 import 'package:flutter_grocery/common/widgets/custom_loader_widget.dart';
 import 'package:flutter_grocery/common/widgets/footer_web_widget.dart';
 import 'package:flutter_grocery/common/widgets/no_data_widget.dart';
 import 'package:flutter_grocery/common/widgets/web_app_bar_widget.dart';
-import 'package:flutter_grocery/features/order/widgets/custom_stepper_widget.dart';
-import 'package:flutter_grocery/features/order/widgets/delivery_man_widget.dart';
 import 'package:flutter_grocery/features/order/widgets/track_order_shimmer_widget.dart';
 import 'package:flutter_grocery/features/order/widgets/track_order_web_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_grocery/features/order/widgets/tracking_map_widget.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../helper/date_converter_helper.dart';
+import '../../../helper/order_helper.dart';
+import '../../../utill/images.dart';
+import '../../../utill/styles.dart';
 import 'delivery_man_profile_card.dart';
 import 'order_stepper_widget.dart';
+
 
 class TrackOrderScreen extends StatefulWidget {
   final String? orderID;
@@ -114,7 +110,6 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
                                               deliveryManModel: orderProvider.deliveryManModel,
                                               orderID: '${orderProvider.trackModel?.id}',
                                               addressModel: orderProvider.trackModel!.deliveryAddress,
-                                              branchID: orderProvider.trackModel!.branchId,
                                             ),
                                             SizedBox(
                                               height: MediaQuery.of(context).size.height * 0.45,
@@ -180,17 +175,17 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
                                         const Center(child: Text('Address not found'))
                                       },
                                       Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 20),
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
                                         height:
                                             orderProvider.trackModel?.deliveryMan != null ? MediaQuery.of(context).size.height * 0.65 : MediaQuery.of(context).size.height * 0.5,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Colors.white,
                                           borderRadius: BorderRadius.only(topRight: Radius.circular(30) , topLeft: Radius.circular(30))
                                         ),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(height: 20),
+                                            const SizedBox(height: 20),
                                             Text(
                                               status == OrderConstants.pending
                                                   ? getTranslated('order_placed', context)

@@ -1,284 +1,304 @@
-import 'dart:collection';
-import 'dart:ui';
-import 'dart:convert' as dartCoverter;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_grocery/common/models/config_model.dart';
 import 'package:flutter_grocery/features/order/domain/models/delivery_man_model.dart';
 import 'package:flutter_grocery/features/order/domain/models/order_model.dart';
-import 'package:flutter_grocery/helper/responsive_helper.dart';
-import 'package:flutter_grocery/localization/language_constraints.dart';
-import 'package:flutter_grocery/features/order/providers/order_provider.dart';
-import 'package:flutter_grocery/features/splash/providers/splash_provider.dart';
-import 'package:flutter_grocery/utill/dimensions.dart';
-import 'package:flutter_grocery/utill/images.dart';
-import 'package:flutter_grocery/common/widgets/custom_loader_widget.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_grocery/features/order/services/location_tracking_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../common/models/config_model.dart';
+import '../../splash/providers/splash_provider.dart';
 
 class TrackingMapWidget extends StatefulWidget {
   final DeliveryManModel? deliveryManModel;
   final String? orderID;
-  final int? branchID;
   final DeliveryAddress? addressModel;
-  const TrackingMapWidget({super.key, required this.deliveryManModel, required this.orderID, required this.addressModel, required this.branchID});
+  const TrackingMapWidget({super.key, required this.deliveryManModel, required this.orderID, required this.addressModel});
 
   @override
   State<TrackingMapWidget> createState() => _TrackingMapWidgetState();
 }
 
 class _TrackingMapWidgetState extends State<TrackingMapWidget> {
-  GoogleMapController? _controller;
-  bool _isLoading = true;
-  Set<Marker> _markers = HashSet<Marker>();
-  late LatLng _deliveryBoyLatLng;
-  late LatLng _addressLatLng;
-  LatLng? _restaurantLatLng;
-  Set<Polyline> _polylines = {}; // Store route
+  GoogleMapController? _mapController;
+  Set<Polyline> _polylines = {};
+  Set<Marker> _markers = {};
+  String? _routePolyline;
+  Timer? _locationTimer;
 
   @override
   void initState() {
     super.initState();
 
-    LatLng? branchLatLong;
-    for (Branches branch in Provider.of<SplashProvider>(context, listen: false).configModel!.branches!) {
-      if (branch.id == widget.branchID) {
-        branchLatLong = LatLng(double.parse(branch.latitude!), double.parse(branch.longitude!));
-        break;
-      }
-    }
-
-    print("----------(MODEL)--------${widget.deliveryManModel?.latitude} and ${widget.deliveryManModel?.longitude}");
-    print("----------(MODEL)--------${widget.addressModel?.latitude} and ${widget.addressModel?.longitude}");
-
-    _deliveryBoyLatLng = widget.deliveryManModel != null
-        ? LatLng(double.parse(widget.deliveryManModel?.latitude ?? '0'), double.parse(widget.deliveryManModel?.longitude ?? '0'))
-        : const LatLng(0, 0);
-    _addressLatLng = widget.addressModel != null
-        ? LatLng(double.parse((widget.addressModel?.latitude?.isNotEmpty ?? false) ? widget.addressModel!.latitude! : '0'),
-            double.parse(((widget.addressModel?.longitude?.isNotEmpty ?? false)) ? widget.addressModel!.longitude! : '0'))
-        : const LatLng(0, 0);
-    _restaurantLatLng = branchLatLong;
-
-    // Fetch route
-    if (_deliveryBoyLatLng.latitude != 0 && _addressLatLng.latitude != 0) {
-      _fetchRoute();
-    }
+    _startLocationUpdates();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getDirections();
+    });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  Future<void> _getDirections() async {
+    if (widget.deliveryManModel == null) return;
 
-    _controller?.dispose();
-  }
+    final origin = '${widget.deliveryManModel?.latitude ?? ''},${widget.deliveryManModel?.longitude ?? ''}';
+    final destination = '${widget.addressModel?.latitude ?? 0},${widget.addressModel?.longitude ?? 0}';
 
-  @override
-  Widget build(BuildContext context) {
-    final ConfigModel? configModel = Provider.of<SplashProvider>(context, listen: false).configModel;
-    final width = MediaQuery.of(context).size.width;
-
-    return (configModel?.googleMapStatus ?? false)
-        ? Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: widget.deliveryManModel?.latitude != null
-                ? Stack(children: [
-                    GoogleMap(
-                      minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
-                      mapType: MapType.normal,
-                      initialCameraPosition: CameraPosition(target: _addressLatLng, zoom: 18),
-                      zoomControlsEnabled: true,
-                      markers: _markers,
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller = controller;
-                        _isLoading = false;
-                        setMarker();
-                      },
-                      onTap: (latLng) async {
-                        await Provider.of<OrderProvider>(context, listen: false).getDeliveryManData(widget.orderID, context);
-                        String url = 'https://www.google.com/maps/dir/?api=1&origin=${widget.deliveryManModel!.latitude},${widget.deliveryManModel!.longitude}'
-                            '&destination=${_addressLatLng.latitude},${_addressLatLng.longitude}&mode=d';
-                        if (await canLaunchUrl(Uri.parse(url))) {
-                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },
-                    ),
-                    _isLoading ? Center(child: CustomLoaderWidget(color: Theme.of(context).primaryColor)) : const SizedBox(),
-                  ])
-                : SizedBox(height: 200, child: Center(child: Text(getTranslated('no_delivery_man_data_found', context)))),
-          )
-        : const SizedBox.shrink();
-  }
-
-  // Function to get route between delivery boy and destination
-  Future<void> _fetchRoute() async {
-
-    // 22.291225, 70.779596
+    print('Origin: $origin');
+    print('Destination: $destination');
 
     String apiKey = 'AIzaSyBNfDDSWLMTtVpDy58bnhhU4x_1jLoJnJA';
-    String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${_deliveryBoyLatLng.latitude},${_deliveryBoyLatLng.longitude}&destination=${_addressLatLng.latitude},${_addressLatLng.longitude}&mode=driving&key=$apiKey';
+    String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&mode=driving&key=$apiKey';
 
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final data = dartCoverter.jsonDecode(response.body);
-      if (data['routes'].isNotEmpty) {
-        String encodedPolyline = data['routes'][0]['overview_polyline']['points'];
-        List<LatLng> polylineCoordinates = _decodePolyline(encodedPolyline);
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
 
-        setState(() {
-          _polylines.add(Polyline(
-            polylineId: const PolylineId('route'),
-            color: Colors.blue,
-            width: 5,
-            points: polylineCoordinates,
-          ));
-        });
+        if (data['status'] == 'ZERO_RESULTS') {
+          print('No route found between the specified locations.');
+          return;
+        }
+
+        if (data['status'] == 'OK' && data['routes'].isNotEmpty) {
+          setState(() {
+            _routePolyline = data['routes'][0]['overview_polyline']['points'];
+            _updateRoutePolyline();
+          });
+        } else {
+          print('Error: ${data['status']}');
+        }
+      } else {
+        print('HTTP Error: ${response.statusCode}');
       }
+    } catch (e) {
+      print('Error getting directions: $e');
     }
   }
 
-  // Decode polyline
+  void _updateRoutePolyline() {
+    if (_routePolyline != null) {
+      setState(() {
+        _polylines = {
+          Polyline(
+            polylineId: const PolylineId('route'),
+            points: _decodePolyline(_routePolyline!),
+            color: Colors.blue,
+            width: 5,
+          ),
+        };
+      });
+    }
+  }
+
   List<LatLng> _decodePolyline(String encoded) {
-    List<LatLng> points = [];
+    List<LatLng> poly = [];
     int index = 0, len = encoded.length;
     int lat = 0, lng = 0;
 
     while (index < len) {
-      int shift = 0, result = 0;
-      int byte;
+      int b, shift = 0, result = 0;
       do {
-        byte = encoded.codeUnitAt(index++) - 63;
-        result |= (byte & 0x1F) << shift;
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
         shift += 5;
-      } while (byte >= 0x20);
-      int dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      } while (b >= 0x20);
+
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
       lat += dlat;
 
       shift = 0;
       result = 0;
       do {
-        byte = encoded.codeUnitAt(index++) - 63;
-        result |= (byte & 0x1F) << shift;
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
         shift += 5;
-      } while (byte >= 0x20);
-      int dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      } while (b >= 0x20);
+
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
       lng += dlng;
 
-      points.add(LatLng(lat / 1E5, lng / 1E5));
+      double latDouble = lat / 1E5;
+      double lngDouble = lng / 1E5;
+      poly.add(LatLng(latDouble, lngDouble));
     }
-    return points;
+    return poly;
   }
 
-  void setMarker() async {
-    Uint8List restaurantImageData = await convertAssetToUnit8List(Images.restaurantMarker, width: 50);
-    Uint8List deliveryBoyImageData = await convertAssetToUnit8List(Images.deliveryBoyMarker, width: 50);
-    Uint8List destinationImageData = await convertAssetToUnit8List(Images.destinationMarker, width: 50);
+  void _startLocationUpdates() {
+    if (widget.orderID == null) return;
 
-    // Animate to coordinate
-    LatLngBounds? bounds;
-    double rotation = 0;
-    if (_controller != null) {
-      if (_addressLatLng.latitude < _restaurantLatLng!.latitude) {
-        bounds = LatLngBounds(southwest: _addressLatLng, northeast: _restaurantLatLng!);
-        rotation = 0;
-      } else {
-        bounds = LatLngBounds(southwest: _restaurantLatLng!, northeast: _addressLatLng);
-        rotation = 180;
+    LocationTrackingService().getLocationUpdates(widget.orderID ?? '').listen((location) {
+      if (mounted) {
+        setState(() {
+          _updateMapWithLocation(location);
+        });
       }
-    }
-    LatLng centerBounds = LatLng((bounds!.northeast.latitude + bounds.southwest.latitude) / 2, (bounds.northeast.longitude + bounds.southwest.longitude) / 2);
+      print('location from firebase: ${location}');
+    }, onError: (error) {
+      print("Error getting location updates: $error");
+    });
+  }
 
-    _controller!.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: centerBounds, zoom: 17)));
-    if (ResponsiveHelper.isMobilePhone()) {
-      zoomToFit(_controller, bounds, centerBounds);
-    }
+  // void _updateMapWithLocation(LocationModel location) {
+  //   final double deliveryLat = double.tryParse(widget.addressModel?.latitude ?? '') ?? 0;
+  //   final double deliveryLng = double.tryParse(widget.addressModel?.longitude ?? '') ?? 0;
+  //
+  //   final LatLng position = LatLng(location.latitude, location.longitude);
+  //   final LatLng deliveryPosition = LatLng(deliveryLat, deliveryLng);
+  //   setState(() {
+  //     _markers = {
+  //       Marker(
+  //         markerId: const MarkerId('rider'),
+  //         position: position,
+  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+  //         rotation: location.heading ?? 0,
+  //         infoWindow: const InfoWindow(title: 'Delivery Partner'),
+  //       ),
+  //       Marker(
+  //         markerId: const MarkerId('delivery'),
+  //         position: deliveryPosition,
+  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+  //         infoWindow: const InfoWindow(title: 'Delivery Location'),
+  //       ),
+  //     };
+  //   });
+  //   // Update markers
+  //
+  //   // Calculate bounds to show both markers
+  //   final bounds = LatLngBounds(
+  //     southwest: LatLng(
+  //       math.min(location.latitude, double.parse(widget.addressModel?.latitude ?? '')),
+  //       math.min(location.longitude, double.parse(widget.addressModel?.longitude ?? '')),
+  //     ),
+  //     northeast: LatLng(
+  //       math.max(location.latitude, double.parse(widget.addressModel?.latitude ?? '')),
+  //       math.max(location.longitude, double.parse(widget.addressModel?.longitude ?? '')),
+  //     ),
+  //   );
+  //
+  //   // Animate camera to show both markers
+  //   _mapController?.animateCamera(
+  //     CameraUpdate.newLatLngBounds(bounds, 50),
+  //   );
+  // }
 
-    // Marker
-    _markers = HashSet<Marker>();
-    _markers.add(Marker(
-      markerId: const MarkerId('destination'),
-      position: _addressLatLng,
-      infoWindow: InfoWindow(
-        title: 'Destination',
-        snippet: '${_addressLatLng.latitude}, ${_addressLatLng.longitude}',
-      ),
-      icon: BitmapDescriptor.fromBytes(destinationImageData),
-    ));
 
-    _markers.add(Marker(
-      markerId: const MarkerId('restaurant'),
-      position: _restaurantLatLng!,
-      infoWindow: InfoWindow(
-        title: 'Restaurant',
-        snippet: '${_restaurantLatLng!.latitude}, ${_restaurantLatLng!.longitude}',
-      ),
-      icon: BitmapDescriptor.fromBytes(restaurantImageData),
-    ));
-    widget.deliveryManModel!.latitude != null
-        ? _markers.add(Marker(
-            markerId: const MarkerId('delivery_boy'),
-            position: _deliveryBoyLatLng,
-            infoWindow: InfoWindow(
-              title: 'Delivery Man',
-              snippet: '${_deliveryBoyLatLng.latitude}, ${_deliveryBoyLatLng.longitude}',
+  void _updateMapWithLocation(LocationModel location) async {
+    final double deliveryLat = double.tryParse(widget.addressModel?.latitude ?? '') ?? 0;
+    final double deliveryLng = double.tryParse(widget.addressModel?.longitude ?? '') ?? 0;
+
+    final LatLng position = LatLng(location.latitude, location.longitude);
+    final LatLng deliveryPosition = LatLng(deliveryLat, deliveryLng);
+
+
+    final BitmapDescriptor deliveryIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(48, 48)), // Adjust size if needed
+      'assets/image/delivery_boy_marker.png',
+    );
+
+    final BitmapDescriptor deliveryLocation = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(48, 48)), // Adjust size if needed
+      'assets/image/address_image.png',
+    );
+
+    setState(() {
+      _markers = {
+        Marker(
+          markerId: const MarkerId('rider'),
+          position: position,
+          icon: deliveryIcon,
+          rotation: location.heading ?? 0,
+          infoWindow: const InfoWindow(title: 'Delivery Partner'),
+        ),
+        Marker(
+          markerId: const MarkerId('delivery'),
+          position: deliveryPosition,
+          icon: deliveryLocation,
+          infoWindow: const InfoWindow(title: 'Delivery Location'),
+        ),
+      };
+    });
+
+    // Calculate appropriate bounds considering the map height (250)
+    _mapController?.getVisibleRegion().then((visibleRegion) {
+      final bounds = LatLngBounds(
+        southwest: LatLng(
+          math.min(location.latitude, deliveryLat),
+          math.min(location.longitude, deliveryLng),
+        ),
+        northeast: LatLng(
+          math.max(location.latitude, deliveryLat),
+          math.max(location.longitude, deliveryLng),
+        ),
+      );
+
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds, 50),
+      );
+    });
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    final ConfigModel? configModel = Provider.of<SplashProvider>(context, listen: false).configModel;
+    return (configModel?.googleMapStatus ?? false)
+        ? SizedBox(
+            height: 250,
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  double.tryParse(widget.deliveryManModel?.latitude ?? '') ?? double.parse(widget.addressModel?.latitude ?? ''),
+                  double.tryParse(widget.deliveryManModel?.longitude ?? '') ?? double.parse(widget.addressModel?.longitude ?? ''),
+                ),
+                zoom: 15,
+              ),
+              onMapCreated: (controller) {
+                setState(() {
+                  _mapController = controller;
+                });
+              },
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              markers: _markers,
+              polylines: _polylines,
+              zoomControlsEnabled: true,
+              mapToolbarEnabled: true,
+              onTap: (latLng) async {
+                if (widget.deliveryManModel?.latitude != null && widget.addressModel != null && widget.addressModel?.latitude != null) {
+                  String url = 'https://www.google.com/maps/dir/?api=1&origin=${widget.deliveryManModel?.latitude},${widget.deliveryManModel?.longitude}'
+                      '&destination=${widget.addressModel?.latitude},${widget.addressModel?.longitude}&mode=d';
+                  if (await canLaunchUrl(Uri.parse(url))) {
+                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                  }
+                }
+              },
             ),
-            rotation: rotation,
-            icon: BitmapDescriptor.fromBytes(deliveryBoyImageData),
-          ))
-        : const SizedBox();
-
-    setState(() {});
+          )
+        : const SizedBox.shrink();
   }
 
-  Future<void> zoomToFit(GoogleMapController? controller, LatLngBounds? bounds, LatLng centerBounds) async {
-    bool keepZoomingOut = true;
+  String _calculateDistance() {
+    if (widget.deliveryManModel == null) return '0.0';
 
-    while (keepZoomingOut) {
-      final LatLngBounds screenBounds = await controller!.getVisibleRegion();
-      if (fits(bounds!, screenBounds)) {
-        keepZoomingOut = false;
-        final double zoomLevel = await controller.getZoomLevel() - 0.5;
-        controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: centerBounds,
-          zoom: zoomLevel,
-        )));
-        break;
-      } else {
-        // Zooming out by 0.1 zoom level per iteration
-        final double zoomLevel = await controller.getZoomLevel() - 0.1;
-        controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: centerBounds,
-          zoom: zoomLevel,
-        )));
-      }
-    }
+    return Geolocator.distanceBetween(
+      double.parse(widget.deliveryManModel?.latitude ?? ''),
+      double.parse(widget.deliveryManModel?.longitude ?? ''),
+      double.parse(widget.addressModel?.latitude ?? ''),
+      double.parse(widget.addressModel?.longitude ?? ''),
+    ).toStringAsFixed(2);
   }
 
-  bool fits(LatLngBounds fitBounds, LatLngBounds screenBounds) {
-    final bool northEastLatitudeCheck = screenBounds.northeast.latitude >= fitBounds.northeast.latitude;
-    final bool northEastLongitudeCheck = screenBounds.northeast.longitude >= fitBounds.northeast.longitude;
-
-    final bool southWestLatitudeCheck = screenBounds.southwest.latitude <= fitBounds.southwest.latitude;
-    final bool southWestLongitudeCheck = screenBounds.southwest.longitude <= fitBounds.southwest.longitude;
-
-    return northEastLatitudeCheck && northEastLongitudeCheck && southWestLatitudeCheck && southWestLongitudeCheck;
-  }
-
-  Future<Uint8List> convertAssetToUnit8List(String imagePath, {int width = 50}) async {
-    ByteData data = await rootBundle.load(imagePath);
-    Codec codec = await instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
-    FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ImageByteFormat.png))!.buffer.asUint8List();
+  @override
+  void dispose() {
+    _locationTimer?.cancel();
+    _mapController?.dispose();
+    super.dispose();
   }
 }
