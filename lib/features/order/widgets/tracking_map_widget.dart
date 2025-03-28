@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery/features/order/domain/models/delivery_man_model.dart';
 import 'package:flutter_grocery/features/order/domain/models/order_model.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_grocery/features/order/services/location_tracking_service.dart';
 import 'package:provider/provider.dart';
@@ -31,15 +30,14 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
   Set<Marker> _markers = {};
   String? _routePolyline;
   Timer? _locationTimer;
+  bool _isFirebaseDatafound = true;
 
   @override
   void initState() {
     super.initState();
 
     _startLocationUpdates();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getDirections();
-    });
+    _getDirections();
   }
 
   Future<void> _getDirections() async {
@@ -88,8 +86,8 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
           Polyline(
             polylineId: const PolylineId('route'),
             points: _decodePolyline(_routePolyline!),
-            color: Colors.blue,
-            width: 5,
+            color: Colors.black,
+            width: 8,
           ),
         };
       });
@@ -133,7 +131,7 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
   void _startLocationUpdates() {
     if (widget.orderID == null) return;
 
-    LocationTrackingService().getLocationUpdates(widget.orderID ?? '').listen((location) {
+    LocationTrackingService().getLocationUpdates(widget.orderID ?? '')?.listen((location) {
       if (mounted) {
         setState(() {
           _updateMapWithLocation(location);
@@ -141,53 +139,12 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
       }
       print('location from firebase: ${location}');
     }, onError: (error) {
+      setState(() {
+        _isFirebaseDatafound = false;
+      });
       print("Error getting location updates: $error");
     });
   }
-
-  // void _updateMapWithLocation(LocationModel location) {
-  //   final double deliveryLat = double.tryParse(widget.addressModel?.latitude ?? '') ?? 0;
-  //   final double deliveryLng = double.tryParse(widget.addressModel?.longitude ?? '') ?? 0;
-  //
-  //   final LatLng position = LatLng(location.latitude, location.longitude);
-  //   final LatLng deliveryPosition = LatLng(deliveryLat, deliveryLng);
-  //   setState(() {
-  //     _markers = {
-  //       Marker(
-  //         markerId: const MarkerId('rider'),
-  //         position: position,
-  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-  //         rotation: location.heading ?? 0,
-  //         infoWindow: const InfoWindow(title: 'Delivery Partner'),
-  //       ),
-  //       Marker(
-  //         markerId: const MarkerId('delivery'),
-  //         position: deliveryPosition,
-  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-  //         infoWindow: const InfoWindow(title: 'Delivery Location'),
-  //       ),
-  //     };
-  //   });
-  //   // Update markers
-  //
-  //   // Calculate bounds to show both markers
-  //   final bounds = LatLngBounds(
-  //     southwest: LatLng(
-  //       math.min(location.latitude, double.parse(widget.addressModel?.latitude ?? '')),
-  //       math.min(location.longitude, double.parse(widget.addressModel?.longitude ?? '')),
-  //     ),
-  //     northeast: LatLng(
-  //       math.max(location.latitude, double.parse(widget.addressModel?.latitude ?? '')),
-  //       math.max(location.longitude, double.parse(widget.addressModel?.longitude ?? '')),
-  //     ),
-  //   );
-  //
-  //   // Animate camera to show both markers
-  //   _mapController?.animateCamera(
-  //     CameraUpdate.newLatLngBounds(bounds, 50),
-  //   );
-  // }
-
 
   void _updateMapWithLocation(LocationModel location) async {
     final double deliveryLat = double.tryParse(widget.addressModel?.latitude ?? '') ?? 0;
@@ -195,7 +152,6 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
 
     final LatLng position = LatLng(location.latitude, location.longitude);
     final LatLng deliveryPosition = LatLng(deliveryLat, deliveryLng);
-
 
     final BitmapDescriptor deliveryIcon = await BitmapDescriptor.asset(
       const ImageConfiguration(size: Size(48, 48)), // Adjust size if needed
@@ -244,55 +200,73 @@ class _TrackingMapWidgetState extends State<TrackingMapWidget> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     final ConfigModel? configModel = Provider.of<SplashProvider>(context, listen: false).configModel;
     return (configModel?.googleMapStatus ?? false)
-        ? SizedBox(
-            height: 250,
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  double.tryParse(widget.deliveryManModel?.latitude ?? '') ?? double.parse(widget.addressModel?.latitude ?? ''),
-                  double.tryParse(widget.deliveryManModel?.longitude ?? '') ?? double.parse(widget.addressModel?.longitude ?? ''),
+        ? _isFirebaseDatafound
+            ? SizedBox(
+                height: 250,
+                child: Stack(
+                  children: [
+
+                    GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                          double.tryParse(widget.deliveryManModel?.latitude ?? '') ?? double.parse(widget.addressModel?.latitude ?? ''),
+                          double.tryParse(widget.deliveryManModel?.longitude ?? '') ?? double.parse(widget.addressModel?.longitude ?? ''),
+                        ),
+                        zoom: 15,
+                      ),
+                      onMapCreated: (controller) {
+                        setState(() {
+                          _mapController = controller;
+                        });
+                      },
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: true,
+                      markers: _markers,
+                      polylines: _polylines,
+                      zoomControlsEnabled: false,
+                      mapToolbarEnabled: true,
+                      onTap: (latLng) async {
+                        if (widget.deliveryManModel?.latitude != null && widget.addressModel != null && widget.addressModel?.latitude != null) {
+                          String url = 'https://www.google.com/maps/dir/?api=1&origin=${widget.deliveryManModel?.latitude},${widget.deliveryManModel?.longitude}'
+                              '&destination=${widget.addressModel?.latitude},${widget.addressModel?.longitude}&mode=d';
+                          if (await canLaunchUrl(Uri.parse(url))) {
+                            await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                          }
+                        }
+                      },
+                    ),
+                    InkWell(
+                      hoverColor: Colors.grey,
+                      onTap: (){
+                        _startLocationUpdates();
+                        _getDirections();
+                      },
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          height: 30,
+                          width: 100,
+                          margin: const EdgeInsets.only(top: 10 , right: 10),
+                          alignment: Alignment.topRight,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: const Center(
+                              child: Text('Reset' , style: TextStyle(color: Colors.white))
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                zoom: 15,
-              ),
-              onMapCreated: (controller) {
-                setState(() {
-                  _mapController = controller;
-                });
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              markers: _markers,
-              polylines: _polylines,
-              zoomControlsEnabled: true,
-              mapToolbarEnabled: true,
-              onTap: (latLng) async {
-                if (widget.deliveryManModel?.latitude != null && widget.addressModel != null && widget.addressModel?.latitude != null) {
-                  String url = 'https://www.google.com/maps/dir/?api=1&origin=${widget.deliveryManModel?.latitude},${widget.deliveryManModel?.longitude}'
-                      '&destination=${widget.addressModel?.latitude},${widget.addressModel?.longitude}&mode=d';
-                  if (await canLaunchUrl(Uri.parse(url))) {
-                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                  }
-                }
-              },
-            ),
-          )
+              )
+            : Container(margin: const EdgeInsets.only(top: 100) , child: const Text('Rider data not found'))
         : const SizedBox.shrink();
-  }
-
-  String _calculateDistance() {
-    if (widget.deliveryManModel == null) return '0.0';
-
-    return Geolocator.distanceBetween(
-      double.parse(widget.deliveryManModel?.latitude ?? ''),
-      double.parse(widget.deliveryManModel?.longitude ?? ''),
-      double.parse(widget.addressModel?.latitude ?? ''),
-      double.parse(widget.addressModel?.longitude ?? ''),
-    ).toStringAsFixed(2);
   }
 
   @override

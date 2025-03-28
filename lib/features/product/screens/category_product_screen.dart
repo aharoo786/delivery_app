@@ -111,25 +111,14 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                                           iconSize: 100,
                                           padding: EdgeInsets.zero,
                                           icon: Container(
-                                            width: 100, // Set a fixed width similar to other buttons
+                                            width: 50, // Set a fixed width similar to other buttons
                                             height: 40, // Set a fixed height similar to other buttons
                                             alignment: Alignment.center,
                                             margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),
                                             decoration: BoxDecoration(
                                                 color: categoryProvider.selectedCategoryIndex == -2 ? Colors.black : ColorResources.getGreyColor(context),
                                                 borderRadius: BorderRadius.circular(7)),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  getTranslated('Filters', context),
-                                                  style: poppinsRegular.copyWith(
-                                                    color: categoryProvider.selectedCategoryIndex == -2 ? Theme.of(context).canvasColor : Colors.black,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 5),
-                                                const Icon(Icons.arrow_drop_down_sharp, size: 15, color: Colors.black)
-                                              ],
-                                            ),
+                                            child: const Icon(Icons.arrow_drop_down_sharp, size: 35, color: Colors.black),
                                           ),
                                           onSelected: (String? value) {
                                             categoryProvider.onChangeSelectIndex(-2);
